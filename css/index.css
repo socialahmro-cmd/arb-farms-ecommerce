@@ -2497,78 +2497,80 @@ textarea::-webkit-scrollbar-thumb:hover {
 /* ============================================================
    HORIZONTAL PRODUCT CARD REDESIGN
    ============================================================ */
-.horizontal-card {
-  display: flex;
-  flex-direction: column;
-}
+@media (max-width: 767.98px) {
+  .horizontal-card {
+    display: flex;
+    flex-direction: column;
+  }
 
-.horizontal-card .row.g-0 {
-  flex: 1;
-  min-height: 200px;
-}
+  .horizontal-card .row.g-0 {
+    flex: 1;
+    min-height: 200px;
+  }
 
-.horizontal-card .product-image-container {
-  height: 100%;
-  width: 100%;
-  aspect-ratio: auto;
-  min-height: 100%;
-}
+  .horizontal-card .product-image-container {
+    height: 100%;
+    width: 100%;
+    aspect-ratio: auto;
+    min-height: 100%;
+  }
 
-.horizontal-card .product-image-container img {
-  object-fit: contain;
-  padding: 8px;
-}
+  .horizontal-card .product-image-container img {
+    object-fit: contain;
+    padding: 8px;
+  }
 
-.horizontal-card .card-body {
-  padding: 0.85rem !important;
-  height: 100%;
-}
+  .horizontal-card .card-body {
+    padding: 0.85rem !important;
+    height: 100%;
+  }
 
-/* Position adjustments for overlay items inside narrow image column */
-.horizontal-card .sku-badge {
-  margin: 0.35rem !important;
-  font-size: 0.6rem !important;
-  padding: 2px 4px !important;
-}
+  /* Position adjustments for overlay items inside narrow image column */
+  .horizontal-card .sku-badge {
+    margin: 0.35rem !important;
+    font-size: 0.6rem !important;
+    padding: 2px 4px !important;
+  }
 
-.horizontal-card .wishlist-btn {
-  margin: 0.35rem !important;
-  width: 28px !important;
-  height: 28px !important;
-  font-size: 0.75rem !important;
-}
+  .horizontal-card .wishlist-btn {
+    margin: 0.35rem !important;
+    width: 28px !important;
+    height: 28px !important;
+    font-size: 0.75rem !important;
+  }
 
-.horizontal-card .quick-view-btn {
-  margin: 0.35rem !important;
-  width: 28px !important;
-  height: 28px !important;
-  font-size: 0.75rem !important;
-}
+  .horizontal-card .quick-view-btn {
+    margin: 0.35rem !important;
+    width: 28px !important;
+    height: 28px !important;
+    font-size: 0.75rem !important;
+  }
 
-/* Text & Select Element scaling */
-.horizontal-card h3 {
-  font-size: 0.95rem !important;
-  line-height: 1.2;
-}
+  /* Text & Select Element scaling */
+  .horizontal-card h3 {
+    font-size: 0.95rem !important;
+    line-height: 1.2;
+  }
 
-.horizontal-card .product-variation-selector {
-  font-size: 0.7rem !important;
-  padding: 0.15rem 1.25rem 0.15rem 0.35rem !important;
-  height: auto !important;
-  margin-top: 0.2rem !important;
-}
+  .horizontal-card .product-variation-selector {
+    font-size: 0.7rem !important;
+    padding: 0.15rem 1.25rem 0.15rem 0.35rem !important;
+    height: auto !important;
+    margin-top: 0.2rem !important;
+  }
 
-.horizontal-card .price-label {
-  font-size: 1.05rem !important;
-}
+  .horizontal-card .price-label {
+    font-size: 1.05rem !important;
+  }
 
-.horizontal-card .reg-price-label {
-  font-size: 0.75rem !important;
-}
+  .horizontal-card .reg-price-label {
+    font-size: 0.75rem !important;
+  }
 
-.horizontal-card .save-badge-bottom {
-  font-size: 0.62rem !important;
-  padding: 1px 4px !important;
+  .horizontal-card .save-badge-bottom {
+    font-size: 0.62rem !important;
+    padding: 1px 4px !important;
+  }
 }
 
 /* Responsiveness on mobile screens (< 576px) */
