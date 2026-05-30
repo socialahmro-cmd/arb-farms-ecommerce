@@ -289,7 +289,7 @@
           if (weightInGrams <= 1000) {
             nwFee = 300;
             nwTier = "Standard Light (Flat 300)";
-          } else if (weightInGrams <= 5999) {
+          } else if (weightInGrams < 6000) {
             const billableKg = Math.ceil(nonWheatWeight);
             nwFee = billableKg * 300;
             nwTier = `Standard Medium (${billableKg} kg @ 300/kg)`;
