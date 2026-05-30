@@ -264,7 +264,7 @@
             const billableKg = Math.ceil(wheatWeight);
             wheatFee = billableKg * 300;
             wheatTier = `Wheat Light (${billableKg} kg @ 300/kg)`;
-          } else if (weightInGrams <= 40000) {
+          } else if (weightInGrams < 40000) {
             const billableKg = Math.ceil(wheatWeight);
             wheatFee = billableKg * 150;
             wheatTier = `Wheat Medium (${billableKg} kg @ 150/kg)`;
