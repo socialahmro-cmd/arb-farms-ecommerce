@@ -637,7 +637,7 @@
         })
         .catch(err => {
           console.error("Vercel Blob Upload failed:", err);
-          alert("File upload failed. Please try again.");
+          alert("File upload failed: " + err.message + "\n\nPlease ensure your Vercel deployment has BLOB_READ_WRITE_TOKEN set.");
           dropZone.classList.remove("d-none");
           progressContainer.classList.add("d-none");
         });
