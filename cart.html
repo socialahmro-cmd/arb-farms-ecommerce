@@ -220,10 +220,11 @@
         let val = parseFloat(rawWeight);
         if (isNaN(val)) return 0;
         
+        const itemId = (item.id || '').toLowerCase();
         let wStr = String(rawWeight).toLowerCase();
         // If it looks like grams (e.g. contains 'gm' or 'gram', or is >= 100 and does not contain 'kg')
         // exclude agricultural bulk tags like 'seeds', 'wheat', 'bales' from being divided by 1000.
-        if (wStr.includes('gm') || wStr.includes('gram') || (val >= 100 && !wStr.includes('kg') && !item.id.toLowerCase().includes('seeds') && !item.id.toLowerCase().includes('wheat') && !item.id.toLowerCase().includes('bales'))) {
+        if (wStr.includes('gm') || wStr.includes('gram') || (val >= 100 && !wStr.includes('kg') && !itemId.includes('seeds') && !itemId.includes('wheat') && !itemId.includes('bales'))) {
           return val / 1000;
         }
         return val;
@@ -237,10 +238,12 @@
 
         cart.forEach(item => {
           const itemWeight = parseItemWeight(item) * item.qty;
-          const isWheat = item.id.toLowerCase().includes('wheat') || 
-                          item.id.toLowerCase().includes('ogn-018') ||
-                          item.name.toLowerCase().includes('wheat') || 
-                          item.name.toLowerCase().includes('gandum');
+          const itemId = (item.id || '').toLowerCase();
+          const itemName = (item.name || '').toLowerCase();
+          const isWheat = itemId.includes('wheat') || 
+                          itemId.includes('ogn-018') ||
+                          itemName.includes('wheat') || 
+                          itemName.includes('gandum');
           if (isWheat) {
             wheatWeight += itemWeight;
           } else {
