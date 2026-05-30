@@ -243,11 +243,10 @@
     import { doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
     import { upload } from "https://cdn.jsdelivr.net/npm/@vercel/blob@2.4.0/+esm";
 
-    document.addEventListener("DOMContentLoaded", () => {
-      // Check query parameter first for direct link loading
-      const urlParams = new URLSearchParams(window.location.search);
-      const orderId = urlParams.get('order');
-      let order = null;
+    // Check query parameter first for direct link loading
+    const urlParams = new URLSearchParams(window.location.search);
+    const orderId = urlParams.get('order');
+    let order = null;
 
       if (orderId) {
         // Try to find the order in arb_all_orders in localStorage
@@ -453,7 +452,6 @@ ${itemsText}
           progressContainer.classList.add("d-none");
         });
       }
-    });
   </script>
 </body>
 </html>

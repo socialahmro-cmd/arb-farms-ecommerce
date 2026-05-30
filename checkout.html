@@ -271,7 +271,6 @@
     import { db } from "./js/firebase-init.js";
     import { doc, setDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-    document.addEventListener("DOMContentLoaded", () => {
       const summaryItems = document.getElementById("checkout-summary-items");
       const subtotalEl = document.getElementById("summary-subtotal");
       const weightEl = document.getElementById("summary-weight");
@@ -504,7 +503,6 @@
       });
 
       loadCheckoutSummary();
-    });
   </script>
 </body>
 </html>
