@@ -267,7 +267,10 @@
   <script src="js/fomo.js?v=57a01075"></script>
 
   <!-- Checkout Logic -->
-  <script>
+  <script type="module">
+    import { db } from "./js/firebase-init.js";
+    import { doc, setDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
     document.addEventListener("DOMContentLoaded", () => {
       const summaryItems = document.getElementById("checkout-summary-items");
       const subtotalEl = document.getElementById("summary-subtotal");
@@ -465,37 +468,38 @@
           shipping: shippingFee,
           total: grandTotal,
           items: cart,
-          status: "Awaiting Advance Payment",
+          status: "Awaiting Receipt",
           orderDate: new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })
         };
 
         const submitBtn = document.querySelector("#checkout-form button[type='submit']");
-        const originalBtnText = submitBtn.innerHTML;
         submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Processing...';
         submitBtn.disabled = true;
 
-        // Try API first
-        fetch('/api/checkout', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(orderData)
-        }).then(res => res.json())
-          .then(data => console.log("Vercel DB Order saved:", data))
-          .catch(err => console.warn("Vercel backend not found. Using local demo mode.", err))
+        // Save order directly to Cloud Firestore DB
+        const orderDocRef = doc(db, "orders", orderData.orderNumber);
+        setDoc(orderDocRef, orderData)
+          .then(() => {
+            console.log("Firestore order saved successfully");
+          })
+          .catch(err => {
+            console.error("Firestore save error:", err);
+          })
           .finally(() => {
-            // Save order data to sessionStorage for thank-you screen
-            sessionStorage.setItem("arb_latest_order", JSON.stringify(orderData));
-
-            // Save to global order history for the client portal
-            const clientOrders = JSON.parse(localStorage.getItem("arb_all_orders")) || [];
-            clientOrders.push(orderData);
-            localStorage.setItem("arb_all_orders", JSON.stringify(clientOrders));
-
-            // Clear local storage cart
-            localStorage.setItem("arb_cart", JSON.stringify([]));
-
-            // Redirect to thank-you screen
-            window.location.href = "thank-you.html";
+            // Also invoke legacy API endpoint if Vercel serverless is loaded
+            fetch('/api/checkout', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(orderData)
+            }).catch(err => console.warn("Local demo mode: API route not online.", err))
+              .finally(() => {
+                sessionStorage.setItem("arb_latest_order", JSON.stringify(orderData));
+                const clientOrders = JSON.parse(localStorage.getItem("arb_all_orders")) || [];
+                clientOrders.push(orderData);
+                localStorage.setItem("arb_all_orders", JSON.stringify(clientOrders));
+                localStorage.setItem("arb_cart", JSON.stringify([]));
+                window.location.href = "thank-you.html";
+              });
           });
       });
 

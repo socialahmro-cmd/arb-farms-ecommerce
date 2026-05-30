@@ -237,9 +237,12 @@
 
   <!-- Scripts -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-
   <!-- Load Order Data -->
-  <script>
+  <script type="module">
+    import { db } from "./js/firebase-init.js";
+    import { doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { upload } from "https://cdn.jsdelivr.net/npm/@vercel/blob@2.4.0/+esm";
+
     document.addEventListener("DOMContentLoaded", () => {
       // Check query parameter first for direct link loading
       const urlParams = new URLSearchParams(window.location.search);
@@ -297,33 +300,24 @@
         if (!waLink) return;
 
         const baseUrl = "https://wa.me/923200005367";
-        const uploadLink = `${window.location.origin}${window.location.pathname}?order=${orderObj.orderNumber}`;
         
         let itemsText = "No items specified";
         if (orderObj.items && Array.isArray(orderObj.items) && orderObj.items.length > 0) {
           itemsText = orderObj.items.map(item => `- ${item.qty}x ${item.name} (${item.weight} kg) - Rs. ${(item.price * item.qty).toLocaleString()}`).join("\n");
         }
 
-        const intro = orderObj.receiptUploaded 
-          ? "Hi ARB Farms, I have uploaded the 50% advance payment receipt for my order:"
-          : "Hi ARB Farms, I would like to verify my order:";
+        const intro = "Hi ARB Farms, I have uploaded the payment receipt for my order!";
 
         const messageText = `${intro}
+
 *Order Number:* ${orderObj.orderNumber}
 *Name:* ${orderObj.customerName}
-*Phone:* +92 ${orderObj.phone}
-*Shipping City:* ${orderObj.city.toUpperCase()}
-*Delivery Address:* ${orderObj.address}
-*Payment Method:* ${orderObj.paymentMethod}
+*Total:* Rs. ${orderObj.total.toLocaleString()}
 
-*Items Ordered:*
+*Products Ordered:*
 ${itemsText}
 
-*Subtotal:* Rs. ${orderObj.subtotal.toLocaleString()}
-*Shipping Fee:* Rs. ${orderObj.shipping.toLocaleString()}
-*Grand Total:* Rs. ${orderObj.total.toLocaleString()}
-
-*Upload Receipt Link:* ${uploadLink}`;
+*Receipt Link:* ${orderObj.receiptUrl || "Awaiting Upload"}`;
 
         waLink.href = `${baseUrl}?text=${encodeURIComponent(messageText)}`;
 
@@ -405,38 +399,59 @@ ${itemsText}
       function handleReceiptUpload(file) {
         dropZone.classList.add("d-none");
         progressContainer.classList.remove("d-none");
-        
-        let percentage = 0;
-        const interval = setInterval(() => {
-          percentage += 20;
-          progressBar.style.width = percentage + "%";
-          
-          if (percentage >= 100) {
-            clearInterval(interval);
-            setTimeout(() => {
-              progressContainer.classList.add("d-none");
-              successAlert.classList.remove("d-none");
-              
-              // Mark order as receipt uploaded in sessionStorage
-              const latestOrder = JSON.parse(sessionStorage.getItem("arb_latest_order")) || {};
-              latestOrder.status = "Advance Settle Pending";
-              latestOrder.receiptUploaded = true;
-              sessionStorage.setItem("arb_latest_order", JSON.stringify(latestOrder));
-              
-              // Update WhatsApp link text to include confirmation of upload
-              updateWhatsAppLink(latestOrder);
+        progressBar.style.width = "40%";
 
-              // Append this order to client history list in localStorage
-              const clientOrders = JSON.parse(localStorage.getItem("arb_all_orders")) || [];
-              const match = clientOrders.find(o => o.orderNumber === latestOrder.orderNumber);
-              if (match) {
-                match.status = "Advance Settle Pending";
-                match.receiptUploaded = true;
-                localStorage.setItem("arb_all_orders", JSON.stringify(clientOrders));
-              }
-            }, 300);
-          }
-        }, 150);
+        const latestOrder = JSON.parse(sessionStorage.getItem("arb_latest_order")) || {};
+        const ext = file.name.split('.').pop();
+        const customFileName = `receipts/${latestOrder.orderNumber}_receipt.${ext}`;
+
+        // Call Vercel Blob client upload
+        upload(customFileName, file, {
+          access: 'public',
+          handleUploadUrl: '/api/upload',
+        })
+        .then(async (blob) => {
+          progressBar.style.width = "100%";
+          setTimeout(() => {
+            progressContainer.classList.add("d-none");
+            successAlert.classList.remove("d-none");
+            
+            // Mark order as receipt uploaded in sessionStorage
+            latestOrder.status = "Awaiting Verification";
+            latestOrder.receiptUploaded = true;
+            latestOrder.receiptUrl = blob.url;
+            sessionStorage.setItem("arb_latest_order", JSON.stringify(latestOrder));
+            
+            // Update Cloud Firestore order document
+            const orderDocRef = doc(db, "orders", latestOrder.orderNumber);
+            updateDoc(orderDocRef, {
+              status: "Awaiting Verification",
+              receiptUploaded: true,
+              receiptUrl: blob.url
+            })
+            .then(() => console.log("Order updated in Firestore with receipt blob URL."))
+            .catch(err => console.error("Firestore update error:", err));
+
+            // Update WhatsApp link text to include confirmation of upload
+            updateWhatsAppLink(latestOrder);
+
+            // Append this order to client history list in localStorage
+            const clientOrders = JSON.parse(localStorage.getItem("arb_all_orders")) || [];
+            const match = clientOrders.find(o => o.orderNumber === latestOrder.orderNumber);
+            if (match) {
+              match.status = "Awaiting Verification";
+              match.receiptUploaded = true;
+              match.receiptUrl = blob.url;
+              localStorage.setItem("arb_all_orders", JSON.stringify(clientOrders));
+            }
+          }, 300);
+        })
+        .catch(err => {
+          console.error("Vercel Blob Upload failed:", err);
+          alert("File upload failed. Please try again or verify directly via WhatsApp.");
+          dropZone.classList.remove("d-none");
+          progressContainer.classList.add("d-none");
+        });
       }
     });
   </script>

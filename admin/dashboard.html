@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard | ARB Farms Pakistan</title>
+  
+  <!-- Bootstrap & Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+  
+  <!-- Custom Styles -->
+  <link href="../css/index.css?v=3ffba108" rel="stylesheet">
+  
+  <style>
+    body {
+      background-color: #f0ede6;
+    }
+    .admin-card {
+      border-radius: var(--radius-md);
+      border: 1px solid var(--color-border);
+      background-color: var(--color-white);
+      box-shadow: var(--shadow-sm);
+    }
+    .status-badge {
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      padding: 4px 8px;
+      border-radius: 50px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Navbar -->
+  <nav class="navbar navbar-expand-lg bg-forest sticky-top shadow-sm py-2">
+    <div class="container">
+      <span class="navbar-brand d-flex align-items-center">
+        <img src="../catalog/arbfarms-logo.svg" alt="ARB Farms Logo" class="me-2" style="height:35px;">
+        <span class="font-primary text-white fs-5 tracking-wide">ARB ADMIN PORTAL</span>
+      </span>
+      <div class="d-flex align-items-center gap-3">
+        <span class="text-white-50 small d-none d-sm-inline" id="user-email-display">admin@arbfarms.com</span>
+        <button class="btn btn-sm btn-outline-light py-1 px-3" id="logout-btn"><i class="bi bi-box-arrow-right me-1"></i> Logout</button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="container py-4">
+    
+    <!-- Analytics Header Cards -->
+    <div class="row g-3 mb-4">
+      <div class="col-6 col-lg-3">
+        <div class="admin-card p-3 d-flex align-items-center gap-3">
+          <div class="bg-primary text-white p-2 rounded-3 fs-4"><i class="bi bi-wallet2"></i></div>
+          <div>
+            <span class="text-muted small d-block">Total Sales</span>
+            <strong class="h5 mb-0 font-primary text-dark" id="stat-sales">Rs. 0</strong>
+          </div>
+        </div>
+      </div>
+      <div class="col-6 col-lg-3">
+        <div class="admin-card p-3 d-flex align-items-center gap-3">
+          <div class="bg-warning text-dark p-2 rounded-3 fs-4"><i class="bi bi-clock-history"></i></div>
+          <div>
+            <span class="text-muted small d-block">Pending Review</span>
+            <strong class="h5 mb-0 font-primary text-dark" id="stat-pending">0</strong>
+          </div>
+        </div>
+      </div>
+      <div class="col-6 col-lg-3">
+        <div class="admin-card p-3 d-flex align-items-center gap-3">
+          <div class="bg-success text-white p-2 rounded-3 fs-4"><i class="bi bi-box-seam"></i></div>
+          <div>
+            <span class="text-muted small d-block">Dispatched</span>
+            <strong class="h5 mb-0 font-primary text-dark" id="stat-dispatched">0</strong>
+          </div>
+        </div>
+      </div>
+      <div class="col-6 col-lg-3">
+        <div class="admin-card p-3 d-flex align-items-center gap-3">
+          <div class="bg-secondary text-white p-2 rounded-3 fs-4"><i class="bi bi-scale"></i></div>
+          <div>
+            <span class="text-muted small d-block">Total Weight</span>
+            <strong class="h5 mb-0 font-primary text-dark" id="stat-weight">0 kg</strong>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Active Orders list -->
+    <div class="admin-card p-4">
+      <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+        <h2 class="h5 font-primary mb-0 text-dark">Customer Order Management</h2>
+        <span class="badge bg-forest py-2 px-3 small" id="orders-count-badge">0 orders active</span>
+      </div>
+
+      <div class="table-responsive">
+        <table class="table align-middle table-hover text-dark">
+          <thead class="table-light">
+            <tr>
+              <th scope="col" style="font-size:0.8rem; text-transform:uppercase;">Order #</th>
+              <th scope="col" style="font-size:0.8rem; text-transform:uppercase;">Customer</th>
+              <th scope="col" style="font-size:0.8rem; text-transform:uppercase;">City</th>
+              <th scope="col" style="font-size:0.8rem; text-transform:uppercase;">Products</th>
+              <th scope="col" style="font-size:0.8rem; text-transform:uppercase;">Amount</th>
+              <th scope="col" style="font-size:0.8rem; text-transform:uppercase;">Receipt</th>
+              <th scope="col" style="font-size:0.8rem; text-transform:uppercase;">Status</th>
+            </tr>
+          </thead>
+          <tbody id="orders-table-body">
+            <tr>
+              <td colspan="7" class="text-center py-5 text-muted">
+                <div class="spinner-border spinner-border-sm me-2 text-primary" role="status"></div> Loading live order feed...
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+  <script type="module">
+    import { auth, db } from "../js/firebase-init.js";
+    import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    import { collection, query, orderBy, onSnapshot, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+    const userDisplay = document.getElementById("user-email-display");
+    const tableBody = document.getElementById("orders-table-body");
+    const logoutBtn = document.getElementById("logout-btn");
+
+    // Stats elements
+    const statSales = document.getElementById("stat-sales");
+    const statPending = document.getElementById("stat-pending");
+    const statDispatched = document.getElementById("stat-dispatched");
+    const statWeight = document.getElementById("stat-weight");
+    const ordersCountBadge = document.getElementById("orders-count-badge");
+
+    // Auth State Route Guard
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        if (user.email === "social.ahmro@gmail.com" || user.email.endsWith("@arbfarms.com")) {
+          userDisplay.textContent = user.email;
+          initializeDashboardFeed();
+        } else {
+          signOut(auth).then(() => {
+            window.location.href = "login.html";
+          });
+        }
+      } else {
+        window.location.href = "login.html";
+      }
+    });
+
+    logoutBtn.addEventListener("click", () => {
+      signOut(auth).then(() => {
+        window.location.href = "login.html";
+      });
+    });
+
+    // Realtime Database Feed
+    function initializeDashboardFeed() {
+      const ordersRef = collection(db, "orders");
+      const q = query(ordersRef, orderBy("orderDate", "desc"));
+
+      onSnapshot(q, (snapshot) => {
+        let totalSalesVal = 0;
+        let pendingVal = 0;
+        let dispatchedVal = 0;
+        let totalWeightVal = 0;
+        let ordersCount = snapshot.size;
+
+        if (snapshot.empty) {
+          tableBody.innerHTML = `<tr><td colspan="7" class="text-center py-5 text-muted">No orders found in database.</td></tr>`;
+          updateStats(0, 0, 0, 0, 0);
+          return;
+        }
+
+        tableBody.innerHTML = snapshot.docs.map(docSnap => {
+          const order = docSnap.data();
+          const id = docSnap.id;
+
+          // Compute stats
+          totalSalesVal += order.total || 0;
+          if (order.status === "Awaiting Verification") pendingVal++;
+          if (order.status === "Dispatched") dispatchedVal++;
+          totalWeightVal += order.weight || 0;
+
+          // Status Badge Classes
+          let badgeClass = "bg-secondary";
+          if (order.status === "Awaiting Verification") badgeClass = "bg-warning text-dark";
+          if (order.status === "Verified & Processing") badgeClass = "bg-info text-dark";
+          if (order.status === "Dispatched") badgeClass = "bg-success";
+          if (order.status === "Cancelled") badgeClass = "bg-danger";
+
+          // Items formatter
+          const itemsText = order.items && order.items.length > 0 
+            ? order.items.map(item => `${item.qty}x ${item.name}`).join("<br>")
+            : "No items";
+
+          // Receipt link builder
+          const receiptLink = order.receiptUrl 
+            ? `<a href="${order.receiptUrl}" target="_blank" class="btn btn-xs btn-outline-primary py-1 px-2 small"><i class="bi bi-file-earmark-image"></i> View Receipt</a>`
+            : `<span class="text-muted small">No receipt</span>`;
+
+          return `
+            <tr>
+              <td><strong class="font-monospace text-primary">${order.orderNumber}</strong></td>
+              <td>
+                <div class="fw-bold">${order.customerName}</div>
+                <div class="text-muted small">+92 ${order.phone}</div>
+              </td>
+              <td><span class="text-uppercase small fw-semibold">${order.city}</span></td>
+              <td class="small">${itemsText}</td>
+              <td class="fw-semibold">Rs. ${(order.total || 0).toLocaleString()}</td>
+              <td>${receiptLink}</td>
+              <td>
+                <select class="form-select form-select-sm border-0 shadow-sm fw-bold ${badgeClass}" style="width:160px; font-size:0.75rem;" onchange="window.updateOrderStatus('${id}', this.value)">
+                  <option value="Awaiting Receipt" ${order.status === 'Awaiting Receipt' ? 'selected' : ''}>Awaiting Receipt</option>
+                  <option value="Awaiting Verification" ${order.status === 'Awaiting Verification' ? 'selected' : ''}>Awaiting Verification</option>
+                  <option value="Verified & Processing" ${order.status === 'Verified & Processing' ? 'selected' : ''}>Verified & Processing</option>
+                  <option value="Dispatched" ${order.status === 'Dispatched' ? 'selected' : ''}>Dispatched</option>
+                  <option value="Cancelled" ${order.status === 'Cancelled' ? 'selected' : ''}>Cancelled</option>
+                </select>
+              </td>
+            </tr>
+          `;
+        }).join("");
+
+        updateStats(totalSalesVal, pendingVal, dispatchedVal, totalWeightVal, ordersCount);
+      });
+    }
+
+    function updateStats(sales, pending, dispatched, weight, count) {
+      statSales.textContent = `Rs. ${sales.toLocaleString()}`;
+      statPending.textContent = pending;
+      statDispatched.textContent = dispatched;
+      statWeight.textContent = `${weight.toFixed(2)} kg`;
+      ordersCountBadge.textContent = `${count} orders active`;
+    }
+
+    // Global hook for dropdown status change
+    window.updateOrderStatus = function(orderId, newStatus) {
+      const orderDocRef = doc(db, "orders", orderId);
+      updateDoc(orderDocRef, {
+        status: newStatus
+      })
+      .then(() => console.log("Order status updated in Firestore."))
+      .catch(err => alert("Error updating order status: " + err.message));
+    };
+
+  </script>
+</body>
+</html>
