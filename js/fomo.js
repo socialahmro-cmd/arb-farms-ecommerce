@@ -147,12 +147,6 @@ function setupSeasonalBanner() {
           ${subText ? `<span class="announcement-sub-text d-none d-lg-inline ms-1 text-white-50">${subText}</span>` : ''}
         </span>
         
-        <!-- Clipboard-Interactive Copy Code Toggler -->
-        <button type="button" class="btn-copy-coupon" id="copy-coupon-btn" onclick="window.copyCouponCode(event, '${activeCampaign.discountCode}')" title="Click to copy coupon code">
-          <span id="coupon-btn-text">Code: ${activeCampaign.discountCode}</span>
-          <i class="bi bi-copy" id="coupon-btn-icon"></i>
-        </button>
-        
         <!-- Redirect CTA Action -->
         <a href="/shop" class="btn-banner-action d-none d-sm-inline-flex">
           Pre-Order <i class="bi bi-chevron-right ms-1" style="font-size: 0.65rem;"></i>
@@ -185,33 +179,7 @@ window.dismissSeasonalBanner = function(event) {
   }
 };
 
-window.copyCouponCode = function(event, code) {
-  if (event) event.stopPropagation();
-  navigator.clipboard.writeText(code).then(() => {
-    const btn = document.getElementById("copy-coupon-btn");
-    if (!btn) return;
-    
-    const textEl = document.getElementById("coupon-btn-text");
-    const iconEl = document.getElementById("coupon-btn-icon");
-    
-    // Animate and feedback status
-    btn.style.transform = "scale(1.08)";
-    btn.style.backgroundColor = "var(--color-success, #28a745)";
-    btn.style.color = "#ffffff";
-    textEl.textContent = "Copied! ✓";
-    iconEl.className = "bi bi-check-lg";
-    
-    setTimeout(() => {
-      textEl.textContent = "Code: " + code;
-      btn.style.backgroundColor = "";
-      btn.style.color = "";
-      iconEl.className = "bi bi-copy";
-      btn.style.transform = "";
-    }, 2000);
-  }).catch(err => {
-    console.error("Could not copy code to clipboard:", err);
-  });
-};
+
 
 
 // 6. Localized popup builder
