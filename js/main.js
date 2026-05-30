@@ -847,14 +847,14 @@ function renderCartPageRecommendations(cart) {
 
     html += `
       <div class="col-md-6">
-        <div class="d-flex gap-3 p-3 border rounded bg-light align-items-center">
-          <img src="${imgSrc}" style="width: 55px; height: 55px; object-fit: cover;" class="rounded border bg-white">
+        <div class="d-flex gap-3 p-3 border rounded bg-light align-items-center min-w-0">
+          <img src="${imgSrc}" style="width: 55px; height: 55px; object-fit: cover;" class="rounded border bg-white flex-shrink-0">
           <div class="flex-grow-1 min-w-0">
             <span class="badge ${rec.badgeClass} mb-1" style="font-size: 0.6rem; padding: 2px 5px;">${rec.badge}</span>
             <h4 class="h6 mb-0 fw-bold text-dark text-truncate" style="font-size: 0.85rem;">${rec.name}</h4>
             <p class="small text-muted mb-0 text-truncate" style="font-size: 0.75rem;">${rec.tagline}</p>
           </div>
-          <div class="text-end">
+          <div class="text-end flex-shrink-0">
             <span class="fw-bold text-primary d-block mb-1" style="font-size: 0.85rem;">Rs. ${rec.price.toLocaleString()}</span>
             <button class="btn btn-sm btn-primary add-to-cart-btn text-uppercase py-1 px-2 fw-bold" style="font-size: 0.7rem;" data-id="${rec.id}" data-name="${rec.name}" data-price="${rec.price}" data-weight="${rec.weight}" data-image="${rec.image}">
               + Add

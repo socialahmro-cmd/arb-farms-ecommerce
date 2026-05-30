@@ -2618,5 +2618,11 @@ textarea::-webkit-scrollbar-thumb:hover {
   }
 }
 
+/* Flexbox text truncation helper */
+.min-w-0 {
+  min-width: 0 !important;
+}
+
+
 
 
