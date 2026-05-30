@@ -282,9 +282,35 @@
         }
       }
 
+      // Secondary fallback: get the last order placed in localStorage history
       if (!order) {
-        window.location.href = "index.html";
-        return;
+        const clientOrders = JSON.parse(localStorage.getItem("arb_all_orders")) || [];
+        if (clientOrders.length > 0) {
+          order = clientOrders[clientOrders.length - 1];
+          sessionStorage.setItem("arb_latest_order", JSON.stringify(order));
+        }
+      }
+
+      // Tertiary fallback: create a mock order to enable full page testing/uploading when visiting directly
+      if (!order) {
+        order = {
+          orderNumber: "ARB-" + Math.floor(100000 + Math.random() * 900000),
+          customerName: "John Doe (Demo)",
+          phone: "3200005367",
+          address: "Street 1, Fatima Avenue, Opp. Fatima Masjid, Near Prime Mart. MPS Road",
+          city: "multan",
+          paymentMethod: "100% Advance Bank Transfer",
+          subtotal: 20800,
+          weight: 4.5,
+          shipping: 300,
+          total: 21100,
+          items: [
+            { id: "ogn-013", name: "Desi Ghee (Pure Cow)", qty: 2, price: 9500, weight: "1 kg" },
+            { id: "ogn-028", name: "Organic Chia Seeds", qty: 3, price: 600, weight: "250 gm" }
+          ],
+          receiptUploaded: false
+        };
+        sessionStorage.setItem("arb_latest_order", JSON.stringify(order));
       }
 
       document.getElementById("confirm-ordernum").textContent = order.orderNumber;
