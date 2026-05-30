@@ -14,7 +14,7 @@ const pakistaniCities = [
 // 2. Featured product dataset for popups
 const fomoProducts = [
   { name: "Organic Desi Ghee", image: "catalog/ogn-013-desi-ghee-500gm.svg" },
-  { name: "Sidr Honey Large", image: "catalog/honey.jpeg" },
+  { name: "Sidr Honey Large", image: "catalog/honey.svg" },
   { name: "Premium Silage Animal Feed", image: "catalog/ogn-041-silage-40kg.svg" },
   { name: "Edible Chia Seeds", image: "catalog/ogn-028-chia-seed-250gm.svg" },
   { name: "Organic Wheat Seeds", image: "catalog/ogn-018-gandum-40kg.svg" },
