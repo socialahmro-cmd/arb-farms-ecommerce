@@ -893,6 +893,8 @@ const ARB_SEARCH_INDEX = [
   { id:"ogn-065-mango", name:"Multan Chaunsa Mangoes (Pre-Booking)", price:0, weight:"5 Kg Box", category:"Organic", image:"catalog/ogn-065-mango-5kg.png", tags:["mango","chaunsa","fruit","fresh","organic","pre-booking"] },
   // Edible Seeds
   { id:"ogn-018", name:"Gandum (Wheat)", price:225, weight:"1 Kg", category:"Edible Seeds", image:"catalog/ogn-018-gandum-40kg.svg", tags:["wheat","gandum","grain","flour"] },
+  { id:"ogn-018-5kg", name:"Gandum (Wheat) 5 Kg", price:1100, weight:"5 Kg", category:"Edible Seeds", image:"catalog/ogn-018-gandum-40kg.svg", tags:["wheat","gandum","grain","flour"] },
+  { id:"ogn-018-40kg", name:"Gandum (Wheat) 40 Kg", price:9000, weight:"40 Kg Maund", category:"Edible Seeds", image:"catalog/ogn-018-gandum-40kg.svg", tags:["wheat","gandum","grain","flour","bulk"] },
   { id:"ogn-027-edible", name:"Kalonji (Black Seed) 250gm", price:720, weight:"250 gm", category:"Edible Seeds", image:"catalog/ogn-027-kalonji-250gm.svg", tags:["kalonji","black seed","superfood"] },
   { id:"ogn-046", name:"Kalonji (Black Seed) 500gm", price:1350, weight:"500 gm", category:"Edible Seeds", image:"catalog/ogn-046-kalonji-500gm.svg", tags:["kalonji","black seed","spice"] },
   { id:"ogn-028-edible", name:"Chia Seed 250gm", price:1400, weight:"250 gm", category:"Edible Seeds", image:"catalog/ogn-028-chia-seed-250gm.svg", tags:["chia","fiber","superfood","weight loss"] },
