@@ -89,8 +89,8 @@ const productsDb = [
     weight: "500 gm",
     price: 5000,
     category: "dairy-organic",
-    image: "catalog/honey.svg",
-    hoverImage: "catalog/honey.svg",
+    image: "catalog/honey.svg?v=2",
+    hoverImage: "catalog/honey.svg?v=2",
     tags: ["honey", "sidr", "sweet", "small", "remedy"]
   },
   {
@@ -100,8 +100,8 @@ const productsDb = [
     weight: "1 Kg",
     price: 9000,
     category: "dairy-organic",
-    image: "catalog/honey.svg",
-    hoverImage: "catalog/honey.svg",
+    image: "catalog/honey.svg?v=2",
+    hoverImage: "catalog/honey.svg?v=2",
     tags: ["honey", "sidr", "sweet", "large", "premium"]
   },
   {
