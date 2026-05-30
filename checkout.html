@@ -616,30 +616,36 @@
         progressContainer.classList.remove("d-none");
         progressBar.style.width = "40%";
 
+        // Generate a stable unique filename for this receipt
+        // Blob Store: store_LtCbr0XEsLvlYrbO  |  Token auth is handled server-side by /api/upload
         const tempOrderNumber = "ARB-" + Math.floor(100000 + Math.random() * 900000);
-        const ext = file.name.split('.').pop();
+        const ext = (file.name.split('.').pop() || 'jpg').toLowerCase();
         const customFileName = `receipts/${tempOrderNumber}_receipt.${ext}`;
 
-        // Call Vercel Blob client upload
+        // Client upload — /api/upload issues a short-lived token using BLOB_READ_WRITE_TOKEN
         upload(customFileName, file, {
           access: 'public',
           handleUploadUrl: '/api/upload',
+          addRandomSuffix: false,        // keep filename predictable for order matching
         })
         .then((blob) => {
           progressBar.style.width = "100%";
           setTimeout(() => {
             progressContainer.classList.add("d-none");
             successAlert.classList.remove("d-none");
-            
             uploadedUrl = blob.url;
             receiptUploaded = true;
           }, 300);
         })
         .catch(err => {
-          console.error("Vercel Blob Upload failed:", err);
-          alert("File upload failed: " + err.message + "\n\nPlease ensure your Vercel deployment has BLOB_READ_WRITE_TOKEN set.");
-          dropZone.classList.remove("d-none");
+          console.error("[Vercel Blob] Upload failed:", err);
           progressContainer.classList.add("d-none");
+          dropZone.classList.remove("d-none");
+          // Show a friendly error with actionable guidance
+          const userMsg = err.message?.includes("401") || err.message?.includes("token")
+            ? "Upload authentication failed.\n\nPlease make sure BLOB_READ_WRITE_TOKEN is set in your Vercel project environment variables for store: store_LtCbr0XEsLvlYrbO."
+            : `Upload failed: ${err.message}\n\nIf this persists, contact support or upload your receipt manually via WhatsApp.`;
+          alert(userMsg);
         });
       }
 
