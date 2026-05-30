@@ -150,17 +150,17 @@
           initializeDashboardFeed();
         } else {
           signOut(auth).then(() => {
-            window.location.href = "login.html";
+            window.location.href = "../account.html";
           });
         }
       } else {
-        window.location.href = "login.html";
+        window.location.href = "../account.html";
       }
     });
 
     logoutBtn.addEventListener("click", () => {
       signOut(auth).then(() => {
-        window.location.href = "login.html";
+        window.location.href = "../account.html";
       });
     });
 
