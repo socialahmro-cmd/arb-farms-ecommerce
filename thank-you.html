@@ -83,46 +83,82 @@
 
     <!-- Success message card -->
     <div class="row justify-content-center">
-      <div class="col-md-8 text-center mb-4">
-        <div class="p-5 bg-white border rounded-3 shadow-sm">
+      <div class="col-md-9 col-lg-8 text-center mb-4">
+        <div class="p-4 p-md-5 bg-white border rounded-3 shadow-sm">
           <i class="bi bi-check-circle-fill text-success" style="font-size: 4rem;"></i>
           <h1 class="h2 font-primary text-primary mt-3 mb-2">Thank You for Your Order!</h1>
-          <p class="lead text-muted font-accent">Your order is being processed. Below are the summary details.</p>
+          <p class="lead text-muted font-accent mb-0">Your order has been received and payment receipt submitted. We'll verify and dispatch shortly.</p>
+
+          <!-- Receipt Uploaded Confirmation -->
+          <div class="alert alert-success mt-4 text-start small d-none" id="receipt-uploaded-alert">
+            <div class="d-flex align-items-center gap-2 flex-wrap">
+              <i class="bi bi-check-circle-fill fs-5"></i>
+              <div>
+                <strong>Payment Receipt Submitted!</strong> Our team will verify your transfer shortly.
+              </div>
+              <div class="mt-2 w-100" id="receipt-link-container"></div>
+            </div>
+          </div>
           
-          <div class="row text-start mt-5 g-4">
+          <!-- Order Details Grid -->
+          <div class="row text-start mt-4 g-3">
             <div class="col-sm-6">
-              <div class="p-3 border rounded">
-                <span class="text-muted small d-block">Order Reference:</span>
-                <strong id="confirm-ordernum" class="text-dark">ARB-000000</strong>
+              <div class="p-3 border rounded bg-light h-100">
+                <span class="text-muted small d-block mb-1"><i class="bi bi-hash me-1"></i>Order Reference</span>
+                <strong id="confirm-ordernum" class="text-dark font-monospace fs-6">ARB-000000</strong>
               </div>
             </div>
             
             <div class="col-sm-6">
-              <div class="p-3 border rounded">
-                <span class="text-muted small d-block">Payment Method:</span>
-                <strong id="confirm-payment" class="text-dark">100% Advance Bank Transfer</strong>
+              <div class="p-3 border rounded bg-light h-100">
+                <span class="text-muted small d-block mb-1"><i class="bi bi-calendar3 me-1"></i>Order Date</span>
+                <strong id="confirm-date" class="text-dark">—</strong>
               </div>
             </div>
 
             <div class="col-sm-6">
-              <div class="p-3 border rounded">
-                <span class="text-muted small d-block">Delivery To:</span>
-                <strong id="confirm-name" class="text-dark">John Doe</strong>
-                <span id="confirm-address" class="text-muted small d-block mt-1">Street 1, Fatima Avenue, Opp. Fatima Masjid, Near Prime Mart. MPS Road, Multan</span>
+              <div class="p-3 border rounded bg-light h-100">
+                <span class="text-muted small d-block mb-1"><i class="bi bi-person me-1"></i>Delivery To</span>
+                <strong id="confirm-name" class="text-dark d-block">—</strong>
+                <span id="confirm-phone" class="text-muted small">—</span>
+                <span id="confirm-address" class="text-muted small d-block mt-1">—</span>
               </div>
             </div>
 
             <div class="col-sm-6">
-              <div class="p-3 border rounded">
-                <span class="text-muted small d-block">Total Settlement (including shipping):</span>
-                <strong id="confirm-total" class="text-primary h5 d-block mt-1">Rs. 0</strong>
+              <div class="p-3 border rounded bg-light h-100">
+                <span class="text-muted small d-block mb-1"><i class="bi bi-wallet2 me-1"></i>Total Settlement</span>
+                <strong id="confirm-total" class="text-primary h4 d-block mt-1 mb-0">Rs. 0</strong>
+                <span class="text-muted" style="font-size:0.75rem;" id="confirm-shipping-note"></span>
               </div>
             </div>
           </div>
 
+          <!-- Order Items Breakdown -->
+          <div class="mt-4 text-start border rounded p-3">
+            <h3 class="h6 font-primary text-dark border-bottom pb-2 mb-3">
+              <i class="bi bi-bag-check me-2 text-primary"></i>Products Ordered
+            </h3>
+            <div id="order-items-list" class="d-flex flex-column mb-3"></div>
+            <div class="d-flex justify-content-between small text-muted mt-2">
+              <span>Subtotal</span>
+              <span id="confirm-subtotal" class="fw-semibold text-dark">Rs. 0</span>
+            </div>
+            <div class="d-flex justify-content-between small text-muted">
+              <span>Shipping Fee</span>
+              <span id="confirm-shipping" class="fw-semibold text-dark">Rs. 0</span>
+            </div>
+            <div class="d-flex justify-content-between border-top pt-2 mt-2">
+              <span class="fw-bold text-dark">Grand Total</span>
+              <span id="confirm-grand-total" class="fw-bold text-primary fs-6">Rs. 0</span>
+            </div>
+          </div>
+
+          <!-- Bank Transfer Info -->
           <div class="alert alert-info mt-4 text-start small">
             <div class="mb-3">
-              <i class="bi bi-info-circle-fill me-2"></i> Please transfer the 100% advance to our bank account. Once payment is verified, our logistics team will dispatch your products via Leopards/TCS. Expect delivery within <strong>2 to 4 business days</strong>.
+              <i class="bi bi-info-circle-fill me-2"></i>
+              Once your payment is verified, our logistics team will dispatch your products via Leopards/TCS. Expect delivery within <strong>2 to 4 business days</strong>.
             </div>
             <div class="p-3 bg-white border rounded-3 text-dark">
               <span class="text-muted small d-block mb-1">Official Bank Account:</span>
@@ -132,18 +168,21 @@
                   <div class="small text-dark mt-1">Account Number: <strong class="fs-6 font-monospace">56235001952299</strong></div>
                   <div class="small text-muted">Title: <strong>ARB Farms</strong></div>
                 </div>
-                <button class="btn btn-sm btn-outline-secondary" onclick="navigator.clipboard.writeText('56235001952299'); alert('Bank account number copied to clipboard!');">
+                <button id="copy-account-btn" class="btn btn-sm btn-outline-secondary">
                   <i class="bi bi-copy"></i> Copy Account
                 </button>
               </div>
             </div>
           </div>
 
-
-
+          <!-- Action Buttons -->
           <div class="d-flex flex-wrap gap-3 justify-content-center mt-4">
-            <a href="shop.html" class="btn btn-primary"><i class="bi bi-bag-check-fill me-1"></i> Continue Shopping</a>
-            <a href="https://wa.me/923200005367?text=Hi%20ARB%20Farms,%20I'd%20like%20to%20verify%20my%20order" target="_blank" class="btn btn-outline-success" id="whatsapp-btn"><i class="bi bi-whatsapp me-1"></i> Direct WhatsApp Verify</a>
+            <a href="shop.html" class="btn btn-outline-primary px-4">
+              <i class="bi bi-bag-check-fill me-1"></i> Continue Shopping
+            </a>
+            <a href="#" target="_blank" class="btn btn-success px-4" id="whatsapp-btn">
+              <i class="bi bi-whatsapp me-1"></i> Send to WhatsApp for Verification
+            </a>
           </div>
         </div>
       </div>
@@ -206,126 +245,177 @@
 
   <!-- Scripts -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="js/main.js?v=f78213d2"></script>
+  <script src="js/fomo.js?v=57a01075"></script>
+
+  <!-- Copy Account Button -->
+  <script>
+    document.getElementById("copy-account-btn").addEventListener("click", function() {
+      navigator.clipboard.writeText("56235001952299").then(() => {
+        this.innerHTML = '<i class="bi bi-check"></i> Copied!';
+        setTimeout(() => { this.innerHTML = '<i class="bi bi-copy"></i> Copy Account'; }, 2000);
+      }).catch(() => {
+        alert("Bank account number: 56235001952299");
+      });
+    });
+  </script>
+
   <!-- Load Order Data -->
   <script type="module">
-    import { db } from "/js/firebase-init.js";
-    import { doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-    import { upload } from "https://cdn.jsdelivr.net/npm/@vercel/blob@2.4.0/client/+esm";
-
-    // Check query parameter first for direct link loading
+    // ----------------------------------------------------------------
+    // Resolve the order object from URL param → sessionStorage → localStorage
+    // ----------------------------------------------------------------
     const urlParams = new URLSearchParams(window.location.search);
-    const orderId = urlParams.get('order');
+    const orderId   = urlParams.get('order');
     let order = null;
 
-      if (orderId) {
-        // Try to find the order in arb_all_orders in localStorage
-        const clientOrders = JSON.parse(localStorage.getItem("arb_all_orders")) || [];
-        order = clientOrders.find(o => o.orderNumber === orderId);
-        
-        if (!order) {
-          // If not found in localStorage (different device), we can still display a placeholder order
-          order = {
-            orderNumber: orderId,
-            customerName: "Customer",
-            phone: "N/A",
-            address: "N/A",
-            city: "N/A",
-            paymentMethod: "100% Advance Bank Transfer",
-            subtotal: 0,
-            weight: 0,
-            shipping: 0,
-            total: 0,
-            items: [],
-            receiptUploaded: false
-          };
-        }
-        // Save to sessionStorage so all page features function
+    if (orderId) {
+      const clientOrders = JSON.parse(localStorage.getItem("arb_all_orders")) || [];
+      order = clientOrders.find(o => o.orderNumber === orderId) || null;
+      if (order) sessionStorage.setItem("arb_latest_order", JSON.stringify(order));
+    }
+
+    if (!order) {
+      try {
+        const raw = sessionStorage.getItem("arb_latest_order");
+        if (raw) order = JSON.parse(raw);
+      } catch(e) {}
+    }
+
+    if (!order) {
+      const clientOrders = JSON.parse(localStorage.getItem("arb_all_orders")) || [];
+      if (clientOrders.length > 0) {
+        order = clientOrders[clientOrders.length - 1];
         sessionStorage.setItem("arb_latest_order", JSON.stringify(order));
       }
+    }
 
-      // Fallback to sessionStorage
-      if (!order) {
-        const orderJson = sessionStorage.getItem("arb_latest_order");
-        if (orderJson) {
-          order = JSON.parse(orderJson);
-        }
+    // Demo fallback so page never shows empty data
+    if (!order) {
+      order = {
+        orderNumber: "ARB-" + Math.floor(100000 + Math.random() * 900000),
+        customerName: "Demo Customer",
+        phone: "3200005367",
+        address: "Street 1, Fatima Avenue, MPS Road",
+        city: "multan",
+        paymentMethod: "100% Advance Bank Transfer",
+        orderDate: new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }),
+        subtotal: 20800,
+        weight: 4.5,
+        shipping: 300,
+        total: 21100,
+        items: [
+          { id: "ogn-013", name: "Desi Ghee (Pure Cow)",  qty: 2, price: 9500, weight: "1 kg"   },
+          { id: "ogn-028", name: "Organic Chia Seeds",    qty: 3, price: 600,  weight: "250 gm" }
+        ],
+        receiptUploaded: false,
+        receiptUrl: ""
+      };
+      sessionStorage.setItem("arb_latest_order", JSON.stringify(order));
+    }
+
+    // ----------------------------------------------------------------
+    // Populate order detail fields
+    // ----------------------------------------------------------------
+    const total    = Number(order.total)    || 0;
+    const subtotal = Number(order.subtotal) || 0;
+    const shipping = Number(order.shipping) || 0;
+
+    document.getElementById("confirm-ordernum").textContent = order.orderNumber || "—";
+    document.getElementById("confirm-date").textContent     = order.orderDate
+      || new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+    document.getElementById("confirm-name").textContent     = order.customerName || "—";
+    document.getElementById("confirm-phone").textContent    = order.phone ? `+92 ${order.phone}` : "—";
+    document.getElementById("confirm-address").textContent  = (order.address && order.city)
+      ? `${order.address}, ${order.city.charAt(0).toUpperCase() + order.city.slice(1)}`
+      : (order.address || "—");
+    document.getElementById("confirm-total").textContent    = `Rs. ${total.toLocaleString()}`;
+    document.getElementById("confirm-subtotal").textContent = `Rs. ${subtotal.toLocaleString()}`;
+    document.getElementById("confirm-shipping").textContent = `Rs. ${shipping.toLocaleString()}`;
+    document.getElementById("confirm-grand-total").textContent = `Rs. ${total.toLocaleString()}`;
+
+    const shippingNote = document.getElementById("confirm-shipping-note");
+    if (shippingNote && shipping > 0) {
+      shippingNote.textContent = `(Rs. ${subtotal.toLocaleString()} + Rs. ${shipping.toLocaleString()} shipping)`;
+    }
+
+    // ----------------------------------------------------------------
+    // Render items breakdown
+    // ----------------------------------------------------------------
+    const itemsListEl = document.getElementById("order-items-list");
+    if (itemsListEl) {
+      if (order.items && order.items.length > 0) {
+        itemsListEl.innerHTML = order.items.map(item => {
+          const lineTotal = (Number(item.price) * Number(item.qty)).toLocaleString();
+          return `
+            <div class="d-flex justify-content-between align-items-center py-2 border-bottom">
+              <div>
+                <span class="small fw-semibold text-dark d-block">${item.name}</span>
+                <span class="text-muted" style="font-size:0.78rem;">${item.qty}&times; ${item.weight}</span>
+              </div>
+              <span class="small fw-bold text-dark">Rs. ${lineTotal}</span>
+            </div>
+          `;
+        }).join("");
+      } else {
+        itemsListEl.innerHTML = `<p class="text-muted small py-2 mb-0">No item details available.</p>`;
+      }
+    }
+
+    // ----------------------------------------------------------------
+    // Show receipt confirmation when receipt was uploaded at checkout
+    // ----------------------------------------------------------------
+    if (order.receiptUploaded && order.receiptUrl) {
+      const receiptAlert         = document.getElementById("receipt-uploaded-alert");
+      const receiptLinkContainer = document.getElementById("receipt-link-container");
+      if (receiptAlert) receiptAlert.classList.remove("d-none");
+      if (receiptLinkContainer) {
+        receiptLinkContainer.innerHTML = `
+          <a href="${order.receiptUrl}" target="_blank" rel="noopener" class="btn btn-sm btn-outline-success">
+            <i class="bi bi-file-earmark-image me-1"></i> View Your Uploaded Receipt
+          </a>
+        `;
+      }
+    }
+
+    // ----------------------------------------------------------------
+    // Build rich pre-filled WhatsApp message
+    // ----------------------------------------------------------------
+    (function buildWhatsAppLink() {
+      const waLink = document.getElementById("whatsapp-btn");
+      if (!waLink) return;
+
+      let itemsText = "No items specified";
+      if (order.items && order.items.length > 0) {
+        itemsText = order.items.map(item =>
+          `- ${item.qty}x ${item.name} (${item.weight}) — Rs. ${(Number(item.price) * Number(item.qty)).toLocaleString()}`
+        ).join("\n");
       }
 
-      // Secondary fallback: get the last order placed in localStorage history
-      if (!order) {
-        const clientOrders = JSON.parse(localStorage.getItem("arb_all_orders")) || [];
-        if (clientOrders.length > 0) {
-          order = clientOrders[clientOrders.length - 1];
-          sessionStorage.setItem("arb_latest_order", JSON.stringify(order));
-        }
-      }
+      const receiptLine = order.receiptUrl
+        ? `*Receipt:* ${order.receiptUrl}`
+        : `*Receipt:* Not submitted yet`;
 
-      // Tertiary fallback: create a mock order to enable full page testing/uploading when visiting directly
-      if (!order) {
-        order = {
-          orderNumber: "ARB-" + Math.floor(100000 + Math.random() * 900000),
-          customerName: "John Doe (Demo)",
-          phone: "3200005367",
-          address: "Street 1, Fatima Avenue, Opp. Fatima Masjid, Near Prime Mart. MPS Road",
-          city: "multan",
-          paymentMethod: "100% Advance Bank Transfer",
-          subtotal: 20800,
-          weight: 4.5,
-          shipping: 300,
-          total: 21100,
-          items: [
-            { id: "ogn-013", name: "Desi Ghee (Pure Cow)", qty: 2, price: 9500, weight: "1 kg" },
-            { id: "ogn-028", name: "Organic Chia Seeds", qty: 3, price: 600, weight: "250 gm" }
-          ],
-          receiptUploaded: false
-        };
-        sessionStorage.setItem("arb_latest_order", JSON.stringify(order));
-      }
+      const msg =
+`Hi ARB Farms! I'd like to confirm my order and verify payment. 🌿
 
-      document.getElementById("confirm-ordernum").textContent = order.orderNumber;
-      document.getElementById("confirm-payment").textContent = order.paymentMethod;
-      document.getElementById("confirm-name").textContent = order.customerName;
-      document.getElementById("confirm-address").textContent = `${order.address}, ${order.city.toUpperCase()}`;
-      document.getElementById("confirm-total").textContent = `Rs. ${order.total.toLocaleString()}`;
-
-      // Update whatsapp link text dynamically with order details and upload link
-      function updateWhatsAppLink(orderObj) {
-        const waLink = document.getElementById("whatsapp-btn");
-        if (!waLink) return;
-
-        const baseUrl = "https://wa.me/923200005367";
-        
-        let itemsText = "No items specified";
-        if (orderObj.items && Array.isArray(orderObj.items) && orderObj.items.length > 0) {
-          itemsText = orderObj.items.map(item => `- ${item.qty}x ${item.name} (${item.weight} kg) - Rs. ${(item.price * item.qty).toLocaleString()}`).join("\n");
-        }
-
-        const intro = "Hi ARB Farms, I have uploaded the payment receipt for my order!";
-
-        const messageText = `${intro}
-
-*Order Number:* ${orderObj.orderNumber}
-*Name:* ${orderObj.customerName}
-*Total:* Rs. ${orderObj.total.toLocaleString()}
+*Order No.:* ${order.orderNumber}
+*Name:* ${order.customerName}
+*Phone:* +92 ${order.phone}
+*City:* ${(order.city || '').toUpperCase()}
+*Address:* ${order.address}
 
 *Products Ordered:*
 ${itemsText}
 
-*Receipt Link:* ${orderObj.receiptUrl || "Awaiting Upload"}`;
+*Subtotal:* Rs. ${subtotal.toLocaleString()}
+*Shipping:* Rs. ${shipping.toLocaleString()}
+*Grand Total:* Rs. ${total.toLocaleString()}
 
-        waLink.href = `${baseUrl}?text=${encodeURIComponent(messageText)}`;
+${receiptLine}`;
 
-        // Handle disabled visual state and validation alerts
-        const waWarning = document.getElementById("whatsapp-warning");
-        if (orderObj.receiptUploaded) {
-          waLink.classList.remove("opacity-50");
-          if (waWarning) waWarning.classList.add("d-none");
-        } else {
-          waLink.classList.add("opacity-50");
-        }
-      }
-
-      updateWhatsAppLink(order);
+      waLink.href = `https://wa.me/923200005367?text=${encodeURIComponent(msg)}`;
+    })();
   </script>
 </body>
 </html>
