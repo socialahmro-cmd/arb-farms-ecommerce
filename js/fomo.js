@@ -69,7 +69,7 @@ const seasonalCampaigns = [
 ];
 
 const defaultCampaign = {
-  bannerText: "📦 50% Advance 50% After Delivery available all over Pakistan!",
+  bannerText: "📦 100% Advance Payment available all over Pakistan!",
   discountCode: "ARBFRESH"
 };
 
