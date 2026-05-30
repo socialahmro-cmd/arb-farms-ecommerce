@@ -1607,7 +1607,7 @@ h1, h2, h3, h4, h5, h6, .font-primary {
     padding-right: 0.25rem !important;
   }
   
-  .row > [class*="col-"]:has(.product-card) {
+  .row > [class*="col-"]:has(> .product-card) {
     width: 50% !important;
     flex: 0 0 50% !important;
     max-width: 50% !important;
@@ -1618,7 +1618,7 @@ h1, h2, h3, h4, h5, h6, .font-primary {
 
   /* Foldable/mini mobile viewports (< 380px) get a clean single-column card layout */
   @media (max-width: 380px) {
-    .row > [class*="col-"]:has(.product-card) {
+    .row > [class*="col-"]:has(> .product-card) {
       width: 100% !important;
       flex: 0 0 100% !important;
       max-width: 100% !important;
