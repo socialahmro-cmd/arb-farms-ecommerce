@@ -135,7 +135,7 @@
             <span id="summary-total" class="h5 fw-bold text-primary mb-0">Rs. 0</span>
           </div>
           
-          <a href="checkout.html" class="btn btn-primary w-100 py-3 font-primary text-uppercase"><i class="bi bi-wallet2 me-2"></i> Proceed to Checkout</a>
+          <a href="checkout.html" id="proceed-to-checkout-btn" class="btn btn-primary w-100 py-3 font-primary text-uppercase"><i class="bi bi-wallet2 me-2"></i> Proceed to Checkout</a>
           <a href="shop.html" class="btn btn-outline-primary w-100 mt-2"><i class="bi bi-arrow-left me-1"></i> Keep Shopping</a>
         </div>
       </div>
@@ -214,6 +214,11 @@
       const tierEl = document.getElementById("summary-shipping-tier");
       const shippingEl = document.getElementById("summary-shipping");
       const totalEl = document.getElementById("summary-total");
+
+      let subtotal = 0;
+      let totalWeight = 0;
+      let actualShippingFee = 0;
+      let grandTotal = 0;
 
       function parseItemWeight(item) {
         let rawWeight = item.weight;
@@ -372,14 +377,14 @@
         }).join("");
 
         // Calculate aggregates
-        const subtotal = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
-        const totalWeight = cart.reduce((sum, item) => sum + (parseItemWeight(item) * item.qty), 0);
+        subtotal = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+        totalWeight = cart.reduce((sum, item) => sum + (parseItemWeight(item) * item.qty), 0);
         const shipping = calculateShipping(cart);
         
-        let actualShippingFee = shipping ? shipping.fee : 0;
+        actualShippingFee = shipping ? shipping.fee : 0;
         let tierLabel = shipping ? shipping.tier : "None";
 
-        const grandTotal = subtotal + actualShippingFee;
+        grandTotal = subtotal + actualShippingFee;
 
         // Injects to Summary widgets
         subtotalEl.textContent = `Rs. ${subtotal.toLocaleString()}`;
@@ -388,6 +393,28 @@
         tierEl.textContent = tierLabel;
         shippingEl.textContent = `Rs. ${actualShippingFee.toLocaleString()}`;
         totalEl.textContent = `Rs. ${grandTotal.toLocaleString()}`;
+      }
+
+      // Proceed to checkout click handler
+      const checkoutBtn = document.getElementById("proceed-to-checkout-btn");
+      if (checkoutBtn) {
+        checkoutBtn.addEventListener("click", (e) => {
+          const cartList = JSON.parse(localStorage.getItem('arb_cart')) || [];
+          if (cartList.length === 0) {
+            e.preventDefault();
+            alert("Your cart is empty. Please add products to check out.");
+            return;
+          }
+          // Save the current totals to sessionStorage so checkout.html can load them instantly
+          const checkoutData = {
+            subtotal: subtotal,
+            weight: totalWeight,
+            shipping: actualShippingFee,
+            total: grandTotal,
+            items: cartList
+          };
+          sessionStorage.setItem("arb_checkout_draft", JSON.stringify(checkoutData));
+        });
       }
 
       // Quantity adjustments hooks

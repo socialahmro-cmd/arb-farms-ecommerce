@@ -408,6 +408,28 @@
       function loadCheckoutSummary() {
         cart = JSON.parse(localStorage.getItem('arb_cart')) || [];
         
+        // Instant load from draft to prevent Rs. 0 visual flashes
+        const draftJson = sessionStorage.getItem("arb_checkout_draft");
+        if (draftJson) {
+          try {
+            const draft = JSON.parse(draftJson);
+            if (draft.items && draft.items.length === cart.length) {
+              subtotal = draft.subtotal;
+              totalWeight = draft.weight;
+              shippingFee = draft.shipping;
+              grandTotal = draft.total;
+
+              subtotalEl.textContent = `Rs. ${subtotal.toLocaleString()}`;
+              const displayTotalWeight = totalWeight >= 1 ? `${totalWeight.toFixed(2)} kg` : `${(totalWeight * 1000).toFixed(0)} gm`;
+              weightEl.textContent = displayTotalWeight;
+              shippingEl.textContent = `Rs. ${shippingFee.toLocaleString()}`;
+              totalEl.textContent = `Rs. ${grandTotal.toLocaleString()}`;
+            }
+          } catch(e) {
+            console.warn("Error parsing checkout draft:", e);
+          }
+        }
+
         if (cart.length === 0) {
           window.location.href = "shop.html";
           return;
