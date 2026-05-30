@@ -1,0 +1,92 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500" width="100%" height="100%">
+  <defs>
+    <!-- Background Gradient -->
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fdfaf4" />
+      <stop offset="100%" stop-color="#ede1ca" />
+    </linearGradient>
+    <!-- Sack Body Gradient -->
+    <linearGradient id="sackGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#d4b27a" />
+      <stop offset="100%" stop-color="#9a7c4a" />
+    </linearGradient>
+    <!-- Brand Green -->
+    <linearGradient id="greenGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#365733" />
+      <stop offset="100%" stop-color="#1e331c" />
+    </linearGradient>
+    <!-- Drop Shadow -->
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="8" stdDeviation="6" flood-color="#121912" flood-opacity="0.12" />
+    </filter>
+  </defs>
+  <!-- Background -->
+  <rect width="500" height="500" rx="20" fill="url(#bgGrad)"/>
+  <rect x="15" y="15" width="470" height="470" rx="15" fill="none" stroke="#365733" stroke-width="1.5" stroke-dasharray="8,6" opacity="0.4"/>
+  
+  <!-- Seed Sack Graphic -->
+  <g filter="url(#shadow)" transform="translate(150, 80)">
+    <!-- Sack Top Fold -->
+    <path d="M30,50 Q100,30 170,50 L180,75 Q100,60 20,75 Z" fill="#b0905a" stroke="#806232" stroke-width="1"/>
+    
+    <!-- Sack Tie Rope -->
+    <rect x="25" y="70" width="150" height="8" rx="4" fill="#5c431d" />
+    <circle cx="50" cy="74" r="7" fill="#b5925e" />
+    <path d="M45,74 Q30,95 20,110 M50,74 Q40,105 45,115" stroke="#5c431d" stroke-width="3" fill="none"/>
+    
+    <!-- Sack Body -->
+    <path d="M22,76 C20,140 10,240 25,270 C35,285 70,290 100,290 C130,290 165,285 175,270 C190,240 180,140 178,76 Z" fill="url(#sackGrad)" />
+    <!-- Texture details on sack -->
+    <path d="M30,110 Q100,100 170,110 M35,160 Q100,150 165,160 M40,210 Q100,200 160,210 M45,250 Q100,240 155,250" stroke="#806232" stroke-width="1" stroke-dasharray="5,10" fill="none" opacity="0.4"/>
+    
+    <!-- Sack Label -->
+    <!-- ARB Organics Mini Badge Label -->
+          <g transform="translate(100.0,165.0)">
+            <!-- Outer cream fill + dark green ring -->
+            <circle cx="0" cy="0" r="62.4" fill="#ede2cb" stroke="#526e4a" stroke-width="3.2"/>
+            <!-- Inner gold ring -->
+            <circle cx="0" cy="0" r="58.4" fill="none" stroke="#b29158" stroke-width="2.1"/>
+
+            <!-- Symmetrical Leaves at the Top -->
+            <g fill="#33522f">
+              <!-- Left Leaf -->
+              <path d="M -2.1,-26.6 C -10.6,-26.6 -23.4,-32.4 -23.4,-46.5 C -10.1,-46.5 -3.5,-36.6 -2.1,-26.6 Z" />
+              <path d="M -2.1,-26.6 Q -10.6,-32.4 -16.7,-40.6" stroke="#ede2cb" stroke-width="0.7" fill="none" stroke-linecap="round" />
+
+              <!-- Right Leaf -->
+              <path d="M 2.1,-26.6 C 10.6,-26.6 23.4,-32.4 23.4,-46.5 C 10.1,-46.5 3.5,-36.6 2.1,-26.6 Z" />
+              <path d="M 2.1,-26.6 Q 10.6,-32.4 16.7,-40.6" stroke="#ede2cb" stroke-width="0.7" fill="none" stroke-linecap="round" />
+            </g>
+
+            <!-- 100% NATURAL -->
+            <text x="0" y="-15.4" font-family="'Impact','Arial Black','Outfit',sans-serif" font-size="7.4" font-weight="900" fill="#33522f" text-anchor="middle" letter-spacing="0.1">100% NATURAL</text>
+
+            <!-- ARB large text -->
+            <text x="0" y="8.5" font-family="'Times New Roman','Lora','Georgia',serif" font-size="31.3" font-weight="900" fill="#000000" text-anchor="middle" letter-spacing="-1">ARB</text>
+
+            <!-- ORGANICS -->
+            <text x="0" y="22.3" font-family="'Times New Roman','Lora','Georgia',serif" font-size="11.2" font-weight="bold" fill="#33522f" text-anchor="middle" letter-spacing="1">ORGANICS</text>
+
+            <!-- Curved bottom text "Your Organic Food store" -->
+            <defs>
+              <path id="arc_100_165" d="M -47.8,13.3 A 51.8,51.8 0 0,0 47.8,13.3" fill="none"/>
+            </defs>
+            <text font-family="'Arial','Helvetica','Inter',sans-serif" font-size="8.8" font-weight="bold" fill="#111111">
+              <textPath href="#arc_100_165" startOffset="50%" text-anchor="middle">Your Organic Food store</textPath>
+            </text>
+          </g>
+    
+    
+    <!-- Sprout/Plant Custom Icon -->
+    
+    
+    <!-- Label Text -->
+    
+    
+  </g>
+  
+  <!-- Outer Titles -->
+  <text x="250" y="415" font-family="'Outfit', sans-serif" font-size="20" font-weight="bold" fill="#365733" text-anchor="middle">Gajar (Carrot) Sowing Seed</text>
+  <text x="250" y="440" font-family="'Lora', serif" font-size="14" font-style="italic" fill="#b5925e" text-anchor="middle">Weight: 1 Kg &#8226; SKU: OGN-034</text>
+  <text x="250" y="462" font-family="'Inter', sans-serif" font-size="12" fill="#5a6459" text-anchor="middle">Price: Rs. 3,000 &#8226; Category: Vegetable Crop</text>
+</svg>

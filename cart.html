@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shopping Cart | ARB Farms Pakistan</title>
+  <meta name="description" content="Manage your shopping cart, review items, and calculate dynamic weight-based shipping rates prior to checkout.">
+  
+  <!-- Bootstrap & Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+  
+  <!-- Custom Styles -->
+  <link href="css/index.css?v=f43db6fe" rel="stylesheet">
+</head>
+<body>
+
+  <!-- Announcement Banner -->
+  <div id="fomo-announcement-banner">
+    <div class="container text-center py-2 text-white fw-bold">
+      <span>📦 50% Advance 50% After Delivery available all over Pakistan!</span>
+    </div>
+  </div>
+
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg bg-forest sticky-top shadow-sm py-2">
+    <div class="container">
+      <a class="navbar-brand d-flex align-items-center" href="index.html">
+        <img src="catalog/arbfarms-logo.svg" alt="ARB Farms Logo" class="me-2">
+        <span class="font-primary text-white fs-4 tracking-wide">ARB FARMS</span>
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar" aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
+        <div class="arb-hamburger" aria-hidden="true">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+      </button>
+      
+      <div class="collapse navbar-collapse" id="mainNavbar">
+        <ul class="navbar-nav mx-auto mb-2 mb-lg-0 gap-lg-3">
+          <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+          <li class="nav-item"><a class="nav-link" href="shop.html">Shop Catalog</a></li>
+          <li class="nav-item"><a class="nav-link" href="about.html">About Us</a></li>
+          <li class="nav-item"><a class="nav-link" href="calculator.html">Sowing Tools</a></li>
+          <li class="nav-item"><a class="nav-link" href="contact.html">Contact Us</a></li>
+        </ul>
+        
+        <div class="d-flex align-items-center gap-3">
+          <button id="search-trigger" aria-label="Search products" title="Search"><i class="bi bi-search"></i></button>
+          <a href="account.html" class="text-white fs-5" aria-label="My Account" title="My Account"><i class="bi bi-person"></i></a>
+          <a href="compare.html" class="text-white fs-5" aria-label="Compare Seeds" title="Compare Seeds"><i class="bi bi-arrow-left-right"></i></a>
+          <a href="wishlist.html" class="position-relative text-white fs-5" aria-label="View Wishlist">
+            <i class="bi bi-heart"></i>
+            <span id="wishlist-count" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size: 0.65rem;">0</span>
+          </a>
+          <a href="cart.html" class="position-relative text-white fs-5" aria-label="View Cart">
+            <i class="bi bi-cart3"></i>
+            <span id="cart-count" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-warning text-dark" style="font-size: 0.65rem;">0</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Page Header -->
+  <header class="py-4" style="background-color: #ede1ca;">
+    <div class="container text-center text-md-start">
+      <h1 class="font-primary text-primary mb-1">Shopping Cart</h1>
+      <p class="text-muted mb-0 font-accent">Review your items and estimate shipping prior to checking out.</p>
+    </div>
+  </header>
+
+  <!-- Cart Area -->
+  <main class="container py-5">
+    <!-- Empty Cart State -->
+    <div id="cart-empty" class="text-center py-5 d-none">
+      <i class="bi bi-cart-x fs-1 text-muted mb-3 d-block"></i>
+      <h2 class="h4 font-primary text-dark">Your Cart is Empty</h2>
+      <p class="text-muted max-width-sm mx-auto">Looks like you haven't added any products to your shopping cart yet.</p>
+      <a href="shop.html" class="btn btn-primary mt-3"><i class="bi bi-bag-check-fill me-2"></i> Continue Shopping</a>
+    </div>
+
+    <!-- Active Cart Layout (Two Columns) -->
+    <div id="cart-content" class="row">
+      <!-- 1. Cart Items (Col 8) -->
+      <div class="col-lg-8 mb-4">
+        <div class="card border-0 shadow-sm rounded-3 p-4 bg-white">
+          <h2 class="h5 font-primary border-bottom pb-3 mb-4">Order Items</h2>
+          <div id="cart-items-container" class="d-flex flex-column gap-3">
+            <!-- Dynamic rows injected here -->
+          </div>
+          <!-- Recommended deals section -->
+          <div id="cart-page-recommendations" class="border-top mt-4 pt-4 d-none">
+            <!-- Recommendations injected dynamically by main.js -->
+          </div>
+        </div>
+      </div>
+
+      <!-- 2. Cart Totals & Shipping Rate calculation (Col 4) -->
+      <div class="col-lg-4">
+        <div class="card border-0 shadow-sm rounded-3 p-4 bg-white sticky-lg-top" style="top: 90px; z-index: 10;">
+          <h2 class="h5 font-primary border-bottom pb-3 mb-4">Order Summary</h2>
+          
+          <div class="d-flex justify-content-between mb-2">
+            <span class="text-muted">Subtotal</span>
+            <span id="summary-subtotal" class="fw-bold">Rs. 0</span>
+          </div>
+          
+          <div class="d-flex justify-content-between mb-2">
+            <span class="text-muted">Total Gross Weight</span>
+            <span id="summary-weight" class="fw-semibold">0 kg</span>
+          </div>
+
+          <div class="d-flex justify-content-between mb-2 align-items-center">
+            <span class="text-muted">Shipping Tier</span>
+            <span id="summary-shipping-tier" class="badge bg-secondary font-monospace" style="font-size:0.75rem;">Standard</span>
+          </div>
+          
+          <div class="d-flex justify-content-between mb-3">
+            <span class="text-muted">Estimated Shipping</span>
+            <span id="summary-shipping" class="fw-semibold">Rs. 0</span>
+          </div>
+          
+          <div class="alert alert-warning p-2 mb-4" style="font-size:0.75rem; border-radius: var(--radius-sm);">
+            <i class="bi bi-info-circle me-1"></i> Shipping rates:<br>
+            • Standard: 1g-1kg: Rs. 300 flat | 1-6kg: Rs. 300/kg | 6kg+: Rs. 150/kg<br>
+            • Wheat: Up to 6kg: Rs. 300/kg | 6-40kg: Rs. 150/kg | 40kg+: Rs. 1,500/Maund (40kg)
+          </div>
+          
+          <hr>
+          
+          <div class="d-flex justify-content-between mb-4">
+            <span class="fw-bold font-primary text-dark">Estimated Total</span>
+            <span id="summary-total" class="h5 fw-bold text-primary mb-0">Rs. 0</span>
+          </div>
+          
+          <a href="checkout.html" class="btn btn-primary w-100 py-3 font-primary text-uppercase"><i class="bi bi-wallet2 me-2"></i> Proceed to Checkout</a>
+          <a href="shop.html" class="btn btn-outline-primary w-100 mt-2"><i class="bi bi-arrow-left me-1"></i> Keep Shopping</a>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="py-5 bg-forest text-white" style="border-top: 5px solid var(--color-secondary);">
+    <div class="container">
+      <div class="row g-4 mb-5">
+        <div class="col-lg-4">
+          <h4 class="h5 text-gold mb-3">ARB Farms &amp; Organics</h4>
+          <p class="small text-white-50">Providing organic dietary staples and high-nutrition livestock forage directly from our off-grid farm in Multan, Pakistan.</p>
+          <p class="small text-white-50"><i class="bi bi-geo-alt-fill text-gold me-2"></i> Street 1, Fatima Avenue, Opp. Fatima Masjid, Near Prime Mart. MPS Road, Multan, Punjab, Pakistan</p>
+          <p class="small text-white-50"><i class="bi bi-telephone-fill text-gold me-2"></i> +92 320 000 5367</p>
+        </div>
+        
+        <div class="col-md-4 col-lg-3 offset-lg-1">
+          <h4 class="h5 text-gold mb-3">Product Catalogs</h4>
+          <ul class="list-unstyled small d-flex flex-column gap-2">
+            <li><a href="shop.html?category=edible-seeds" class="text-white-50 text-decoration-none">Superfood &amp; Edible Seeds</a></li>
+            <li><a href="shop.html?category=dairy-organic" class="text-white-50 text-decoration-none">Desi Ghee &amp; Raw Honey</a></li>
+            <li><a href="shop.html?category=feed-agri" class="text-white-50 text-decoration-none">Livestock Silage &amp; Baled Fodder</a></li>
+          </ul>
+        </div>
+        
+        <div class="col-md-4 col-lg-2">
+          <h4 class="h5 text-gold mb-3">Customer Service</h4>
+          <ul class="list-unstyled small d-flex flex-column gap-2">
+            <li><a href="about.html" class="text-white-50 text-decoration-none">About Us</a></li>
+            <li><a href="contact.html" class="text-white-50 text-decoration-none">Contact Us</a></li>
+            <li><a href="legal/shipping-policy.html" class="text-white-50 text-decoration-none">Shipping Tiers &amp; Rules</a></li>
+            <li><a href="legal/refund-policy.html" class="text-white-50 text-decoration-none">Return Policy</a></li>
+            <li><a href="legal/terms-conditions.html" class="text-white-50 text-decoration-none">Terms of Service</a></li>
+            <li><a href="legal/privacy-policy.html" class="text-white-50 text-decoration-none">Privacy Policy</a></li>
+          </ul>
+        </div>
+        
+        <div class="col-md-4 col-lg-2">
+          <h4 class="h5 text-gold mb-3">Follow Our Farm</h4>
+          <div class="d-flex gap-3 fs-5">
+            <a href="https://www.tiktok.com/@arborganics" class="text-white-50"><i class="bi bi-tiktok"></i></a>
+            <a href="https://www.instagram.com/arb.organicsouq/" class="text-white-50"><i class="bi bi-instagram"></i></a>
+            <a href="https://www.facebook.com/ARBORGANIC" class="text-white-50"><i class="bi bi-facebook"></i></a>
+            <a href="https://wa.me/923200005367" class="text-white-50"><i class="bi bi-whatsapp"></i></a>
+          </div>
+        </div>
+      </div>
+      
+      <div class="border-top border-secondary pt-4 d-flex flex-wrap justify-content-between align-items-center gap-3">
+        <p class="small mb-0 text-white-50">&copy; 2026 ARB Farms Organics. All rights reserved.</p>
+        <div class="d-flex align-items-center gap-3">
+          <span class="small text-white-50">Accepted Methods:</span>
+          <span class="badge bg-secondary">50% Advance 50% After Delivery</span>
+          <span class="badge bg-secondary">EasyPaisa / JazzCash</span>
+          <span class="badge bg-secondary">Card Settlement</span>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="js/main.js?v=90f821b8"></script>
+  <script src="js/fomo.js?v=d687853f"></script>
+
+  <!-- Cart UI Handler -->
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const container = document.getElementById("cart-items-container");
+      const emptyDiv = document.getElementById("cart-empty");
+      const contentDiv = document.getElementById("cart-content");
+
+      // Summary elements
+      const subtotalEl = document.getElementById("summary-subtotal");
+      const weightEl = document.getElementById("summary-weight");
+      const tierEl = document.getElementById("summary-shipping-tier");
+      const shippingEl = document.getElementById("summary-shipping");
+      const totalEl = document.getElementById("summary-total");
+
+      function parseItemWeight(item) {
+        let rawWeight = item.weight;
+        let val = parseFloat(rawWeight);
+        if (isNaN(val)) return 0;
+        
+        let wStr = String(rawWeight).toLowerCase();
+        // If it looks like grams (e.g. contains 'gm' or 'gram', or is >= 100 and does not contain 'kg')
+        // exclude agricultural bulk tags like 'seeds', 'wheat', 'bales' from being divided by 1000.
+        if (wStr.includes('gm') || wStr.includes('gram') || (val >= 100 && !wStr.includes('kg') && !item.id.toLowerCase().includes('seeds') && !item.id.toLowerCase().includes('wheat') && !item.id.toLowerCase().includes('bales'))) {
+          return val / 1000;
+        }
+        return val;
+      }
+
+      function calculateShipping(cart) {
+        if (!cart || cart.length === 0) return { fee: 0, tier: "None" };
+        
+        let wheatWeight = 0;
+        let nonWheatWeight = 0;
+
+        cart.forEach(item => {
+          const itemWeight = parseItemWeight(item) * item.qty;
+          const isWheat = item.id.toLowerCase().includes('wheat') || 
+                          item.id.toLowerCase().includes('ogn-018') ||
+                          item.name.toLowerCase().includes('wheat') || 
+                          item.name.toLowerCase().includes('gandum');
+          if (isWheat) {
+            wheatWeight += itemWeight;
+          } else {
+            nonWheatWeight += itemWeight;
+          }
+        });
+
+        let fee = 0;
+        let tiers = [];
+
+        // 1. Calculate Wheat Shipping
+        if (wheatWeight > 0) {
+          let wheatFee = 0;
+          let wheatTier = "";
+          // [0.5 gram to 5999 gram = 300 PKR / KG ]
+          // [6000 gram to 40000 gram = 150 PKR / KG]
+          // [40000 gram above = 1500 PKR / KG (Maund rate)]
+          const weightInGrams = wheatWeight * 1000;
+          if (weightInGrams <= 5999) {
+            const billableKg = Math.ceil(wheatWeight);
+            wheatFee = billableKg * 300;
+            wheatTier = `Wheat Light (${billableKg} kg @ 300/kg)`;
+          } else if (weightInGrams <= 40000) {
+            const billableKg = Math.ceil(wheatWeight);
+            wheatFee = billableKg * 150;
+            wheatTier = `Wheat Medium (${billableKg} kg @ 150/kg)`;
+          } else {
+            const maunds = wheatWeight / 40;
+            const billableMaunds = Math.ceil(maunds);
+            wheatFee = billableMaunds * 1500;
+            wheatTier = `Wheat Bulk (${billableMaunds} Maund @ 1500/Maund)`;
+          }
+          fee += wheatFee;
+          tiers.push(wheatTier);
+        }
+
+        // 2. Calculate Non-Wheat Shipping
+        if (nonWheatWeight > 0) {
+          let nwFee = 0;
+          let nwTier = "";
+          // [1 gm to 1000 gm = 300 PKR]
+          // [1001 gram to 5999 gram = 300 PKR / KG]
+          // [6000 gram above = 150 PKR / KG]
+          const weightInGrams = nonWheatWeight * 1000;
+          if (weightInGrams <= 1000) {
+            nwFee = 300;
+            nwTier = "Standard Light (Flat 300)";
+          } else if (weightInGrams <= 5999) {
+            const billableKg = Math.ceil(nonWheatWeight);
+            nwFee = billableKg * 300;
+            nwTier = `Standard Medium (${billableKg} kg @ 300/kg)`;
+          } else {
+            const billableKg = Math.ceil(nonWheatWeight);
+            nwFee = billableKg * 150;
+            nwTier = `Standard Heavy (${billableKg} kg @ 150/kg)`;
+          }
+          fee += nwFee;
+          tiers.push(nwTier);
+        }
+
+        return {
+          fee: fee,
+          tier: tiers.length > 0 ? tiers.join(" + ") : "None"
+        };
+      }
+
+      function renderCart() {
+        const cart = JSON.parse(localStorage.getItem('arb_cart')) || [];
+        
+        if (cart.length === 0) {
+          emptyDiv.classList.remove("d-none");
+          contentDiv.classList.add("d-none");
+          return;
+        }
+
+        emptyDiv.classList.add("d-none");
+        contentDiv.classList.remove("d-none");
+
+        // Renders item rows
+        container.innerHTML = cart.map(item => {
+          const parsedUnitWeight = parseItemWeight(item);
+          const displayUnitWeight = parsedUnitWeight >= 1 ? `${parsedUnitWeight.toFixed(2)} kg` : `${(parsedUnitWeight * 1000).toFixed(0)} gm`;
+          const itemSubtotal = item.price * item.qty;
+          return `
+            <div class="row align-items-center py-3 border-bottom g-3">
+              <div class="col-3 col-md-2">
+                <div class="bg-light p-1 rounded" style="width: 70px; height: 70px;">
+                  <img src="${item.image}" alt="${item.name}" class="w-100 h-100 object-fit-contain">
+                </div>
+              </div>
+              
+              <div class="col-9 col-md-4">
+                <h3 class="h6 mb-1 text-dark fw-bold font-primary">${item.name}</h3>
+                <span class="text-muted small">Unit Weight: ${displayUnitWeight}</span>
+              </div>
+              
+              <div class="col-4 col-md-2">
+                <span class="text-muted small d-block d-md-none">Price:</span>
+                <span class="fw-semibold text-dark">Rs. ${item.price.toLocaleString()}</span>
+              </div>
+              
+              <div class="col-5 col-md-2">
+                <span class="text-muted small d-block d-md-none">Qty:</span>
+                <div class="input-group input-group-sm" style="max-width: 100px;">
+                  <button class="btn btn-outline-secondary" type="button" onclick="adjustQty('${item.id}', ${item.qty - 1})">-</button>
+                  <input type="text" class="form-control text-center bg-white" value="${item.qty}" readonly>
+                  <button class="btn btn-outline-secondary" type="button" onclick="adjustQty('${item.id}', ${item.qty + 1})">+</button>
+                </div>
+              </div>
+              
+              <div class="col-3 col-md-2 text-end">
+                <span class="text-muted small d-block d-md-none">Subtotal:</span>
+                <span class="fw-bold text-primary">Rs. ${itemSubtotal.toLocaleString()}</span>
+                <button class="btn btn-link text-danger p-0 ms-2 d-none d-md-inline" onclick="removeCartItem('${item.id}')" title="Delete product">
+                  <i class="bi bi-trash"></i>
+                </button>
+              </div>
+              
+              <div class="col-12 d-md-none text-end border-top pt-2">
+                <button class="btn btn-outline-danger btn-xs py-1 px-2" onclick="removeCartItem('${item.id}')">
+                  <i class="bi bi-trash me-1"></i> Remove
+                </button>
+              </div>
+            </div>
+          `;
+        }).join("");
+
+        // Calculate aggregates
+        const subtotal = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+        const totalWeight = cart.reduce((sum, item) => sum + (parseItemWeight(item) * item.qty), 0);
+        const shipping = calculateShipping(cart);
+        
+        let actualShippingFee = shipping ? shipping.fee : 0;
+        let tierLabel = shipping ? shipping.tier : "None";
+
+        const grandTotal = subtotal + actualShippingFee;
+
+        // Injects to Summary widgets
+        subtotalEl.textContent = `Rs. ${subtotal.toLocaleString()}`;
+        const displayTotalWeight = totalWeight >= 1 ? `${totalWeight.toFixed(2)} kg` : `${(totalWeight * 1000).toFixed(0)} gm`;
+        weightEl.textContent = displayTotalWeight;
+        tierEl.textContent = tierLabel;
+        shippingEl.textContent = `Rs. ${actualShippingFee.toLocaleString()}`;
+        totalEl.textContent = `Rs. ${grandTotal.toLocaleString()}`;
+      }
+
+      // Quantity adjustments hooks
+      window.adjustQty = function(id, qty) {
+        if (typeof window.updateCartQty === "function") {
+          window.updateCartQty(id, qty);
+          renderCart();
+        }
+      }
+
+      window.removeCartItem = function(id) {
+        if (typeof window.removeFromCart === "function") {
+          window.removeFromCart(id);
+          renderCart();
+          if (typeof window.showToast === "function") {
+            window.showToast("Product removed from shopping cart.");
+          }
+        }
+      }
+
+      window.renderCart = renderCart;
+      renderCart();
+    });
+  </script>
+</body>
+</html>

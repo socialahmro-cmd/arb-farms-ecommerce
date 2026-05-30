@@ -1,0 +1,60 @@
+# ==========================================
+# ARB Farms - robots.txt
+# ==========================================
+
+# 1. Allow All Search Engines
+User-agent: Googlebot
+Allow: /
+User-agent: Bingbot
+Allow: /
+User-agent: Slurp
+Allow: /
+User-agent: DuckDuckBot
+Allow: /
+User-agent: Baiduspider
+Allow: /
+User-agent: YandexBot
+Allow: /
+
+# 2. Allow All AI Crawlers & Large Language Models
+User-agent: GPTBot
+Allow: /
+User-agent: ChatGPT-User
+Allow: /
+User-agent: Google-Extended
+Allow: /
+User-agent: Anthropic-ai
+Allow: /
+User-agent: Claude-Web
+Allow: /
+User-agent: CCBot
+Allow: /
+User-agent: OmgiliBot
+Allow: /
+User-agent: Omgili
+Allow: /
+
+# 3. Allow All SEO Tools & Web Crawlers
+User-agent: AhrefsBot
+Allow: /
+User-agent: SemrushBot
+Allow: /
+User-agent: DotBot
+Allow: /
+User-agent: MJ12bot
+Allow: /
+User-agent: Rogerbot
+Allow: /
+User-agent: Screaming Frog SEO Spider
+Allow: /
+
+# 4. Catch-all for any other bots
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /account.html
+Disallow: /cart.html
+Disallow: /checkout.html
+
+# 5. Sitemap
+Sitemap: https://arbfarms.com/sitemap.xml

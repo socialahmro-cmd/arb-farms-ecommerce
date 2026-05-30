@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Checkout | ARB Farms Pakistan</title>
+  <meta name="description" content="Complete your purchase with 50% Advance 50% After Delivery at ARB Farms. Easy billing and weight-based shipping verification.">
+  
+  <!-- Bootstrap & Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+  
+  <!-- Custom Styles -->
+  <link href="css/index.css?v=f43db6fe" rel="stylesheet">
+</head>
+<body>
+
+  <!-- Announcement Banner -->
+  <div id="fomo-announcement-banner">
+    <div class="container text-center py-2 text-white fw-bold">
+      <span>📦 50% Advance 50% After Delivery available all over Pakistan!</span>
+    </div>
+  </div>
+
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg bg-forest sticky-top shadow-sm py-2">
+    <div class="container">
+      <a class="navbar-brand d-flex align-items-center" href="index.html">
+        <img src="catalog/arbfarms-logo.svg" alt="ARB Farms Logo" class="me-2">
+        <span class="font-primary text-white fs-4 tracking-wide">ARB FARMS</span>
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar" aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
+        <div class="arb-hamburger" aria-hidden="true">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+      </button>
+      
+      <div class="collapse navbar-collapse" id="mainNavbar">
+        <ul class="navbar-nav mx-auto mb-2 mb-lg-0 gap-lg-3">
+          <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+          <li class="nav-item"><a class="nav-link" href="shop.html">Shop Catalog</a></li>
+          <li class="nav-item"><a class="nav-link" href="about.html">About Us</a></li>
+          <li class="nav-item"><a class="nav-link" href="calculator.html">Sowing Tools</a></li>
+          <li class="nav-item"><a class="nav-link" href="contact.html">Contact Us</a></li>
+        </ul>
+        
+        <div class="d-flex align-items-center gap-3">
+          <button id="search-trigger" aria-label="Search products" title="Search"><i class="bi bi-search"></i></button>
+          <a href="account.html" class="text-white fs-5" aria-label="My Account" title="My Account"><i class="bi bi-person"></i></a>
+          <a href="compare.html" class="text-white fs-5" aria-label="Compare Seeds" title="Compare Seeds"><i class="bi bi-arrow-left-right"></i></a>
+          <a href="wishlist.html" class="position-relative text-white fs-5" aria-label="View Wishlist">
+            <i class="bi bi-heart"></i>
+            <span id="wishlist-count" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size: 0.65rem;">0</span>
+          </a>
+          <a href="cart.html" class="position-relative text-white fs-5" aria-label="View Cart">
+            <i class="bi bi-cart3"></i>
+            <span id="cart-count" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-warning text-dark" style="font-size: 0.65rem;">0</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Page Header -->
+  <header class="py-4" style="background-color: #ede1ca;">
+    <div class="container text-center text-md-start">
+      <h1 class="font-primary text-primary mb-1">Shipping &amp; Checkout</h1>
+      <p class="text-muted mb-0 font-accent">Fill in your delivery address and settle via COD or mobile wallets.</p>
+    </div>
+  </header>
+
+  <!-- Checkout Area -->
+  <main class="container py-5">
+    <!-- Progress Stepper -->
+    <div class="row justify-content-center mb-5">
+      <div class="col-md-8">
+        <div class="stepper">
+          <div class="stepper-step completed" title="Cart Details">1</div>
+          <div class="stepper-step active" title="Shipping &amp; Address">2</div>
+          <div class="stepper-step" title="Order Confirmation">3</div>
+        </div>
+        <div class="d-flex justify-content-between text-muted small" style="margin-top: -15px;">
+          <span>Cart Summary</span>
+          <span class="fw-bold text-primary">Shipping &amp; COD</span>
+          <span>Thank You</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Content layout -->
+    <div id="checkout-container" class="row">
+      <!-- 1. Checkout Form (Col 7) -->
+      <div class="col-lg-7 mb-4">
+        <div class="card border-0 shadow-sm rounded-3 p-4 bg-white">
+          <h2 class="h5 font-primary border-bottom pb-3 mb-4"><i class="bi bi-geo-alt text-primary me-2"></i> Delivery &amp; Contact Information</h2>
+          
+          <form id="checkout-form" novalidate>
+            <!-- Name -->
+            <div class="mb-3">
+              <label for="fullName" class="form-label fw-bold text-dark">Full Name <span class="text-danger">*</span></label>
+              <input type="text" class="form-control" id="fullName" placeholder="Enter your full name" required>
+              <div class="invalid-feedback">Please enter your full name.</div>
+            </div>
+
+            <!-- Phone -->
+            <div class="mb-3">
+              <label for="phone" class="form-label fw-bold text-dark">Mobile Number <span class="text-danger">*</span></label>
+              <div class="input-group">
+                <span class="input-group-text">+92</span>
+                <input type="tel" class="form-control" id="phone" placeholder="3001234567" required pattern="^(0?3[0-9]{9})$">
+              </div>
+              <div class="form-text">Enter 10 or 11-digit mobile number (e.g., 3001234567 or 03001234567).</div>
+              <div class="invalid-feedback">Please enter a valid Pakistani mobile number.</div>
+            </div>
+
+            <!-- City Dropdown -->
+            <div class="mb-3">
+              <label for="city" class="form-label fw-bold text-dark">Shipping City <span class="text-danger">*</span></label>
+              <select class="form-select" id="city" required>
+                <option value="" disabled selected>Select your city...</option>
+                <option value="multan">Multan (Fresh Dairy Avail)</option>
+                <option value="lahore">Lahore</option>
+                <option value="karachi">Karachi</option>
+                <option value="islamabad">Islamabad</option>
+                <option value="faisalabad">Faisalabad</option>
+                <option value="peshawar">Peshawar</option>
+                <option value="rawalpindi">Rawalpindi</option>
+                <option value="gujranwala">Gujranwala</option>
+                <option value="sargodha">Sargodha</option>
+                <option value="bahawalpur">Bahawalpur</option>
+              </select>
+              <div class="invalid-feedback">Please select a shipping city.</div>
+            </div>
+
+            <!-- Delivery Address -->
+            <div class="mb-4">
+              <label for="address" class="form-label fw-bold text-dark">Shipping Address <span class="text-danger">*</span></label>
+              <textarea class="form-control" id="address" rows="3" placeholder="House number, Street name, Area details" required></textarea>
+              <div class="invalid-feedback">Please enter your detailed shipping address.</div>
+            </div>
+
+            <h2 class="h5 font-primary border-bottom pb-3 mb-4"><i class="bi bi-wallet2 text-primary me-2"></i> Payment Method</h2>
+            
+            <div class="mb-4">
+              <div class="form-check p-3 border rounded-3 mb-2 bg-light">
+                <input class="form-check-input" type="radio" name="paymentMethod" id="pay-cod" value="50% Advance 50% After Delivery" checked>
+                <label class="form-check-label fw-semibold text-dark" for="pay-cod">
+                  💵 50% Advance 50% After Delivery
+                </label>
+                <p class="small text-muted mb-2 ms-4">Pay 50% advance via bank transfer or mobile wallet, and the remaining 50% after delivery.</p>
+                <div class="ms-4 p-2 bg-white border rounded small text-dark" style="max-width: 420px; font-size: 0.8rem;">
+                  <div class="fw-bold mb-1 text-primary"><i class="bi bi-bank me-1"></i> Bank Al-Falah Account:</div>
+                  <div>Account Number: <strong class="font-monospace">56235001952299</strong></div>
+                  <div>Title: <strong>ARB Farms</strong></div>
+                </div>
+              </div>
+              
+              <div class="form-check p-3 border rounded-3 mb-2">
+                <input class="form-check-input" type="radio" name="paymentMethod" id="pay-mobile" value="Mobile Wallet">
+                <label class="form-check-label fw-semibold text-dark" for="pay-mobile">
+                  📱 EasyPaisa / JazzCash
+                </label>
+                <p class="small text-muted mb-0 ms-4">Transfer to our official wallet. Details sent after order verification.</p>
+              </div>
+            </div>
+
+            <!-- Error banner for Multan milk delivery restriction -->
+            <div class="alert alert-danger d-none" id="dairy-restriction-alert">
+              <i class="bi bi-exclamation-octagon-fill me-2"></i>
+              <strong>Dairy Restriction Alert:</strong> Cow Milk, Buffalo Milk, and Goat Milk can only be shipped to <strong>Multan</strong>. Please remove the fresh dairy items from your cart to select other cities, or select Multan as your destination.
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100 py-3 font-primary text-uppercase" id="submit-order-btn">
+              <i class="bi bi-check-circle me-1"></i> Place Order
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <!-- 2. Order Summary Panel (Col 5) -->
+      <div class="col-lg-5">
+        <div class="card border-0 shadow-sm rounded-3 p-4 bg-white sticky-lg-top" style="top: 90px; z-index: 10;">
+          <h2 class="h5 font-primary border-bottom pb-3 mb-4">Cart Summary</h2>
+          
+          <!-- Summary rows container -->
+          <div id="checkout-summary-items" class="d-flex flex-column gap-3 mb-4" style="max-height: 250px; overflow-y: auto;">
+            <!-- Loaded dynamically -->
+          </div>
+          
+          <hr>
+          
+          <div class="d-flex justify-content-between mb-2">
+            <span class="text-muted">Subtotal</span>
+            <span id="summary-subtotal" class="fw-bold">Rs. 0</span>
+          </div>
+          
+          <div class="d-flex justify-content-between mb-2">
+            <span class="text-muted">Gross Weight</span>
+            <span id="summary-weight" class="fw-semibold">0 kg</span>
+          </div>
+          
+          <div class="d-flex justify-content-between mb-3">
+            <span class="text-muted">Shipping Fee</span>
+            <span id="summary-shipping" class="fw-semibold text-primary">Rs. 0</span>
+          </div>
+          
+          <div class="d-flex justify-content-between pt-3 border-top">
+            <span class="fw-bold font-primary text-dark h5 mb-0">Grand Total</span>
+            <span id="summary-total" class="h4 fw-bold text-primary mb-0">Rs. 0</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="py-5 bg-forest text-white" style="border-top: 5px solid var(--color-secondary);">
+    <div class="container">
+      <div class="row g-4 mb-5">
+        <div class="col-lg-4">
+          <h4 class="h5 text-gold mb-3">ARB Farms &amp; Organics</h4>
+          <p class="small text-white-50">Providing organic dietary staples and high-nutrition livestock forage directly from our off-grid farm in Multan, Pakistan.</p>
+          <p class="small text-white-50"><i class="bi bi-geo-alt-fill text-gold me-2"></i> Street 1, Fatima Avenue, Opp. Fatima Masjid, Near Prime Mart. MPS Road, Multan, Punjab, Pakistan</p>
+          <p class="small text-white-50"><i class="bi bi-telephone-fill text-gold me-2"></i> +92 320 000 5367</p>
+        </div>
+        
+        <div class="col-md-4 col-lg-3 offset-lg-1">
+          <h4 class="h5 text-gold mb-3">Product Catalogs</h4>
+          <ul class="list-unstyled small d-flex flex-column gap-2">
+            <li><a href="shop.html?category=edible-seeds" class="text-white-50 text-decoration-none">Superfood &amp; Edible Seeds</a></li>
+            <li><a href="shop.html?category=dairy-organic" class="text-white-50 text-decoration-none">Desi Ghee &amp; Raw Honey</a></li>
+            <li><a href="shop.html?category=feed-agri" class="text-white-50 text-decoration-none">Livestock Silage &amp; Baled Fodder</a></li>
+          </ul>
+        </div>
+        
+        <div class="col-md-4 col-lg-2">
+          <h4 class="h5 text-gold mb-3">Customer Service</h4>
+          <ul class="list-unstyled small d-flex flex-column gap-2">
+            <li><a href="about.html" class="text-white-50 text-decoration-none">About Us</a></li>
+            <li><a href="contact.html" class="text-white-50 text-decoration-none">Contact Us</a></li>
+            <li><a href="legal/shipping-policy.html" class="text-white-50 text-decoration-none">Shipping Tiers &amp; Rules</a></li>
+            <li><a href="legal/refund-policy.html" class="text-white-50 text-decoration-none">Return Policy</a></li>
+            <li><a href="legal/terms-conditions.html" class="text-white-50 text-decoration-none">Terms of Service</a></li>
+            <li><a href="legal/privacy-policy.html" class="text-white-50 text-decoration-none">Privacy Policy</a></li>
+          </ul>
+        </div>
+        
+        <div class="col-md-4 col-lg-2">
+          <h4 class="h5 text-gold mb-3">Follow Our Farm</h4>
+          <div class="d-flex gap-3 fs-5">
+            <a href="https://www.tiktok.com/@arborganics" class="text-white-50"><i class="bi bi-tiktok"></i></a>
+            <a href="https://www.instagram.com/arb.organicsouq/" class="text-white-50"><i class="bi bi-instagram"></i></a>
+            <a href="https://www.facebook.com/ARBORGANIC" class="text-white-50"><i class="bi bi-facebook"></i></a>
+            <a href="https://wa.me/923200005367" class="text-white-50"><i class="bi bi-whatsapp"></i></a>
+          </div>
+        </div>
+      </div>
+      
+      <div class="border-top border-secondary pt-4 d-flex flex-wrap justify-content-between align-items-center gap-3">
+        <p class="small mb-0 text-white-50">&copy; 2026 ARB Farms Organics. All rights reserved.</p>
+        <div class="d-flex align-items-center gap-3">
+          <span class="small text-white-50">Accepted Methods:</span>
+          <span class="badge bg-secondary">50% Advance 50% After Delivery</span>
+          <span class="badge bg-secondary">EasyPaisa / JazzCash</span>
+          <span class="badge bg-secondary">Card Settlement</span>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="js/main.js?v=90f821b8"></script>
+  <script src="js/fomo.js?v=d687853f"></script>
+
+  <!-- Checkout Logic -->
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const summaryItems = document.getElementById("checkout-summary-items");
+      const subtotalEl = document.getElementById("summary-subtotal");
+      const weightEl = document.getElementById("summary-weight");
+      const shippingEl = document.getElementById("summary-shipping");
+      const totalEl = document.getElementById("summary-total");
+
+      const checkoutForm = document.getElementById("checkout-form");
+      const citySelect = document.getElementById("city");
+      const dairyAlert = document.getElementById("dairy-restriction-alert");
+
+      let subtotal = 0;
+      let totalWeight = 0;
+      let shippingFee = 0;
+      let grandTotal = 0;
+      let hasFreshMilk = false;
+      let cart = [];
+
+      function parseItemWeight(item) {
+        let rawWeight = item.weight;
+        let val = parseFloat(rawWeight);
+        if (isNaN(val)) return 0;
+        
+        let wStr = String(rawWeight).toLowerCase();
+        if (wStr.includes('gm') || wStr.includes('gram') || (val >= 100 && !wStr.includes('kg') && !item.id.toLowerCase().includes('seeds') && !item.id.toLowerCase().includes('wheat') && !item.id.toLowerCase().includes('bales'))) {
+          return val / 1000;
+        }
+        return val;
+      }
+
+      function calculateShipping(cart) {
+        if (!cart || cart.length === 0) return { fee: 0, tier: "None" };
+        
+        let wheatWeight = 0;
+        let nonWheatWeight = 0;
+
+        cart.forEach(item => {
+          const itemWeight = parseItemWeight(item) * item.qty;
+          const isWheat = item.id.toLowerCase().includes('wheat') || 
+                          item.id.toLowerCase().includes('ogn-018') ||
+                          item.name.toLowerCase().includes('wheat') || 
+                          item.name.toLowerCase().includes('gandum');
+          if (isWheat) {
+            wheatWeight += itemWeight;
+          } else {
+            nonWheatWeight += itemWeight;
+          }
+        });
+
+        let fee = 0;
+        let tiers = [];
+
+        // 1. Calculate Wheat Shipping
+        if (wheatWeight > 0) {
+          let wheatFee = 0;
+          let wheatTier = "";
+          const weightInGrams = wheatWeight * 1000;
+          if (weightInGrams <= 5999) {
+            const billableKg = Math.ceil(wheatWeight);
+            wheatFee = billableKg * 300;
+            wheatTier = `Wheat Light (${billableKg} kg @ 300/kg)`;
+          } else if (weightInGrams <= 40000) {
+            const billableKg = Math.ceil(wheatWeight);
+            wheatFee = billableKg * 150;
+            wheatTier = `Wheat Medium (${billableKg} kg @ 150/kg)`;
+          } else {
+            const maunds = wheatWeight / 40;
+            const billableMaunds = Math.ceil(maunds);
+            wheatFee = billableMaunds * 1500;
+            wheatTier = `Wheat Bulk (${billableMaunds} Maund @ 1500/Maund)`;
+          }
+          fee += wheatFee;
+          tiers.push(wheatTier);
+        }
+
+        // 2. Calculate Non-Wheat Shipping
+        if (nonWheatWeight > 0) {
+          let nwFee = 0;
+          let nwTier = "";
+          const weightInGrams = nonWheatWeight * 1000;
+          if (weightInGrams <= 1000) {
+            nwFee = 300;
+            nwTier = "Standard Light (Flat 300)";
+          } else if (weightInGrams <= 5999) {
+            const billableKg = Math.ceil(nonWheatWeight);
+            nwFee = billableKg * 300;
+            nwTier = `Standard Medium (${billableKg} kg @ 300/kg)`;
+          } else {
+            const billableKg = Math.ceil(nonWheatWeight);
+            nwFee = billableKg * 150;
+            nwTier = `Standard Heavy (${billableKg} kg @ 150/kg)`;
+          }
+          fee += nwFee;
+          tiers.push(nwTier);
+        }
+
+        return {
+          fee: fee,
+          tier: tiers.length > 0 ? tiers.join(" + ") : "None"
+        };
+      }
+
+      function loadCheckoutSummary() {
+        cart = JSON.parse(localStorage.getItem('arb_cart')) || [];
+        
+        if (cart.length === 0) {
+          window.location.href = "shop.html";
+          return;
+        }
+
+        // Render small line items
+        summaryItems.innerHTML = cart.map(item => {
+          // Detect dairy milk products OGN-004-milk, OGN-005, OGN-006
+          if (item.id === "ogn-004-milk" || item.id === "ogn-005" || item.id === "ogn-006") {
+            hasFreshMilk = true;
+          }
+          const parsedUnitWeight = parseItemWeight(item);
+          const displayUnitWeight = parsedUnitWeight >= 1 ? `${parsedUnitWeight.toFixed(2)} kg` : `${(parsedUnitWeight * 1000).toFixed(0)} gm`;
+          return `
+            <div class="d-flex justify-content-between align-items-center">
+              <div>
+                <span class="small fw-semibold text-dark d-block">${item.name}</span>
+                <span class="text-muted small">${item.qty}x ${displayUnitWeight}</span>
+              </div>
+              <span class="small fw-bold">Rs. ${(item.price * item.qty).toLocaleString()}</span>
+            </div>
+          `;
+        }).join("");
+
+        // Calculate aggregates
+        subtotal = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+        totalWeight = cart.reduce((sum, item) => sum + (parseItemWeight(item) * item.qty), 0);
+        const shipping = calculateShipping(cart);
+        shippingFee = shipping.fee;
+
+        grandTotal = subtotal + shippingFee;
+
+        subtotalEl.textContent = `Rs. ${subtotal.toLocaleString()}`;
+        const displayTotalWeight = totalWeight >= 1 ? `${totalWeight.toFixed(2)} kg` : `${(totalWeight * 1000).toFixed(0)} gm`;
+        weightEl.textContent = displayTotalWeight;
+        shippingEl.textContent = `Rs. ${shippingFee.toLocaleString()}`;
+        totalEl.textContent = `Rs. ${grandTotal.toLocaleString()}`;
+      }
+
+      // Check dairy restriction on city change
+      citySelect.addEventListener("change", () => {
+        const city = citySelect.value;
+        if (hasFreshMilk && city !== "multan") {
+          dairyAlert.classList.remove("d-none");
+        } else {
+          dairyAlert.classList.add("d-none");
+        }
+      });
+
+      // Submit checkout form
+      checkoutForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+        
+        // Custom validations
+        const city = citySelect.value;
+        if (hasFreshMilk && city !== "multan") {
+          dairyAlert.classList.remove("d-none");
+          citySelect.focus();
+          return;
+        }
+
+        if (!checkoutForm.checkValidity()) {
+          e.stopPropagation();
+          checkoutForm.classList.add("was-validated");
+          
+          // Scroll first invalid field into view for a better user experience
+          const firstInvalidEl = checkoutForm.querySelector(":invalid");
+          if (firstInvalidEl) {
+            firstInvalidEl.scrollIntoView({ behavior: "smooth", block: "center" });
+            firstInvalidEl.focus();
+          }
+          return;
+        }
+
+        // Form valid - prepare checkout data and sanitize phone number (remove leading zero if present)
+        let phoneVal = document.getElementById("phone").value.trim();
+        if (phoneVal.startsWith("0")) {
+          phoneVal = phoneVal.substring(1);
+        }
+
+        const orderData = {
+          orderNumber: "ARB-" + Math.floor(100000 + Math.random() * 900000),
+          customerName: document.getElementById("fullName").value,
+          phone: phoneVal,
+          address: document.getElementById("address").value,
+          city: city,
+          paymentMethod: document.querySelector('input[name="paymentMethod"]:checked').value,
+          subtotal: subtotal,
+          weight: totalWeight,
+          shipping: shippingFee,
+          total: grandTotal,
+          items: cart,
+          status: "Awaiting Advance Payment",
+          orderDate: new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })
+        };
+
+        const submitBtn = document.querySelector("#checkout-form button[type='submit']");
+        const originalBtnText = submitBtn.innerHTML;
+        submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Processing...';
+        submitBtn.disabled = true;
+
+        // Try API first
+        fetch('/api/checkout', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(orderData)
+        }).then(res => res.json())
+          .then(data => console.log("Vercel DB Order saved:", data))
+          .catch(err => console.warn("Vercel backend not found. Using local demo mode.", err))
+          .finally(() => {
+            // Save order data to sessionStorage for thank-you screen
+            sessionStorage.setItem("arb_latest_order", JSON.stringify(orderData));
+
+            // Save to global order history for the client portal
+            const clientOrders = JSON.parse(localStorage.getItem("arb_all_orders")) || [];
+            clientOrders.push(orderData);
+            localStorage.setItem("arb_all_orders", JSON.stringify(clientOrders));
+
+            // Clear local storage cart
+            localStorage.setItem("arb_cart", JSON.stringify([]));
+
+            // Redirect to thank-you screen
+            window.location.href = "thank-you.html";
+          });
+      });
+
+      loadCheckoutSummary();
+    });
+  </script>
+</body>
+</html>

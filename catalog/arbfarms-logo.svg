@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500" width="100%" height="100%">
+  <!-- Background transparent -->
+  <defs>
+    <!-- Curve for bottom text "Your Organic Food store" -->
+    <!-- Center of circle is at 250, 250. Radius of path should be around 195. -->
+    <path id="bottomTextPath" d="M 70,300 A 195,195 0 0,0 430,300" fill="none" />
+  </defs>
+
+  <!-- Outer Dark Green Ring -->
+  <circle cx="250" cy="250" r="235" fill="#ede2cb" stroke="#526e4a" stroke-width="12" />
+
+  <!-- Inner Gold/Brown Ring -->
+  <circle cx="250" cy="250" r="220" fill="none" stroke="#b29158" stroke-width="8" />
+
+  <!-- Symmetrical Leaves at the Top -->
+  <g fill="#33522f">
+    <!-- Left Leaf -->
+    <path d="M 242,150 C 210,150 162,128 162,75 C 212,75 237,112 242,150 Z" />
+    <path d="M 242,150 Q 202,112 187,97" stroke="#ede2cb" stroke-width="2.5" fill="none" stroke-linecap="round" />
+
+    <!-- Right Leaf -->
+    <path d="M 258,150 C 290,150 338,128 338,75 C 288,75 263,112 258,150 Z" />
+    <path d="M 258,150 Q 298,112 313,97" stroke="#ede2cb" stroke-width="2.5" fill="none" stroke-linecap="round" />
+  </g>
+
+  <!-- 100% NATURAL text -->
+  <text x="250" y="192" font-family="'Impact', 'Arial Black', 'Outfit', sans-serif" font-size="28" font-weight="900" fill="#33522f" text-anchor="middle" letter-spacing="0.5">100% NATURAL</text>
+
+  <!-- Giant ARB Text -->
+  <text x="250" y="282" font-family="'Times New Roman', 'Lora', 'Georgia', serif" font-size="118" font-weight="900" fill="#000000" text-anchor="middle" letter-spacing="-4">ARB</text>
+
+  <!-- Since and 1431 flanking text aligned with proper text-anchor boundaries -->
+  <text x="120" y="258" font-family="'Arial', 'Helvetica', 'Inter', sans-serif" font-size="18" font-weight="bold" fill="#000000" text-anchor="end">Since</text>
+  <text x="380" y="258" font-family="'Arial', 'Helvetica', 'Inter', sans-serif" font-size="18" font-weight="bold" fill="#000000" text-anchor="start">1431</text>
+
+  <!-- ORGANICS text -->
+  <text x="250" y="334" font-family="'Times New Roman', 'Lora', 'Georgia', serif" font-size="42" font-weight="bold" fill="#33522f" text-anchor="middle" letter-spacing="4">ORGANICS</text>
+
+  <!-- Curved Bottom Text "Your Organic Food store" -->
+  <text font-family="'Arial', 'Helvetica', 'Inter', sans-serif" font-size="33" font-weight="bold" fill="#111111">
+    <textPath href="#bottomTextPath" startOffset="50%" text-anchor="middle">Your Organic Food store</textPath>
+  </text>
+</svg>

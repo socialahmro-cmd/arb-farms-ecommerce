@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500" width="100%" height="100%">
+  <defs>
+    <!-- Background Gradient -->
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fdfaf4" />
+      <stop offset="100%" stop-color="#ede1ca" />
+    </linearGradient>
+    <!-- Card Border Green -->
+    <linearGradient id="borderGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#365733" />
+      <stop offset="100%" stop-color="#1e331c" />
+    </linearGradient>
+    <!-- Drop Shadow -->
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="8" stdDeviation="6" flood-color="#121912" flood-opacity="0.15" />
+    </filter>
+  </defs>
+  
+  <!-- Outer Box -->
+  <rect width="500" height="500" rx="20" fill="url(#bgGrad)"/>
+  <rect x="15" y="15" width="470" height="470" rx="15" fill="none" stroke="url(#borderGrad)" stroke-width="1.5" stroke-dasharray="8,6" opacity="0.4"/>
+  
+  <!-- Illustration with Shadow -->
+  <g filter="url(#shadow)">
+    
+        <!-- Loose Toori (Wheat Straw Sheaf) -->
+        <g transform="translate(150, 100)">
+          <!-- Straw bundle lines -->
+          <path d="M60,50 L140,150 M140,50 L60,150 M100,40 L100,160 M50,70 L150,130 M150,70 L50,130" stroke="#dfbe7e" stroke-width="8" stroke-linecap="round" />
+          <path d="M70,60 L130,140 M130,60 L70,140 M100,50 L100,150 M60,80 L140,120 M140,80 L60,120" stroke="#b5925e" stroke-width="4" stroke-linecap="round" />
+          
+          <!-- Binding rope -->
+          <rect x="75" y="92" width="50" height="15" rx="5" fill="#806232" />
+          <ellipse cx="100" cy="100" rx="20" ry="4" fill="none" stroke="#ede1ca" stroke-width="2" />
+          
+          <!-- Golden sparkles or seed grains -->
+          <circle cx="65" cy="50" r="3" fill="#fcedc0" />
+          <circle cx="135" cy="50" r="3" fill="#fcedc0" />
+          <circle cx="55" cy="140" r="3" fill="#fcedc0" />
+          <circle cx="145" cy="140" r="3" fill="#fcedc0" />
+        </g>
+        
+  </g>
+  
+  <!-- Label Overlay -->
+  <rect x="80" y="27" width="340" height="40" rx="20" fill="#365733" opacity="0.9" />
+  <text x="250" y="52" font-family="'Outfit', sans-serif" font-size="14" font-weight="bold" fill="#ede1ca" text-anchor="middle" letter-spacing="2">ARB ORGANICS &#8226; AGRI FEED</text>
+  
+  <!-- Content Labels -->
+  <text x="250" y="420" font-family="'Outfit', sans-serif" font-size="20" font-weight="bold" fill="#365733" text-anchor="middle">TOORI (WHEAT STRAW)</text>
+  <text x="250" y="445" font-family="'Lora', serif" font-size="14" font-style="italic" fill="#b5925e" text-anchor="middle">Weight: 40 Kg &#8226; SKU: OGN-044</text>
+  <text x="250" y="470" font-family="'Inter', sans-serif" font-size="12" fill="#5a6459" text-anchor="middle">Price: Rs. 1,100 &#8226; Sourced by ARB Farms</text>
+</svg>

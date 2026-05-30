@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Agricultural Calculators &amp; Sowing Tools | ARB Farms Pakistan</title>
+  <meta name="description" content="Calculate wheat seed rates, livestock silage feed requirements, and check the Rabi/Kharif sowing calendars for Pakistan.">
+  
+  <!-- Bootstrap & Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+  
+  <!-- Custom Styles -->
+  <link href="css/index.css?v=f43db6fe" rel="stylesheet">
+</head>
+<body>
+
+  <!-- Announcement Banner -->
+  <div id="fomo-announcement-banner">
+    <div class="container text-center py-2 text-white fw-bold">
+      <span>📦 50% Advance 50% After Delivery available all over Pakistan!</span>
+    </div>
+  </div>
+
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg bg-forest sticky-top shadow-sm py-2">
+    <div class="container">
+      <a class="navbar-brand d-flex align-items-center" href="index.html">
+        <img src="catalog/arbfarms-logo.svg" alt="ARB Farms Logo" class="me-2">
+        <span class="font-primary text-white fs-4 tracking-wide">ARB FARMS</span>
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar" aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
+        <div class="arb-hamburger" aria-hidden="true">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+      </button>
+      
+      <div class="collapse navbar-collapse" id="mainNavbar">
+        <ul class="navbar-nav mx-auto mb-2 mb-lg-0 gap-lg-3">
+          <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+          <li class="nav-item"><a class="nav-link" href="shop.html">Shop Catalog</a></li>
+          <li class="nav-item"><a class="nav-link" href="about.html">About Us</a></li>
+          <li class="nav-item"><a class="nav-link active" href="calculator.html">Sowing Tools</a></li>
+          <li class="nav-item"><a class="nav-link" href="contact.html">Contact Us</a></li>
+        </ul>
+        
+        <div class="d-flex align-items-center gap-3">
+          <button id="search-trigger" aria-label="Search products" title="Search"><i class="bi bi-search"></i></button>
+          <a href="account.html" class="text-white fs-5" aria-label="My Account" title="My Account"><i class="bi bi-person"></i></a>
+          <a href="compare.html" class="text-white fs-5" aria-label="Compare Seeds" title="Compare Seeds"><i class="bi bi-arrow-left-right"></i></a>
+          <a href="wishlist.html" class="position-relative text-white fs-5" aria-label="View Wishlist">
+            <i class="bi bi-heart"></i>
+            <span id="wishlist-count" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size: 0.65rem;">0</span>
+          </a>
+          <a href="cart.html" class="position-relative text-white fs-5" aria-label="View Cart">
+            <i class="bi bi-cart3"></i>
+            <span id="cart-count" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-warning text-dark" style="font-size: 0.65rem;">0</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Header -->
+  <header class="py-5 text-center text-md-start" style="background-color: #ede1ca;">
+    <div class="container">
+      <div class="row align-items-center">
+        <div class="col-md-8">
+          <span class="badge bg-primary text-uppercase mb-2">Smart Farming Portal</span>
+          <h1 class="font-primary text-primary mb-2">Sowing Calculators &amp; Crop Calendars</h1>
+          <p class="text-muted mb-0 font-accent lead">Determine seed ratios, estimate silage feeds, and review optimal agricultural sowing windows.</p>
+        </div>
+        <div class="col-md-4 text-md-end mt-3 mt-md-0">
+          <a href="shop.html" class="btn btn-primary"><i class="bi bi-bag-fill me-1"></i> Order Sowing Seeds</a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Interactive Area -->
+  <main class="container py-5">
+    <div class="row">
+      <!-- Left sidebar selector tabs -->
+      <div class="col-lg-3 mb-4">
+        <div class="card border-0 shadow-sm p-3 bg-white rounded-3">
+          <div class="nav flex-column nav-pills gap-2" id="calc-tabs" role="tablist">
+            <button class="nav-link active text-start py-3 px-3 d-flex align-items-center gap-2" id="seed-tab" data-bs-toggle="pill" data-bs-target="#seed-pane" type="button" role="tab">
+              <i class="bi bi-tree-fill text-gold fs-5"></i>
+              <span>Seed Rate Calculator</span>
+            </button>
+            <button class="nav-link text-start py-3 px-3 d-flex align-items-center gap-2" id="silage-tab" data-bs-toggle="pill" data-bs-target="#silage-pane" type="button" role="tab">
+              <i class="bi bi-egg-fill text-gold fs-5"></i>
+              <span>Silage &amp; Feed Estimator</span>
+            </button>
+            <button class="nav-link text-start py-3 px-3 d-flex align-items-center gap-2" id="calendar-tab" data-bs-toggle="pill" data-bs-target="#calendar-pane" type="button" role="tab">
+              <i class="bi bi-calendar-event-fill text-gold fs-5"></i>
+              <span>Seasonal Sowing Advisor</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right dynamic display panel -->
+      <div class="col-lg-9">
+        <div class="tab-content" id="calc-tabContent">
+          
+          <!-- 1. Seed Rate Calculator Pane -->
+          <div class="tab-pane fade show active" id="seed-pane" role="tabpanel">
+            <div class="card border-0 shadow-sm p-4 bg-white rounded-3">
+              <h2 class="h4 font-primary text-primary border-bottom pb-3 mb-4"><i class="bi bi-sliders text-secondary me-2"></i> Seed Rate Calculator</h2>
+              
+              <div class="row g-4">
+                <div class="col-md-6">
+                  <form id="seed-rate-form">
+                    <div class="mb-3">
+                      <label for="crop-type" class="form-label fw-bold">Select Crop Target</label>
+                      <select class="form-select" id="crop-type" required>
+                        <option value="wheat" selected>Wheat (Gandum / Sowing Seeds)</option>
+                        <option value="maize">Maize (Makkai / Fodder)</option>
+                        <option value="sorghum">Sorghum (Jowar / Feed)</option>
+                        <option value="alfalfa">Alfalfa (Lucerne / Clover)</option>
+                        <option value="mustard">Mustard (Sarson / Oilseed)</option>
+                      </select>
+                    </div>
+
+                    <div class="mb-3">
+                      <label for="land-size" class="form-label fw-bold">Land Area Size</label>
+                      <div class="input-group">
+                        <input type="number" class="form-control" id="land-size" value="1" min="0.1" step="0.1" required>
+                        <select class="form-select" id="land-unit" style="max-width: 120px;">
+                          <option value="acre" selected>Acres</option>
+                          <option value="kanal">Kanals</option>
+                        </select>
+                      </div>
+                      <div class="form-text">Note: 1 Acre represents 8 Kanals in standard Punjab land units.</div>
+                    </div>
+
+                    <div class="mb-3">
+                      <label for="sowing-method" class="form-label fw-bold">Sowing Method</label>
+                      <select class="form-select" id="sowing-method">
+                        <option value="drilling" selected>Drilling Machine (Recommended - Saves Seed)</option>
+                        <option value="broadcasting">Broadcasting / Chattha (Requires more seed)</option>
+                        <option value="dibbling">Dibbling / Hand Sowing (Optimal spacing)</option>
+                      </select>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary w-100 py-2">Calculate Seed Requirements</button>
+                  </form>
+                </div>
+
+                <div class="col-md-6">
+                  <div class="p-4 rounded-3 h-100 d-flex flex-column justify-content-between" style="background-color: var(--color-accent-light); border: 1px solid var(--color-border);">
+                    <div>
+                      <h3 class="h6 text-uppercase fw-bold text-muted mb-2">Calculation Results</h3>
+                      <div class="mb-3">
+                        <span class="small text-muted d-block">Recommended Seed Weight:</span>
+                        <strong class="h2 text-primary" id="result-seed-weight">50 kg</strong>
+                      </div>
+                      
+                      <div class="mb-3">
+                        <span class="small text-muted d-block">Expected Germination Count (approx):</span>
+                        <strong class="fs-5 text-dark" id="result-germ-count">~ 1,500,000 plants</strong>
+                      </div>
+
+                      <div class="mb-3">
+                        <span class="small text-muted d-block">First Watering Advice:</span>
+                        <span class="text-dark d-block fw-semibold" id="result-watering">First irrigation 20-22 days after sowing (Kor watering).</span>
+                      </div>
+                      
+                      <div class="mb-3">
+                        <span class="small text-muted d-block">Organic Soil &amp; Nutrient Advice:</span>
+                        <span class="text-dark small d-block font-accent" id="result-fertilizer">Incorporate 8-10 tons/acre of well-rotted cattle manure (FYM) or compost 1 month before sowing. Apply organic bio-fertilizers with first water.</span>
+                      </div>
+                    </div>
+
+                    <a href="shop.html?category=edible-seeds" class="btn btn-secondary btn-sm mt-3 w-100 text-uppercase"><i class="bi bi-cart3"></i> Order Organic Wheat</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 2. Silage & Feed Intake Estimator Pane -->
+          <div class="tab-pane fade" id="silage-pane" role="tabpanel">
+            <div class="card border-0 shadow-sm p-4 bg-white rounded-3">
+              <h2 class="h4 font-primary text-primary border-bottom pb-3 mb-4"><i class="bi bi-calculator text-secondary me-2"></i> Silage &amp; Feed Estimator</h2>
+              
+              <div class="row g-4">
+                <div class="col-md-6">
+                  <form id="silage-estimator-form">
+                    <div class="mb-3">
+                      <label for="livestock-count" class="form-label fw-bold">Number of Cattle / Livestock</label>
+                      <input type="number" class="form-control" id="livestock-count" value="10" min="1" required>
+                    </div>
+
+                    <div class="mb-3">
+                      <label for="livestock-type" class="form-label fw-bold">Animal Classification</label>
+                      <select class="form-select" id="livestock-type" required>
+                        <option value="milking" selected>Lactating Cows / Buffaloes (High consumption)</option>
+                        <option value="dry">Dry Cattle (Medium consumption)</option>
+                        <option value="calves">Heifers &amp; Calves (Low consumption)</option>
+                      </select>
+                    </div>
+
+                    <div class="mb-3">
+                      <label for="feeding-days" class="form-label fw-bold">Feeding Period (Days)</label>
+                      <input type="number" class="form-control" id="feeding-days" value="30" min="1" max="365" required>
+                      <div class="form-text">Common planning windows: 30 days (short-term), 90 days (quarterly), 180 days (winter/dry reserve).</div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary w-100 py-2">Calculate Silage Feed</button>
+                  </form>
+                </div>
+
+                <div class="col-md-6">
+                  <div class="p-4 rounded-3 h-100 d-flex flex-column justify-content-between" style="background-color: var(--color-accent-light); border: 1px solid var(--color-border);">
+                    <div>
+                      <h3 class="h6 text-uppercase fw-bold text-muted mb-2">Feed Estimates</h3>
+                      <div class="mb-3">
+                        <span class="small text-muted d-block">Total Wet Silage Needed:</span>
+                        <strong class="h2 text-primary" id="result-silage-weight">5,400 kg</strong>
+                      </div>
+                      
+                      <div class="mb-3">
+                        <span class="small text-muted d-block">Equivalent in Maunds (40 Kg):</span>
+                        <strong class="fs-5 text-dark" id="result-silage-maunds">135 Maunds</strong>
+                      </div>
+
+                      <div class="mb-3">
+                        <span class="small text-muted d-block">Required Bales (Standard 40 kg):</span>
+                        <strong class="fs-5 text-success" id="result-silage-bales">135 Bales</strong>
+                      </div>
+
+                      <div class="mb-3 text-muted small p-2 border rounded bg-white font-accent">
+                        <i class="bi bi-info-circle-fill text-primary"></i> Standard milking cattle eat 15kg to 18kg of wet corn silage daily. Corn silage contains high dry matter content, increasing dairy yield.
+                      </div>
+                    </div>
+
+                    <a href="shop.html?category=feed-agri" class="btn btn-secondary btn-sm mt-3 w-100 text-uppercase"><i class="bi bi-truck"></i> Check silage stock</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 3. Seasonal Sowing Advisor Pane -->
+          <div class="tab-pane fade" id="calendar-pane" role="tabpanel">
+            <div class="card border-0 shadow-sm p-4 bg-white rounded-3">
+              <h2 class="h4 font-primary text-primary border-bottom pb-3 mb-4"><i class="bi bi-calendar-check text-secondary me-2"></i> Seasonal Sowing Advisor</h2>
+              <p class="text-muted small">Select a month below to view recommended crops and sowing guidelines for Punjab agricultural zones.</p>
+
+              <!-- Months Selector Grid -->
+              <div class="row g-2 mb-4">
+                <div class="col-4 col-sm-3 col-md-2"><button class="btn calendar-month-btn w-100 active" data-month="10">Oct</button></div>
+                <div class="col-4 col-sm-3 col-md-2"><button class="btn calendar-month-btn w-100" data-month="11">Nov</button></div>
+                <div class="col-4 col-sm-3 col-md-2"><button class="btn calendar-month-btn w-100" data-month="12">Dec</button></div>
+                <div class="col-4 col-sm-3 col-md-2"><button class="btn calendar-month-btn w-100" data-month="1">Jan</button></div>
+                <div class="col-4 col-sm-3 col-md-2"><button class="btn calendar-month-btn w-100" data-month="2">Feb</button></div>
+                <div class="col-4 col-sm-3 col-md-2"><button class="btn calendar-month-btn w-100" data-month="3">Mar</button></div>
+                <div class="col-4 col-sm-3 col-md-2"><button class="btn calendar-month-btn w-100" data-month="4">Apr</button></div>
+                <div class="col-4 col-sm-3 col-md-2"><button class="btn calendar-month-btn w-100" data-month="5">May</button></div>
+                <div class="col-4 col-sm-3 col-md-2"><button class="btn calendar-month-btn w-100" data-month="6">Jun</button></div>
+                <div class="col-4 col-sm-3 col-md-2"><button class="btn calendar-month-btn w-100" data-month="7">Jul</button></div>
+                <div class="col-4 col-sm-3 col-md-2"><button class="btn calendar-month-btn w-100" data-month="8">Aug</button></div>
+                <div class="col-4 col-sm-3 col-md-2"><button class="btn calendar-month-btn w-100" data-month="9">Sep</button></div>
+              </div>
+
+              <!-- Calendar Results Container -->
+              <div id="calendar-results" class="row g-3">
+                <!-- Loaded dynamically via JavaScript -->
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="py-5 bg-forest text-white" style="border-top: 5px solid var(--color-secondary);">
+    <div class="container">
+      <div class="row g-4 mb-5">
+        <div class="col-lg-4">
+          <h4 class="h5 text-gold mb-3">ARB Farms &amp; Organics</h4>
+          <p class="small text-white-50">Providing organic dietary staples and high-nutrition livestock forage directly from our off-grid farm in Multan, Pakistan.</p>
+          <p class="small text-white-50"><i class="bi bi-geo-alt-fill text-gold me-2"></i> Street 1, Fatima Avenue, Opp. Fatima Masjid, Near Prime Mart. MPS Road, Multan, Punjab, Pakistan</p>
+          <p class="small text-white-50"><i class="bi bi-telephone-fill text-gold me-2"></i> +92 320 000 5367</p>
+        </div>
+        
+        <div class="col-md-4 col-lg-3 offset-lg-1">
+          <h4 class="h5 text-gold mb-3">Product Catalogs</h4>
+          <ul class="list-unstyled small d-flex flex-column gap-2">
+            <li><a href="shop.html?category=edible-seeds" class="text-white-50 text-decoration-none">Superfood &amp; Edible Seeds</a></li>
+            <li><a href="shop.html?category=dairy-organic" class="text-white-50 text-decoration-none">Desi Ghee &amp; Raw Honey</a></li>
+            <li><a href="shop.html?category=feed-agri" class="text-white-50 text-decoration-none">Livestock Silage &amp; Baled Fodder</a></li>
+          </ul>
+        </div>
+        
+        <div class="col-md-4 col-lg-2">
+          <h4 class="h5 text-gold mb-3">Customer Service</h4>
+          <ul class="list-unstyled small d-flex flex-column gap-2">
+            <li><a href="about.html" class="text-white-50 text-decoration-none">About Us</a></li>
+            <li><a href="contact.html" class="text-white-50 text-decoration-none">Contact Us</a></li>
+            <li><a href="legal/shipping-policy.html" class="text-white-50 text-decoration-none">Shipping Tiers &amp; Rules</a></li>
+            <li><a href="legal/refund-policy.html" class="text-white-50 text-decoration-none">Return Policy</a></li>
+            <li><a href="legal/terms-conditions.html" class="text-white-50 text-decoration-none">Terms of Service</a></li>
+            <li><a href="legal/privacy-policy.html" class="text-white-50 text-decoration-none">Privacy Policy</a></li>
+          </ul>
+        </div>
+        
+        <div class="col-md-4 col-lg-2">
+          <h4 class="h5 text-gold mb-3">Follow Our Farm</h4>
+          <div class="d-flex gap-3 fs-5">
+            <a href="https://www.tiktok.com/@arborganics" class="text-white-50"><i class="bi bi-tiktok"></i></a>
+            <a href="https://www.instagram.com/arb.organicsouq/" class="text-white-50"><i class="bi bi-instagram"></i></a>
+            <a href="https://www.facebook.com/ARBORGANIC" class="text-white-50"><i class="bi bi-facebook"></i></a>
+            <a href="https://wa.me/923200005367" class="text-white-50"><i class="bi bi-whatsapp"></i></a>
+          </div>
+        </div>
+      </div>
+      
+      <div class="border-top border-secondary pt-4 d-flex flex-wrap justify-content-between align-items-center gap-3">
+        <p class="small mb-0 text-white-50">&copy; 2026 ARB Farms Organics. All rights reserved.</p>
+        <div class="d-flex align-items-center gap-3">
+          <span class="small text-white-50">Accepted Methods:</span>
+          <span class="badge bg-secondary">50% Advance 50% After Delivery</span>
+          <span class="badge bg-secondary">EasyPaisa / JazzCash</span>
+          <span class="badge bg-secondary">Card Settlement</span>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="js/main.js?v=90f821b8"></script>
+  <script src="js/fomo.js?v=d687853f"></script>
+
+  <!-- Calculators Controllers Logic -->
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      // 1. Seed Rate Calculator
+      const seedForm = document.getElementById("seed-rate-form");
+      const resultSeedWeight = document.getElementById("result-seed-weight");
+      const resultGermCount = document.getElementById("result-germ-count");
+      const resultWatering = document.getElementById("result-watering");
+      const resultFertilizer = document.getElementById("result-fertilizer");
+
+      const seedBaseConfig = {
+        wheat: { baseKgPerAcre: 50, plants: 1500000, water: "First irrigation (Kor) 20-22 days after sowing; requires 4 total waterings.", fert: "Incorporate 8-10 tons/acre of well-rotted cattle manure (FYM) or compost 1 month before sowing. Treat seeds with organic bio-inoculants." },
+        maize: { baseKgPerAcre: 10, plants: 35000, water: "Keep soil moist; irrigate every 6-8 days in hot weather.", fert: "Mix poultry manure or organic biogas slurry (3-4 tons/acre) with soil. Green manure with Sesbania beforehand is highly recommended." },
+        sorghum: { baseKgPerAcre: 15, plants: 60000, water: "First irrigation 15 days after sowing; 3 total waterings required.", fert: "Mix 5-6 tons/acre of farmyard manure during field preparation. Spray liquid Jeevamrut during first watering." },
+        alfalfa: { baseKgPerAcre: 8, plants: 800000, water: "Sowing irrigation, followed by light weekly irrigation until established.", fert: "Apply composted goat manure or wood ash to enrich soil potassium. Treat seeds with Rhizobium culture before sowing." },
+        mustard: { baseKgPerAcre: 2.5, plants: 120000, water: "First watering 28 days after sowing; second at pod development.", fert: "Enrich land with mustard cake compost and vermicompost. Apply organic gypsum to soil to boost natural oil concentration." }
+      };
+
+      seedForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+        const crop = document.getElementById("crop-type").value;
+        const sizeInput = parseFloat(document.getElementById("land-size").value) || 0;
+        const unit = document.getElementById("land-unit").value;
+        const method = document.getElementById("sowing-method").value;
+
+        let sizeInAcres = sizeInput;
+        if (unit === "kanal") {
+          sizeInAcres = sizeInput / 8;
+        }
+
+        const config = seedBaseConfig[crop];
+        let requiredWeight = config.baseKgPerAcre * sizeInAcres;
+
+        // Apply method modifier
+        if (method === "broadcasting") {
+          requiredWeight *= 1.1; // 10% more seed needed
+        } else if (method === "drilling") {
+          requiredWeight *= 0.95; // 5% less seed needed
+        }
+
+        resultSeedWeight.textContent = `${requiredWeight.toFixed(1)} kg`;
+        resultGermCount.textContent = `~ ${(config.plants * sizeInAcres).toLocaleString()} plants`;
+        resultWatering.textContent = config.water;
+        resultFertilizer.textContent = config.fert;
+      });
+
+      // 2. Silage Estimator
+      const silageForm = document.getElementById("silage-estimator-form");
+      const resultSilageWeight = document.getElementById("result-silage-weight");
+      const resultSilageMaunds = document.getElementById("result-silage-maunds");
+      const resultSilageBales = document.getElementById("result-silage-bales");
+
+      const livestockConfig = {
+        milking: 18, // 18kg wet silage daily
+        dry: 12,     // 12kg daily
+        calves: 6    // 6kg daily
+      };
+
+      silageForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+        const count = parseInt(document.getElementById("livestock-count").value) || 0;
+        const type = document.getElementById("livestock-type").value;
+        const days = parseInt(document.getElementById("feeding-days").value) || 0;
+
+        const rate = livestockConfig[type];
+        const totalKg = count * rate * days;
+        const totalMaunds = totalKg / 40;
+        const totalBales = Math.ceil(totalKg / 40); // 40kg per standard bale
+
+        resultSilageWeight.textContent = `${totalKg.toLocaleString()} kg`;
+        resultSilageMaunds.textContent = `${totalMaunds.toLocaleString()} Maunds`;
+        resultSilageBales.textContent = `${totalBales.toLocaleString()} Bales (40 kg each)`;
+      });
+
+      // 3. Sowing Calendar Advisor
+      const monthButtons = document.querySelectorAll(".calendar-month-btn");
+      const calendarResults = document.getElementById("calendar-results");
+
+      const cropSowingDatabase = [
+        { name: "Wheat (Gandum)", months: [10, 11, 12], type: "Rabi", temp: "15-25°C", advice: "Ideal sowing window is November. Late sowing reduces yields by 1% per day.", icon: "bi-flower2" },
+        { name: "Berseem Clover (Fodder)", months: [9, 10, 11], type: "Rabi", temp: "20-30°C", advice: "High protein animal feed. Irrigate immediately after broadcasting.", icon: "bi-leaf" },
+        { name: "Mustard (Sarson)", months: [9, 10], type: "Rabi", temp: "20-28°C", advice: "Requires well-drained sandy loam soil. Watch out for aphid attacks in winter.", icon: "bi-sun-fill" },
+        { name: "Alfalfa (Lucerne)", months: [10, 11, 2, 3], type: "Rabi/Kharif", temp: "15-30°C", advice: "Perennial crop giving multiple cuts. Requires laser land leveling.", icon: "bi-tree" },
+        { name: "Maize (Makkai)", months: [2, 3, 7, 8], type: "Kharif/Spring", temp: "22-35°C", advice: "Spring crop sown in Feb-Mar; Summer crop sown in July-Aug. Heavy feeder.", icon: "bi-cone-striped" },
+        { name: "Sorghum (Jowar)", months: [4, 5, 6, 7], type: "Kharif", temp: "25-38°C", advice: "Drought resistant crop. Great for green baled fodder during dry months.", icon: "bi-tags-fill" },
+        { name: "Sesame (Til)", months: [6, 7], type: "Kharif", temp: "28-40°C", advice: "Sow in high temperatures. Extremely low water requirement.", icon: "bi-ticket-detailed" }
+      ];
+
+      function renderSowingCrops(monthNum) {
+        const monthInt = parseInt(monthNum);
+        const matchingCrops = cropSowingDatabase.filter(crop => crop.months.includes(monthInt));
+
+        if (matchingCrops.length === 0) {
+          calendarResults.innerHTML = `
+            <div class="col-12 text-center py-5">
+              <i class="bi bi-calendar-x fs-1 text-muted"></i>
+              <p class="mt-2 text-muted">No major sowing activities recommended for this month.</p>
+            </div>
+          `;
+          return;
+        }
+
+        calendarResults.innerHTML = matchingCrops.map(crop => {
+          const seasonBadge = crop.type === "Rabi" ? "bg-primary" : "bg-warning text-dark";
+          return `
+            <div class="col-md-6 col-lg-4">
+              <div class="calendar-card p-3 h-100">
+                <div class="d-flex align-items-center gap-2 mb-3">
+                  <div class="rounded-circle p-2 bg-success bg-opacity-10 text-success">
+                    <i class="bi ${crop.icon} fs-4"></i>
+                  </div>
+                  <div>
+                    <h4 class="h6 mb-0 font-primary">${crop.name}</h4>
+                    <span class="badge ${seasonBadge} mt-1" style="font-size:0.65rem;">${crop.type} Crop</span>
+                  </div>
+                </div>
+                <div class="small text-muted mb-2">
+                  <span class="d-block"><strong>Best Temperature:</strong> ${crop.temp}</span>
+                </div>
+                <p class="small text-dark mb-0 font-accent" style="font-size: 0.8rem;">
+                  <i class="bi bi-info-circle text-success me-1"></i> ${crop.advice}
+                </p>
+              </div>
+            </div>
+          `;
+        }).join("");
+      }
+
+      // Handle month selection clicks
+      monthButtons.forEach(btn => {
+        btn.addEventListener("click", () => {
+          monthButtons.forEach(b => b.classList.remove("active"));
+          btn.classList.add("active");
+          renderSowingCrops(btn.getAttribute("data-month"));
+        });
+      });
+
+      // Render default month (October - 10)
+      renderSowingCrops(10);
+    });
+  </script>
+</body>
+</html>

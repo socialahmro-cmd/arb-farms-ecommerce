@@ -1,0 +1,1325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Premium Product | ARB Farms Pakistan</title>
+  <meta name="description" content="Buy premium organic products from ARB Farms in Multan. Direct from our farm, 100% natural, nationwide shipping.">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+  <link href="../../css/index.css?v=f43db6fe" rel="stylesheet">
+  <style>
+    /* ── Detail Page Premium Styles ── */
+    .pdp-hero {
+      background: var(--color-bg-page);
+      padding: 2.5rem 0 3rem;
+    }
+
+    /* Image Panel */
+    .pdp-image-panel {
+      position: sticky;
+      top: 80px;
+    }
+    .pdp-image-wrap {
+      background: #fff;
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-md);
+      padding: 2rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .pdp-image-wrap::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at 30% 20%, rgba(54,87,51,0.05) 0%, transparent 65%);
+      pointer-events: none;
+    }
+    .pdp-img-container {
+      position: relative;
+      aspect-ratio: 1 / 1;
+      max-width: 380px;
+      margin: 0 auto;
+    }
+    .pdp-img-container img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      transition: opacity 0.45s cubic-bezier(0.4,0,0.2,1), transform 0.45s cubic-bezier(0.4,0,0.2,1);
+    }
+    .pdp-img-container img.pdp-img-hover { opacity: 0; }
+    .pdp-image-wrap:hover .pdp-img-container img.pdp-img-base { opacity: 0; transform: scale(1.03); }
+    .pdp-image-wrap:hover .pdp-img-container img.pdp-img-hover { opacity: 1; transform: scale(1.03); }
+    .pdp-image-hint {
+      text-align: center;
+      font-size: 0.78rem;
+      color: var(--color-text-muted);
+      margin-top: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.4rem;
+    }
+
+    /* Specs Panel */
+    .pdp-specs {
+      padding: 0.25rem 0;
+    }
+    .pdp-badge-row {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      margin-bottom: 0.85rem;
+    }
+    .pdp-badge {
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      padding: 0.35em 0.85em;
+      border-radius: 99px;
+      text-transform: uppercase;
+    }
+    .pdp-title {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 800;
+      font-size: clamp(1.5rem, 3.5vw, 2.2rem);
+      color: var(--color-text-dark);
+      line-height: 1.15;
+      margin-bottom: 0.6rem;
+    }
+    .pdp-rating {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+    .pdp-stars { color: #f5a623; font-size: 0.9rem; }
+    .pdp-rating-label { font-size: 0.8rem; color: var(--color-text-muted); font-weight: 600; }
+    .pdp-desc-short {
+      font-family: 'Lora', serif;
+      color: var(--color-text-muted);
+      font-size: 0.97rem;
+      line-height: 1.75;
+      margin-bottom: 1.25rem;
+    }
+
+    /* Meta Grid */
+    .pdp-meta-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.5rem;
+      background: var(--color-accent-light);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-md);
+      padding: 1rem 1.25rem;
+      margin-bottom: 1.5rem;
+    }
+    .pdp-meta-item label {
+      display: block;
+      font-size: 0.72rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--color-text-muted);
+      margin-bottom: 0.2rem;
+    }
+    .pdp-meta-item strong {
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--color-text-dark);
+    }
+
+    /* Pricing */
+    .pdp-price-block {
+      margin-bottom: 1.5rem;
+    }
+    .pdp-price-original {
+      text-decoration: line-through;
+      color: var(--color-text-muted);
+      font-size: 0.88rem;
+      display: block;
+      margin-bottom: 0.15rem;
+    }
+    .pdp-price-main {
+      font-family: 'Outfit', sans-serif;
+      font-size: clamp(2rem, 4vw, 2.8rem);
+      font-weight: 900;
+      color: var(--color-primary);
+      line-height: 1;
+    }
+    .pdp-price-save {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      background: #fff3cd;
+      color: #856404;
+      border: 1px solid #ffc107;
+      border-radius: 99px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      padding: 0.2em 0.75em;
+      margin-top: 0.4rem;
+    }
+
+    /* CTA Row */
+    .pdp-cta-row {
+      display: flex;
+      gap: 0.75rem;
+      align-items: stretch;
+      margin-bottom: 1.25rem;
+      flex-wrap: wrap;
+    }
+    .pdp-qty-wrap {
+      display: flex;
+      align-items: center;
+      border: 2px solid var(--color-border);
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+      background: #fff;
+      min-width: 110px;
+    }
+    .pdp-qty-btn {
+      background: none;
+      border: none;
+      width: 38px;
+      height: 48px;
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--color-primary);
+      cursor: pointer;
+      transition: background 0.2s;
+      flex-shrink: 0;
+    }
+    .pdp-qty-btn:hover { background: var(--color-accent-light); }
+    .pdp-qty-input {
+      border: none;
+      width: 44px;
+      text-align: center;
+      font-weight: 700;
+      font-family: 'Outfit', sans-serif;
+      font-size: 1rem;
+      color: var(--color-text-dark);
+      background: transparent;
+      outline: none;
+    }
+    .pdp-add-btn {
+      flex: 1;
+      min-width: 160px;
+      background: var(--color-primary);
+      color: #fff;
+      border: none;
+      border-radius: var(--radius-sm);
+      font-family: 'Outfit', sans-serif;
+      font-weight: 700;
+      font-size: 0.92rem;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      padding: 0.75rem 1.5rem;
+      cursor: pointer;
+      transition: var(--transition-smooth);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+    .pdp-add-btn:hover { background: var(--color-primary-hover); transform: translateY(-1px); box-shadow: 0 6px 20px rgba(54,87,51,0.25); }
+    .pdp-wishlist-btn {
+      width: 48px;
+      height: 48px;
+      border: 2px solid var(--color-border);
+      border-radius: var(--radius-sm);
+      background: #fff;
+      color: var(--color-text-muted);
+      cursor: pointer;
+      transition: var(--transition-smooth);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.15rem;
+      flex-shrink: 0;
+    }
+    .pdp-wishlist-btn:hover { border-color: #dc3545; color: #dc3545; background: #fff5f5; }
+    .pdp-wishlist-btn.active { border-color: #dc3545; color: #dc3545; }
+
+    /* Trust Badges */
+    .pdp-trust-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.6rem;
+      margin-bottom: 1rem;
+    }
+    .pdp-trust-item {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      background: var(--color-accent-light);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-sm);
+      padding: 0.6rem 0.8rem;
+      font-size: 0.8rem;
+    }
+    .pdp-trust-item i {
+      font-size: 1.1rem;
+      color: var(--color-primary);
+      flex-shrink: 0;
+    }
+    .pdp-trust-item span { color: var(--color-text-muted); font-weight: 500; line-height: 1.3; }
+
+
+    @media (max-width: 480px) {
+      .pdp-trust-row { grid-template-columns: 1fr; }
+      .pdp-cta-row {
+        display: grid !important;
+        grid-template-columns: 1fr 48px;
+        gap: 0.5rem !important;
+      }
+      .pdp-qty-wrap {
+        grid-column: 1 / -1;
+        width: 100%;
+        min-width: auto;
+        justify-content: space-between;
+      }
+      .pdp-qty-btn {
+        flex-grow: 1;
+        height: 40px;
+      }
+      .pdp-qty-input {
+        flex-grow: 2;
+      }
+      .pdp-add-btn {
+        grid-column: 1 / 2;
+        width: 100%;
+        height: 48px;
+      }
+      .pdp-wishlist-btn {
+        grid-column: 2 / 3;
+        width: 48px;
+        height: 48px;
+      }
+    }
+
+    /* Tabs */
+    .pdp-tabs-card {
+      background: #fff;
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-sm);
+      padding: 1.5rem;
+      margin-bottom: 3rem;
+    }
+    .pdp-nav-tabs {
+      display: flex;
+      gap: 0.25rem;
+      border-bottom: 2px solid var(--color-border);
+      margin-bottom: 1.5rem;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+    .pdp-nav-tabs::-webkit-scrollbar { display: none; }
+    .pdp-tab-btn {
+      background: none;
+      border: none;
+      border-bottom: 3px solid transparent;
+      margin-bottom: -2px;
+      padding: 0.6rem 1.1rem;
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: var(--color-text-muted);
+      cursor: pointer;
+      white-space: nowrap;
+      transition: color 0.2s, border-color 0.2s;
+    }
+    .pdp-tab-btn.active {
+      color: var(--color-primary);
+      border-bottom-color: var(--color-primary);
+    }
+    .pdp-tab-btn:hover:not(.active) { color: var(--color-text-dark); }
+    .pdp-tab-pane { display: none; }
+    .pdp-tab-pane.active { display: block; }
+
+    /* Description tab */
+    .pdp-desc-para { color: var(--color-text-muted); line-height: 1.8; margin-bottom: 0.85rem; font-size: 0.95rem; }
+    .pdp-desc-para:last-child { margin-bottom: 0; }
+
+    /* Specs table */
+    .pdp-spec-table { width: 100%; border-collapse: collapse; max-width: 480px; }
+    .pdp-spec-table tr { border-bottom: 1px solid var(--color-border); }
+    .pdp-spec-table tr:last-child { border-bottom: none; }
+    .pdp-spec-table td { padding: 0.7rem 0.5rem; font-size: 0.9rem; }
+    .pdp-spec-table td:first-child { color: var(--color-text-muted); font-weight: 600; width: 55%; }
+    .pdp-spec-table td:last-child { color: var(--color-text-dark); font-weight: 500; }
+
+    /* Reviews */
+    .pdp-review-item {
+      padding: 1rem 0;
+      border-bottom: 1px solid var(--color-border);
+      display: flex;
+      gap: 0.85rem;
+    }
+    .pdp-review-item:last-child { border-bottom: none; padding-bottom: 0; }
+    .pdp-review-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: var(--color-primary);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 0.88rem;
+      flex-shrink: 0;
+      font-family: 'Outfit', sans-serif;
+    }
+    .pdp-review-body { flex: 1; }
+    .pdp-review-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 0.25rem;
+      flex-wrap: wrap;
+      gap: 0.3rem;
+    }
+    .pdp-reviewer { font-weight: 700; font-size: 0.9rem; color: var(--color-text-dark); }
+    .pdp-review-date { font-size: 0.75rem; color: var(--color-text-muted); }
+    .pdp-review-stars { color: #f5a623; font-size: 0.82rem; }
+    .pdp-review-text { font-size: 0.88rem; color: var(--color-text-muted); line-height: 1.65; margin:0; }
+    .pdp-review-verified { font-size: 0.72rem; color: #2e7d32; font-weight: 600; }
+
+    /* Rating Summary Bar */
+    .pdp-rating-summary {
+      display: flex;
+      gap: 1.5rem;
+      align-items: center;
+      background: var(--color-accent-light);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-md);
+      padding: 1.25rem 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+    .pdp-rating-big {
+      text-align: center;
+      flex-shrink: 0;
+    }
+    .pdp-rating-big .score {
+      font-family: 'Outfit', sans-serif;
+      font-size: 3rem;
+      font-weight: 900;
+      color: var(--color-primary);
+      line-height: 1;
+    }
+    .pdp-rating-big .out-of { font-size: 0.78rem; color: var(--color-text-muted); }
+    .pdp-rating-bars { flex: 1; }
+    .pdp-bar-row {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 0.3rem;
+      font-size: 0.78rem;
+    }
+    .pdp-bar-label { width: 28px; color: var(--color-text-muted); font-weight: 600; }
+    .pdp-bar-track {
+      flex: 1;
+      height: 7px;
+      background: #e0e0e0;
+      border-radius: 99px;
+      overflow: hidden;
+    }
+    .pdp-bar-fill {
+      height: 100%;
+      background: #f5a623;
+      border-radius: 99px;
+      transition: width 0.6s ease;
+    }
+    .pdp-bar-count { width: 22px; color: var(--color-text-muted); text-align: right; }
+
+    /* Write Review Form */
+    .pdp-review-form-card {
+      background: #f9fafb;
+      border: 1.5px dashed var(--color-border);
+      border-radius: var(--radius-md);
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+    .pdp-review-form-card h4 {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 700;
+      font-size: 1rem;
+      color: var(--color-text-dark);
+      margin-bottom: 1rem;
+    }
+    .pdp-star-input {
+      display: flex;
+      gap: 0.25rem;
+      margin-bottom: 1rem;
+    }
+    .pdp-star-input i {
+      font-size: 1.6rem;
+      color: #e0e0e0;
+      cursor: pointer;
+      transition: color 0.15s, transform 0.15s;
+    }
+    .pdp-star-input i.selected,
+    .pdp-star-input i.hover { color: #f5a623; transform: scale(1.15); }
+    .pdp-review-submit {
+      background: var(--color-primary);
+      color: #fff;
+      border: none;
+      border-radius: var(--radius-sm);
+      font-family: 'Outfit', sans-serif;
+      font-weight: 700;
+      font-size: 0.88rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      padding: 0.65rem 1.5rem;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.15s;
+    }
+    .pdp-review-submit:hover { background: var(--color-primary-hover); transform: translateY(-1px); }
+    .pdp-review-success {
+      display: none;
+      background: #e8f5e9;
+      border: 1px solid #a5d6a7;
+      border-radius: var(--radius-sm);
+      color: #2e7d32;
+      padding: 0.75rem 1rem;
+      font-size: 0.88rem;
+      font-weight: 600;
+      margin-top: 0.75rem;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    /* Related Products */
+    .pdp-related-section { margin-bottom: 4rem; }
+    .pdp-related-title {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 800;
+      font-size: 1.4rem;
+      color: var(--color-text-dark);
+      text-align: center;
+      margin-bottom: 1.75rem;
+      position: relative;
+    }
+    .pdp-related-title::after {
+      content: '';
+      display: block;
+      width: 48px;
+      height: 3px;
+      background: var(--color-secondary);
+      border-radius: 99px;
+      margin: 0.6rem auto 0;
+    }
+
+    /* Breadcrumb */
+    .pdp-breadcrumb {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      flex-wrap: wrap;
+      font-size: 0.82rem;
+      margin-bottom: 1.5rem;
+      color: var(--color-text-muted);
+    }
+    .pdp-breadcrumb a { color: var(--color-primary); text-decoration: none; font-weight: 500; }
+    .pdp-breadcrumb a:hover { text-decoration: underline; }
+    .pdp-breadcrumb .sep { color: var(--color-border); }
+    .pdp-breadcrumb .current { color: var(--color-text-dark); font-weight: 600; }
+
+    /* Section divider */
+    .pdp-divider {
+      border: none;
+      border-top: 1.5px solid var(--color-border);
+      margin: 2rem 0;
+    }
+
+    /* Mobile sticky CTA */
+    .pdp-mobile-cta {
+      display: none;
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: #fff;
+      border-top: 1px solid var(--color-border);
+      padding: 0.75rem 1rem;
+      z-index: 500;
+      gap: 0.6rem;
+      box-shadow: 0 -4px 20px rgba(0,0,0,0.08);
+    }
+    @media (max-width: 767px) {
+      .pdp-mobile-cta { display: flex; }
+      .pdp-hero { padding-bottom: 5rem; }
+      .pdp-image-panel { position: relative; top: 0; }
+      #faq-assistant-trigger {
+        bottom: 75px !important;
+      }
+      #faq-assistant-card {
+        bottom: 145px !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Announcement Banner -->
+  <div id="fomo-announcement-banner">
+    <div class="container text-center py-2 text-white fw-bold">
+      <span>📦 50% Advance · 50% On Delivery — All Over Pakistan</span>
+    </div>
+  </div>
+
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg bg-forest sticky-top shadow-sm py-2">
+    <div class="container">
+      <a class="navbar-brand d-flex align-items-center" href="../../index.html">
+        <img src="../../catalog/arbfarms-logo.svg" alt="ARB Farms Logo" class="me-2">
+        <span class="font-primary text-white fs-4 tracking-wide">ARB FARMS</span>
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar" aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
+        <div class="arb-hamburger" aria-hidden="true"><span></span><span></span><span></span></div>
+      </button>
+      <div class="collapse navbar-collapse" id="mainNavbar">
+        <ul class="navbar-nav mx-auto mb-2 mb-lg-0 gap-lg-3">
+          <li class="nav-item"><a class="nav-link" href="../../index.html">Home</a></li>
+          <li class="nav-item"><a class="nav-link active" href="../../shop.html">Shop Catalog</a></li>
+          <li class="nav-item"><a class="nav-link" href="../../about.html">About Us</a></li>
+          <li class="nav-item"><a class="nav-link" href="../../calculator.html">Sowing Tools</a></li>
+          <li class="nav-item"><a class="nav-link" href="../../contact.html">Contact Us</a></li>
+        </ul>
+        <div class="d-flex align-items-center gap-3">
+          <button id="search-trigger" aria-label="Search products" title="Search"><i class="bi bi-search"></i></button>
+          <a href="../../account.html" class="text-white fs-5" aria-label="My Account"><i class="bi bi-person"></i></a>
+          <a href="../../wishlist.html" class="position-relative text-white fs-5" aria-label="Wishlist">
+            <i class="bi bi-heart"></i>
+            <span id="wishlist-count" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size:.65rem">0</span>
+          </a>
+          <a href="../../cart.html" class="position-relative text-white fs-5" aria-label="Cart">
+            <i class="bi bi-cart3"></i>
+            <span id="cart-count" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-warning text-dark" style="font-size:.65rem">0</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- PRODUCT DETAIL PAGE (shown after JS populates) -->
+  <section class="pdp-hero" id="product-detail-container" style="display:none">
+    <div class="container">
+
+      <!-- Breadcrumb -->
+      <nav class="pdp-breadcrumb" aria-label="Breadcrumb">
+        <a href="../../index.html"><i class="bi bi-house-fill me-1"></i>Home</a>
+        <span class="sep">/</span>
+        <a href="../../shop.html">Shop</a>
+        <span class="sep">/</span>
+        <a href="../../shop.html" id="breadcrumb-category-link">Category</a>
+        <span class="sep">/</span>
+        <span class="current" id="breadcrumb-product">Product</span>
+      </nav>
+
+      <div class="row g-4 g-xl-5 align-items-start">
+        <!-- ── LEFT: Image Panel ── -->
+        <div class="col-md-5 col-lg-5">
+          <div class="pdp-image-panel">
+            <div class="pdp-image-wrap">
+              <div class="pdp-img-container">
+                <img id="detail-image-base" src="" class="pdp-img-base" alt="Product Benefits">
+                <img id="detail-image-hover" src="" class="pdp-img-hover" alt="Product Front View">
+              </div>
+              <p class="pdp-image-hint">
+                <i class="bi bi-hand-index-thumb"></i>
+                Hover to reveal product packaging &amp; front view
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── RIGHT: Specs Panel ── -->
+        <div class="col-md-7 col-lg-7">
+          <div class="pdp-specs">
+            <!-- Badges -->
+            <div class="pdp-badge-row">
+              <span class="pdp-badge bg-success text-white" id="detail-badge">100% Organic</span>
+              <span class="pdp-badge" style="background:#e8f5e9;color:#2e7d32;" id="detail-stock-badge">
+                <i class="bi bi-check-circle-fill me-1"></i>In Stock
+              </span>
+            </div>
+
+            <!-- Title -->
+            <h1 class="pdp-title" id="detail-title">ARB Premium Product</h1>
+
+            <!-- Rating -->
+            <div class="pdp-rating">
+              <div class="pdp-stars" id="detail-stars">
+                <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-half"></i>
+              </div>
+              <span class="pdp-rating-label" id="detail-rating-text">4.8 · 24 reviews</span>
+            </div>
+
+            <!-- Short Description -->
+            <p class="pdp-desc-short" id="detail-desc-short">Loading...</p>
+
+            <hr class="pdp-divider">
+
+            <!-- Meta: SKU / Weight -->
+            <div class="pdp-meta-grid">
+              <div class="pdp-meta-item">
+                <label>SKU Code</label>
+                <strong id="detail-sku">OGN-XXX</strong>
+              </div>
+              <div class="pdp-meta-item">
+                <label>Pack Weight</label>
+                <strong id="detail-weight">—</strong>
+              </div>
+              <div class="pdp-meta-item">
+                <label>Category</label>
+                <strong id="detail-category">—</strong>
+              </div>
+              <div class="pdp-meta-item">
+                <label>Origin</label>
+                <strong>Multan, Pakistan</strong>
+              </div>
+            </div>
+
+            <!-- Product Variations Selector -->
+            <div id="pdp-variation-container" class="mb-3"></div>
+
+            <!-- Pricing -->
+            <div class="pdp-price-block">
+              <div class="text-muted" style="font-size:0.82rem;margin-bottom:0.15rem;">Regular Price: <span class="text-decoration-line-through" id="detail-regular-price">Rs. 0</span></div>
+              <div class="d-flex align-items-center gap-2 flex-wrap">
+                <span class="pdp-price-main" id="detail-price">Rs. 0</span>
+                <span class="pdp-price-save" id="detail-discount-badge"><i class="bi bi-tag-fill"></i> Save Rs. 0</span>
+              </div>
+            </div>
+
+            <!-- CTA Row -->
+            <div class="pdp-cta-row">
+              <div class="pdp-qty-wrap">
+                <button class="pdp-qty-btn" id="qty-minus" aria-label="Decrease quantity">−</button>
+                <input type="text" class="pdp-qty-input" id="product-qty" value="1" readonly aria-label="Quantity">
+                <button class="pdp-qty-btn" id="qty-plus" aria-label="Increase quantity">+</button>
+              </div>
+              <button class="pdp-add-btn" id="add-to-cart-action">
+                <i class="bi bi-cart-plus"></i> Add to Cart
+              </button>
+              <button class="pdp-wishlist-btn" id="wishlist-toggle-action" title="Save to Wishlist" aria-label="Add to Wishlist">
+                <i class="bi bi-heart"></i>
+              </button>
+            </div>
+
+            <!-- Trust Badges -->
+            <div class="pdp-trust-row">
+              <div class="pdp-trust-item">
+                <i class="bi bi-truck"></i>
+                <span>Nationwide via Leopards / TCS</span>
+              </div>
+              <div class="pdp-trust-item">
+                <i class="bi bi-cash-coin"></i>
+                <span>50% Advance · 50% On Delivery</span>
+              </div>
+              <div class="pdp-trust-item">
+                <i class="bi bi-shield-check"></i>
+                <span>100% Purity Guaranteed</span>
+              </div>
+              <div class="pdp-trust-item">
+                <i class="bi bi-patch-check"></i>
+                <span>Direct from ARB Farm, Multan</span>
+              </div>
+            </div>
+
+            <!-- WhatsApp Order CTA -->
+            <a href="https://wa.me/923200005367" target="_blank" rel="noopener" class="d-flex align-items-center gap-2 justify-content-center text-decoration-none mt-2 py-2 px-3 rounded-2 fw-bold" style="background:#25d366;color:#fff;font-size:0.88rem;font-family:'Outfit',sans-serif;">
+              <i class="bi bi-whatsapp fs-5"></i> Order via WhatsApp &nbsp;·&nbsp; +92 320 000 5367
+            </a>
+          </div>
+        </div>
+      </div><!-- /row -->
+
+      <!-- ── TABS ── -->
+      <div class="pdp-tabs-card mt-4">
+        <div class="pdp-nav-tabs" role="tablist">
+          <button class="pdp-tab-btn active" data-tab="desc" role="tab">Description</button>
+          <button class="pdp-tab-btn" data-tab="nutri" id="tabs-nutri-title" role="tab">Nutritional Info</button>
+          <button class="pdp-tab-btn" data-tab="reviews" id="tabs-reviews-title" role="tab">Reviews (24)</button>
+        </div>
+
+        <!-- Description -->
+        <div class="pdp-tab-pane active" id="pane-desc">
+          <h3 class="h6 font-primary text-dark mb-2" id="desc-long-title">From ARB Farms</h3>
+          <p class="pdp-desc-para" id="desc-long-text-1">Loading…</p>
+          <p class="pdp-desc-para" id="desc-long-text-2">Loading…</p>
+        </div>
+
+        <!-- Nutritional / Specs -->
+        <div class="pdp-tab-pane" id="pane-nutri">
+          <table class="pdp-spec-table" id="nutri-table" aria-label="Product specifications">
+            <tbody><!-- Injected --></tbody>
+          </table>
+        </div>
+
+        <!-- Reviews -->
+        <div class="pdp-tab-pane" id="pane-reviews">
+
+          <!-- Rating Summary -->
+          <div class="pdp-rating-summary" id="reviews-summary">
+            <div class="pdp-rating-big">
+              <div class="score" id="avg-score">4.8</div>
+              <div class="pdp-stars" style="color:#f5a623;font-size:0.85rem;margin:0.2rem 0;"><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-half"></i></div>
+              <div class="out-of" id="review-count-label">out of 5</div>
+            </div>
+            <div class="pdp-rating-bars" id="rating-bars">
+              <!-- Injected by JS -->
+            </div>
+          </div>
+
+          <!-- Write a Review Form -->
+          <div class="pdp-review-form-card">
+            <h4><i class="bi bi-pencil-square me-2 text-primary"></i>Write a Review</h4>
+            <div>
+              <label class="text-muted small fw-bold mb-1 d-block" style="font-size:0.78rem;text-transform:uppercase;">Your Rating</label>
+              <div class="pdp-star-input" id="star-input-row">
+                <i class="bi bi-star-fill" data-val="1"></i>
+                <i class="bi bi-star-fill" data-val="2"></i>
+                <i class="bi bi-star-fill" data-val="3"></i>
+                <i class="bi bi-star-fill" data-val="4"></i>
+                <i class="bi bi-star-fill" data-val="5"></i>
+              </div>
+              <div class="row g-2 mb-2">
+                <div class="col-sm-6">
+                  <input type="text" class="form-control form-control-sm" id="review-name" placeholder="Your name *" maxlength="50">
+                </div>
+                <div class="col-sm-6">
+                  <input type="text" class="form-control form-control-sm" id="review-city" placeholder="City (optional)" maxlength="30">
+                </div>
+              </div>
+              <textarea class="form-control form-control-sm mb-2" id="review-text" rows="3" placeholder="Share your experience with this product… *" maxlength="400"></textarea>
+              <button class="pdp-review-submit" id="submit-review-btn"><i class="bi bi-send me-1"></i>Submit Review</button>
+              <div class="pdp-review-success" id="review-success">
+                <i class="bi bi-check-circle-fill"></i> Thank you! Your review has been published.
+              </div>
+            </div>
+          </div>
+
+          <!-- Reviews List -->
+          <div id="reviews-list"><!-- Injected --></div>
+        </div>
+      </div>
+
+      <!-- ── RELATED PRODUCTS ── -->
+      <div class="pdp-related-section">
+        <h2 class="pdp-related-title">You May Also Like</h2>
+        <div class="row g-3 g-lg-4" id="related-products-row"><!-- Injected --></div>
+      </div>
+
+    </div><!-- /container -->
+  </section>
+
+  <!-- ── Mobile Sticky CTA ── -->
+  <div class="pdp-mobile-cta" id="mobile-sticky-cta" style="display:none">
+    <button class="btn btn-primary flex-grow-1 fw-bold" id="mobile-add-to-cart">
+      <i class="bi bi-cart-plus me-2"></i>Add to Cart
+    </button>
+    <button class="pdp-wishlist-btn" id="mobile-wishlist-btn" aria-label="Wishlist">
+      <i class="bi bi-heart"></i>
+    </button>
+  </div>
+
+  <!-- Error State -->
+  <section class="container py-5 text-center" id="product-error-container" style="display:none; min-height:60vh; flex-direction:column; align-items:center; justify-content:center">
+    <div style="max-width:420px; margin:auto">
+      <i class="bi bi-exclamation-triangle-fill text-warning" style="font-size:4rem"></i>
+      <h1 class="h3 font-primary mt-3 mb-2">Product Not Found</h1>
+      <p class="text-muted mb-4">This product does not exist in our catalog or the link may be incorrect.</p>
+      <a href="../../shop.html" class="btn btn-primary px-4"><i class="bi bi-arrow-left me-2"></i>Back to Shop</a>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="bg-forest text-white pt-5 pb-4 mt-auto">
+    <div class="container">
+      <div class="row g-4">
+        <div class="col-md-4">
+          <h4 class="h5 text-gold mb-3">ARB Farms &amp; Organics</h4>
+          <p class="small text-white-50">Organic dietary staples and high-germination sowing seeds from our farm in Multan, Pakistan.</p>
+          <p class="small text-white-50"><i class="bi bi-geo-alt-fill text-gold me-2"></i>Street 1, Fatima Avenue, Opp. Fatima Masjid, Near Prime Mart. MPS Road, Multan, Punjab</p>
+          <p class="small text-white-50"><i class="bi bi-telephone-fill text-gold me-2"></i>+92 320 000 5367</p>
+        </div>
+        <div class="col-md-4 col-lg-3 offset-lg-1">
+          <h4 class="h5 text-gold mb-3">Shop Categories</h4>
+          <ul class="list-unstyled small">
+            <li class="mb-2"><a href="../../shop.html#dairy-organic" class="text-white-50 text-decoration-none">Dairy &amp; Fresh Honey</a></li>
+            <li class="mb-2"><a href="../../shop.html#edible-seeds" class="text-white-50 text-decoration-none">Edible Seeds &amp; Herbs</a></li>
+            <li><a href="../../shop.html#feed-agri" class="text-white-50 text-decoration-none">Livestock Silage &amp; Feed</a></li>
+          </ul>
+        </div>
+        <div class="col-md-4 col-lg-2">
+          <h4 class="h5 text-gold mb-3">Follow Our Farm</h4>
+          <div class="d-flex gap-3 fs-5">
+            <a href="https://www.tiktok.com/@arborganics" class="text-white-50"><i class="bi bi-tiktok"></i></a>
+            <a href="https://www.instagram.com/arb.organicsouq/" class="text-white-50"><i class="bi bi-instagram"></i></a>
+            <a href="https://www.facebook.com/ARBORGANIC" class="text-white-50"><i class="bi bi-facebook"></i></a>
+            <a href="https://wa.me/923200005367" class="text-white-50"><i class="bi bi-whatsapp"></i></a>
+          </div>
+        </div>
+      </div>
+      <hr class="border-secondary my-4">
+      <div class="row align-items-center">
+        <div class="col-md-6 text-center text-md-start">
+          <p class="small text-white-50 mb-0">&copy; 2026 ARB Farms. Street 1, Fatima Avenue, Opp. Fatima Masjid, Near Prime Mart. MPS Road, Multan. All Rights Reserved.</p>
+        </div>
+        <div class="col-md-6 text-center text-md-end mt-2 mt-md-0">
+          <a href="../../legal/terms-conditions.html" class="text-white-50 text-decoration-none small me-3">Terms</a>
+          <a href="../../legal/privacy-policy.html" class="text-white-50 text-decoration-none small">Privacy Policy</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="../../js/products-db.js?v=801124bf"></script>
+  <script src="../../js/main.js?v=90f821b8"></script>
+  <script>
+  let activeProduct = null;
+  let refreshReviews = null;
+
+  document.addEventListener('DOMContentLoaded', () => {
+    // ── Tabs ──
+    document.querySelectorAll('.pdp-tab-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.pdp-tab-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.pdp-tab-pane').forEach(p => p.classList.remove('active'));
+        btn.classList.add('active');
+        document.getElementById('pane-' + btn.dataset.tab).classList.add('active');
+      });
+    });
+
+    // ── Load Product ──
+    const params = new URLSearchParams(window.location.search);
+    const productId = params.get('id');
+
+    if (!productId || typeof productsDb === 'undefined') { showError(); return; }
+    const product = productsDb.find(p => p.id === productId);
+    if (!product) { showError(); return; }
+
+    renderProduct(product);
+    renderRelated(product);
+
+    document.getElementById('product-detail-container').style.display = 'block';
+    document.getElementById('mobile-sticky-cta').style.display = 'flex';
+
+    // ── Qty controls ──
+    const qtyEl = document.getElementById('product-qty');
+    if (qtyEl) {
+      const btnMinus = document.getElementById('qty-minus');
+      const btnPlus = document.getElementById('qty-plus');
+      if (btnMinus) {
+        btnMinus.addEventListener('click', () => {
+          const v = parseInt(qtyEl.value) || 1; if (v > 1) qtyEl.value = v - 1;
+        });
+      }
+      if (btnPlus) {
+        btnPlus.addEventListener('click', () => {
+          qtyEl.value = (parseInt(qtyEl.value) || 1) + 1;
+        });
+      }
+    }
+
+    // ── Add to cart ──
+    const doAddCart = () => {
+      if (!activeProduct) return;
+      const qtyVal = qtyEl ? (parseInt(qtyEl.value) || 1) : 1;
+      if (typeof addToCart === 'function') {
+        addToCart({
+          id: activeProduct.id,
+          name: activeProduct.name,
+          price: activeProduct.price,
+          weight: activeProduct.weight,
+          image: activeProduct.image,
+          qty: qtyVal
+        });
+      }
+    };
+    const addCartBtn = document.getElementById('add-to-cart-action');
+    if (addCartBtn) addCartBtn.addEventListener('click', doAddCart);
+    const mobAddCartBtn = document.getElementById('mobile-add-to-cart');
+    if (mobAddCartBtn) mobAddCartBtn.addEventListener('click', doAddCart);
+
+    // ── Wishlist ──
+    const doWishlist = () => {
+      if (!activeProduct) return;
+      if (typeof toggleWishlist === 'function') {
+        toggleWishlist(activeProduct.id, activeProduct.name);
+      }
+    };
+    const wishlistToggle = document.getElementById('wishlist-toggle-action');
+    if (wishlistToggle) wishlistToggle.addEventListener('click', doWishlist);
+    const mobWishlistToggle = document.getElementById('mobile-wishlist-btn');
+    if (mobWishlistToggle) mobWishlistToggle.addEventListener('click', doWishlist);
+
+    // ── Interactive Star Input ──
+    let selectedRating = 0;
+    const starInputs = document.querySelectorAll('#star-input-row i');
+    starInputs.forEach(star => {
+      star.addEventListener('mouseenter', () => {
+        const val = parseInt(star.dataset.val);
+        starInputs.forEach(s => s.classList.toggle('hover', parseInt(s.dataset.val) <= val));
+      });
+      star.addEventListener('mouseleave', () => {
+        starInputs.forEach(s => s.classList.remove('hover'));
+      });
+      star.addEventListener('click', () => {
+        selectedRating = parseInt(star.dataset.val);
+        starInputs.forEach(s => s.classList.toggle('selected', parseInt(s.dataset.val) <= selectedRating));
+      });
+    });
+
+    // ── Submit Review ──
+    const submitReviewBtn = document.getElementById('submit-review-btn');
+    if (submitReviewBtn) {
+      submitReviewBtn.addEventListener('click', () => {
+        if (!activeProduct) return;
+        const name = document.getElementById('review-name').value.trim();
+        const city = document.getElementById('review-city').value.trim();
+        const text = document.getElementById('review-text').value.trim();
+        if (!name) { document.getElementById('review-name').focus(); return; }
+        if (!text) { document.getElementById('review-text').focus(); return; }
+        if (!selectedRating) { showToast('Please select a star rating first.', 'warning'); return; }
+        const now = new Date();
+        const dateStr = now.toLocaleDateString('en-GB', { day:'numeric', month:'short', year:'numeric' });
+        const newReview = { name, city, rating: selectedRating, text, date: dateStr, verified: false };
+        
+        const storageKey = `arb_reviews_${activeProduct.id}`;
+        const stored = JSON.parse(localStorage.getItem(storageKey)) || [];
+        stored.unshift(newReview);
+        localStorage.setItem(storageKey, JSON.stringify(stored));
+        
+        // Reset form
+        document.getElementById('review-name').value = '';
+        document.getElementById('review-city').value = '';
+        document.getElementById('review-text').value = '';
+        selectedRating = 0;
+        starInputs.forEach(s => s.classList.remove('selected', 'hover'));
+        document.getElementById('review-success').style.display = 'flex';
+        setTimeout(() => { document.getElementById('review-success').style.display = 'none'; }, 4000);
+        
+        if (typeof refreshReviews === 'function') refreshReviews();
+        
+        // Scroll to new review
+        document.getElementById('reviews-list').scrollIntoView({ behavior:'smooth', block:'start' });
+      });
+    }
+  });
+
+  function showError() {
+    document.getElementById('product-error-container').style.display = 'flex';
+  }
+
+  function renderProduct(p) {
+    activeProduct = p;
+    const reviewCount = Math.floor(Math.random() * 20) + 18;
+
+    // SEO
+    document.title = `${p.name} | ARB Farms Pakistan`;
+    const meta = document.querySelector('meta[name="description"]');
+    if (meta) meta.setAttribute('content', `Buy ${p.name.replace(/ (Small|Large|Medium|Bulk)$/i, '')} (${p.weight}) from ARB Farms in Multan. 100% organic, farm-direct. Nationwide delivery.`);
+
+    // JSON-LD
+    const schema = {
+      "@context":"https://schema.org/","@type":"Product",
+      "name":`ARB ${p.name}`,"image":[`https://arbfarms.com/${p.image}`],
+      "description": getProductDescription ? getProductDescription(p) : p.name,
+      "sku": p.sku || p.id.toUpperCase(),
+      "brand":{"@type":"Brand","name":"ARB Farms"},
+      "aggregateRating":{"@type":"AggregateRating","ratingValue":"4.8","reviewCount":reviewCount},
+      "offers":{"@type":"Offer","url":window.location.href,"priceCurrency":"PKR","price":p.price,
+        "availability":"https://schema.org/InStock","seller":{"@type":"Organization","name":"ARB Farms"}}
+    };
+    const s = document.createElement('script'); s.type='application/ld+json'; s.text=JSON.stringify(schema);
+    document.head.appendChild(s);
+
+    // Breadcrumb
+    const catLabel = typeof getCategoryLabel === 'function' ? getCategoryLabel(p.category) : p.category;
+    document.getElementById('breadcrumb-category-link').textContent = catLabel;
+    document.getElementById('breadcrumb-category-link').href = `../../shop.html#${p.category}`;
+    document.getElementById('breadcrumb-product').textContent = p.name;
+
+    // Badge & category
+    const badge = document.getElementById('detail-badge');
+    const catBadges = {
+      'dairy-organic': {text:'100% Pure & Fresh', cls:'bg-success text-white'},
+      'sowing-seeds':  {text:'High Germination', cls:'bg-primary text-white'},
+      'feed-agri':     {text:'High Nutritional Value', cls:'bg-warning text-dark'},
+      'edible-seeds':  {text:'Raw Superfood', cls:'bg-info text-dark'},
+    };
+    const cb = catBadges[p.category] || {text:'100% Organic', cls:'bg-success text-white'};
+    badge.textContent = cb.text; badge.className = `pdp-badge ${cb.cls}`;
+    document.getElementById('detail-category').textContent = catLabel;
+
+    // Title, rating
+    document.getElementById('detail-title').textContent = p.name.replace(/ (Small|Large|Medium|Bulk)$/i, '');
+    document.getElementById('detail-rating-text').textContent = `4.8 · ${reviewCount} reviews`;
+    document.getElementById('tabs-reviews-title').textContent = `Reviews (${reviewCount})`;
+
+    // Images
+    document.getElementById('detail-image-base').src = '../../' + p.hoverImage;
+    document.getElementById('detail-image-base').alt = `${p.name} benefits`;
+    document.getElementById('detail-image-hover').src = '../../' + p.image;
+    document.getElementById('detail-image-hover').alt = `${p.name} front view`;
+
+    // Short description
+    if (typeof getProductDescription === 'function') {
+      document.getElementById('detail-desc-short').textContent = getProductDescription(p);
+    } else {
+      document.getElementById('detail-desc-short').textContent = `Premium ${p.name} — sourced directly from ARB Farms, Multan.`;
+    }
+
+    // Meta
+    document.getElementById('detail-sku').textContent = p.sku || p.id.toUpperCase();
+    document.getElementById('detail-weight').textContent = p.weight;
+
+    // Render variations dropdown
+    const varContainer = document.getElementById('pdp-variation-container');
+    if (varContainer) {
+      const varGroup = window.productVariations && window.productVariations[p.id];
+      if (varGroup && varGroup.length > 1) {
+        const options = varGroup.map(vId => {
+          const vProd = window.productsDb.find(prod => prod.id === vId);
+          if (!vProd) return "";
+          const selected = vId === p.id ? "selected" : "";
+          return `<option value="${vProd.id}" ${selected}>${vProd.weight}</option>`;
+        }).join("");
+        
+        varContainer.innerHTML = `
+          <div class="mb-3">
+            <label class="small text-muted fw-bold mb-1 d-block" style="font-size:0.7rem;"><i class="bi bi-layers me-1"></i>Select Size:</label>
+            <select id="pdp-variation-selector" class="form-select form-select-sm" style="font-size:0.75rem; border-radius:6px; border-color:var(--color-border); padding: 0.25rem 2rem 0.25rem 0.5rem; max-width: 160px;">
+              ${options}
+            </select>
+          </div>
+        `;
+        
+        const selectEl = document.getElementById('pdp-variation-selector');
+        if (selectEl) {
+          selectEl.addEventListener('change', (e) => {
+            const nextId = e.target.value;
+            const nextProd = window.productsDb.find(prod => prod.id === nextId);
+            if (nextProd) {
+              // Update URL search parameter
+              const searchParams = new URLSearchParams(window.location.search);
+              searchParams.set('id', nextId);
+              window.history.replaceState({}, '', `${window.location.pathname}?${searchParams.toString()}`);
+              
+              // Re-render product
+              renderProduct(nextProd);
+            }
+          });
+        }
+      } else {
+        varContainer.innerHTML = '';
+      }
+    }
+
+    // Pricing
+    const base = p.price;
+    const reg = Math.round(base * 1.15 / 50) * 50;
+    const save = reg - base;
+    document.getElementById('detail-regular-price').textContent = `Rs. ${reg.toLocaleString()}`;
+    document.getElementById('detail-price').textContent = `Rs. ${base.toLocaleString()}`;
+    document.getElementById('detail-discount-badge').innerHTML = `<i class="bi bi-tag-fill"></i> Save Rs. ${save.toLocaleString()}`;
+
+    // Long description
+    document.getElementById('desc-long-title').textContent = `${p.name} — Production & Quality`;
+    const descMap = {
+      'ogn-065-mango': [
+        "Pre-book the legendary Multan Chaunsa mangoes, directly sourced from our family-run orchards in Multan. Known worldwide for its rich aroma, sweet fiberless golden pulp, and incomparable sweetness, our Chaunsa is hand-picked at perfect physiological maturity.",
+        "Each 5 Kg export-quality box is carefully sorted, hot-water treated for hygiene, and packed to ensure they ripen naturally at your home. Secure your pre-order today; direct farm-to-table shipping begins in mid-June."
+      ],
+      'dairy-organic': [
+        "Collected daily from grass-fed cattle on our sustainable Multan dairy farm. Every batch undergoes strict quality filtering and rapid chilling — no artificial stabilizers, no water mixing.",
+        "Our ghee and butter are slow-cooked in traditional clay earthenware over woodfire, yielding classic granularity (daanedaar) and rich natural aroma. Packaged in sterile containers to lock in freshness."
+      ],
+      'sowing-seeds': [
+        "Engineered for Pakistan's specific climate, our sowing seeds are professionally cleaned, sorted, and moisture-control packaged. Germination viability is tested on-farm to exceed 85%.",
+        "Trusted by small farmers and large commercial operations across Punjab. Includes step-by-step planting guidelines and access to our digital Sowing Calculator."
+      ],
+      'feed-agri': [
+        "Fermented premium silage prepared from early-harvested corn. Rich in soluble sugars and digestible fibers — proven to increase daily milk yield and support healthy livestock weight gain.",
+        "Double-wrapped compression bales maintain optimal pH (3.8–4.2) and prevent contamination. Trusted by dairy farm operators across South Punjab."
+      ],
+      'edible-seeds': [
+        "Sustainably harvested superfoods cleaned, sun-dried, and sorted under sterile conditions. Active enzymes, dietary fibers, and omega fatty acids are preserved through cold-processing.",
+        "Naturally gluten-free, cholesterol-free, and rich in micronutrients. Ideal for daily breakfast bowls, weight-loss smoothies, bakery applications, and therapeutic use."
+      ]
+    };
+    const [d1, d2] = descMap[p.id] || descMap[p.category] || descMap['edible-seeds'];
+    document.getElementById('desc-long-text-1').textContent = d1;
+    document.getElementById('desc-long-text-2').textContent = d2;
+
+    // Spec table
+    const specsMap = {
+      'ogn-065-mango': [["Variety","Premium Samar Bahisht Chaunsa"],["Origin","Multan Orchards, Pakistan"],["Net Weight","5 Kg (Gross 5.4 Kg approx)"],["Pulp Texture","Rich, Golden & Fiberless"],["Sugar Brix","20° – 24° (High Sweetness)"],["Treatment","Hot Water Treated (HWT) & Sorted"]],
+      'dairy-organic': [["Energy","720 kcal / 100g"],["Total Fat","81 g"],["Saturated Fat","51 g"],["Protein","0.5 g"],["Calcium","120 mg"],["Purity","100% Guaranteed"]],
+      'sowing-seeds':  [["Germination Rate","88% – 92% (Certified)"],["Purity","99%"],["Moisture","Below 12%"],["Crop Duration","120 – 145 Days"],["Sowing Season","Rabi / Kharif"],["Yield","High-Yield Hybrid"]],
+      'feed-agri':     [["Crude Protein","8.5% – 9.2%"],["Crude Fiber","22%"],["Dry Matter","30% – 32%"],["TDN","68%"],["pH (Fermented)","3.8 – 4.2"],["Material","Sweet Corn & Stalks"]],
+      'edible-seeds':  [["Energy","486 kcal / 100g"],["Dietary Fiber","34.4 g"],["Protein","16.5 g"],["Omega-3","17.8 g"],["Iron","7.7 mg"],["Magnesium","335 mg"]],
+    };
+    const specs = specsMap[p.id] || specsMap[p.category] || specsMap['edible-seeds'];
+    document.getElementById('tabs-nutri-title').textContent = p.category === 'sowing-seeds' ? 'Seed Specs' : p.category === 'feed-agri' ? 'Feed Analysis' : p.id === 'ogn-065-mango' ? 'Fruit Specs' : 'Nutritional Info';
+    const tbody = document.querySelector('#nutri-table tbody');
+    tbody.innerHTML = specs.map(([k,v]) => `<tr><td>${k}</td><td>${v}</td></tr>`).join('');
+
+    // ── Reviews ──
+    const reviewers = [
+      {name:"Muhammad Zahid",city:"Multan"},
+      {name:"Ayesha Siddiqui",city:"Lahore"},
+      {name:"Dr. Imran Malik",city:"Karachi"},
+      {name:"Yasir Shah",city:"Faisalabad"},
+      {name:"Kamran Rafiq",city:"Islamabad"},
+      {name:"Sadia Qureshi",city:"Peshawar"}
+    ];
+    const seedRatings = [5, 5, 4, 5, 4, 5];
+    const reviewTexts = {
+      'ogn-065-mango': [
+        "Aroma is already filled in my living room, absolutely superb and sweet Multan Chaunsa!",
+        "Pre-booked last week and confirmed. Looking forward to the mid-June delivery, ARB farms never disappoints.",
+        "Perfect export-quality mangoes, completely fiberless and extremely sweet. Highly recommend pre-booking.",
+        "Last year's batch was phenomenal. SubhanAllah, the sweetness of Multani Chaunsa is unmatched.",
+        "Very clean packaging, hot water treated, and authentic taste of Multan orchards.",
+        "Outstanding customer service for pre-bookings. Can't wait for the season to start!"
+      ],
+      'dairy-organic': ["Outstanding granular texture and natural aroma — just like traditional village ghee!","Very fresh and pure. Multan delivery was fast and packaging extremely premium.","ARB Farms has become our family's daily kitchen standard. Zero compromise on quality.","Best ghee I've had in years. True daanedaar quality.","Absolutely pure — no adulteration at all. Highly recommend.","Rich taste and brilliant aroma. Will order again!"],
+      'feed-agri':     ["Our dairy cows love this silage. Milk yield jumped by 1.5 liters per animal per day!","Sweet fermentation smell and solid bale quality. Easy to store and stack in our barn.","Great nutritional value. Livestock stays healthy and gains weight naturally.","Consistent quality every time. Our go-to feed supplier.","Very dense bales, excellent TDN value.","Saved a lot on feed costs while improving herd health."],
+      'edible-seeds':  ["Super clean — no impurities. I use it daily in my weight-loss smoothies.","Fresh packaging and rich in fiber. Perfect natural health booster for the whole family.","Great value pack. Seeds are crispy and taste authentically organic.","Excellent quality chia — sprouted perfectly in my yogurt.","Very satisfied with the kalonji — full of flavour.","Fast delivery and excellent packing. Ordered twice already!"],
+    };
+    const seedTexts = reviewTexts[p.id] || reviewTexts[p.category] || reviewTexts['edible-seeds'];
+    const seedDates = ["15 May 2026","12 May 2026","10 May 2026","8 May 2026","5 May 2026","2 May 2026"];
+
+    // Build seeded reviews array
+    const seededReviews = [];
+    for (let i = 0; i < Math.min(reviewCount, 6); i++) {
+      seededReviews.push({
+        name: reviewers[i % reviewers.length].name,
+        city: reviewers[i % reviewers.length].city,
+        rating: seedRatings[i % seedRatings.length],
+        text: seedTexts[i % seedTexts.length],
+        date: seedDates[i % seedDates.length],
+        verified: true
+      });
+    }
+
+    // Load user reviews from localStorage
+    const storageKey = `arb_reviews_${p.id}`;
+    let userReviews = JSON.parse(localStorage.getItem(storageKey)) || [];
+    const allReviews = [...userReviews, ...seededReviews];
+
+    function starsHtml(r) {
+      return [1,2,3,4,5].map(n =>
+        `<i class="bi bi-star${n <= r ? '-fill' : (n - r < 1 ? '-half' : '')}"></i>`
+      ).join('');
+    }
+
+    function initials(name) {
+      return name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0,2);
+    }
+
+    function avatarColor(name) {
+      const colors = ['#365733','#5b8a58','#8B5E3C','#2e7d32','#5e3c8b','#3c6b8b'];
+      let h = 0; for (const c of name) h = (h * 31 + c.charCodeAt(0)) & 0xffffff;
+      return colors[Math.abs(h) % colors.length];
+    }
+
+    function renderAllReviews() {
+      const reviewsList = document.getElementById('reviews-list');
+      const fresh = JSON.parse(localStorage.getItem(storageKey)) || [];
+      const combined = [...fresh, ...seededReviews];
+      reviewsList.innerHTML = combined.map(rv => `
+        <div class="pdp-review-item">
+          <div class="pdp-review-avatar" style="background:${avatarColor(rv.name)}">${initials(rv.name)}</div>
+          <div class="pdp-review-body">
+            <div class="pdp-review-header">
+              <div>
+                <span class="pdp-reviewer">${rv.name}</span>
+                ${rv.city ? `<span class="text-muted ms-2" style="font-size:0.75rem;"><i class="bi bi-geo-alt-fill"></i> ${rv.city}</span>` : ''}
+              </div>
+              <span class="pdp-review-date">${rv.date || 'Recently'}</span>
+            </div>
+            <div class="pdp-review-stars mb-1">${starsHtml(rv.rating)}</div>
+            ${rv.verified ? '<span class="pdp-review-verified"><i class="bi bi-patch-check-fill me-1"></i>Verified Purchase</span>' : ''}
+            <p class="pdp-review-text mt-1">"${rv.text}"</p>
+          </div>
+        </div>
+      `).join('');
+
+      // Update rating bar
+      const counts = [0,0,0,0,0];
+      combined.forEach(rv => { if (rv.rating >= 1 && rv.rating <= 5) counts[5 - rv.rating]++; });
+      const total = combined.length || 1;
+      const avg = (combined.reduce((s,rv) => s + rv.rating, 0) / combined.length).toFixed(1);
+      document.getElementById('avg-score').textContent = avg;
+      document.getElementById('review-count-label').textContent = `out of 5 · ${combined.length} reviews`;
+      document.getElementById('tabs-reviews-title').textContent = `Reviews (${combined.length})`;
+      document.getElementById('detail-rating-text').textContent = `${avg} · ${combined.length} reviews`;
+      document.getElementById('rating-bars').innerHTML = [5,4,3,2,1].map((star, idx) => {
+        const pct = Math.round((counts[idx] / total) * 100);
+        return `<div class="pdp-bar-row">
+          <span class="pdp-bar-label">${star}★</span>
+          <div class="pdp-bar-track"><div class="pdp-bar-fill" style="width:${pct}%"></div></div>
+          <span class="pdp-bar-count">${counts[idx]}</span>
+        </div>`;
+      }).join('');
+    }
+    refreshReviews = renderAllReviews;
+    renderAllReviews();
+  }
+
+  function renderRelated(currentProduct) {
+    if (typeof productsDb === 'undefined') return;
+    const related = productsDb.filter(p => p.category === currentProduct.category && p.id !== currentProduct.id).slice(0, 3);
+    const row = document.getElementById('related-products-row');
+    row.innerHTML = '';
+    related.forEach(p => {
+      const url = `../../product/detail?id=${p.id}`;
+      const col = document.createElement('div');
+      col.className = 'col-sm-6 col-lg-4';
+      col.innerHTML = `
+          <div class="card h-100 product-card border-0 shadow-sm">
+          <span class="badge position-absolute m-3 bg-secondary text-white z-2 small">${p.sku}</span>
+          <button class="wishlist-btn position-absolute top-0 end-0 m-3 border-0 z-2" aria-label="Wishlist" data-id="${p.id}"><i class="bi bi-heart"></i></button>
+          <div class="product-image-container">
+            <a href="${url}" class="product-image-link">
+              <img src="../../${p.image}" class="product-image-base" alt="${p.name}">
+              <img src="../../${p.hoverImage}" class="product-image-hover" alt="${p.name} details">
+            </a>
+            <a href="${url}" class="quick-view-btn position-absolute bottom-0 end-0 m-3 z-3 text-decoration-none" data-id="${p.id}"><i class="bi bi-eye"></i></a>
+          </div>
+          <div class="card-body d-flex flex-column p-3">
+            <span class="text-uppercase text-muted" style="font-size:.72rem;font-weight:700;">${p.category.replace(/-/g,' ')}</span>
+            <h3 class="h6 my-2 font-primary"><a href="${url}" class="text-decoration-none text-dark">${p.name}</a></h3>
+            <div class="pt-2 border-top mt-auto">
+              <div class="d-flex justify-content-between align-items-start">
+                <div>
+                  <div class="text-muted" style="font-size:.72rem;">${p.weight}</div>
+                  <div class="text-muted text-decoration-line-through" style="font-size:0.78rem;">Regular: Rs. ${(Math.round(p.price * 1.15 / 50) * 50).toLocaleString()}</div>
+                  <div class="text-primary fw-bold" style="font-size:1rem;">Rs. ${p.price.toLocaleString()}</div>
+                  <span class="badge rounded-pill mt-1" style="background:#fff3cd;color:#856404;border:1px solid #ffc107;font-size:0.68rem;"><i class="bi bi-tag-fill me-1"></i>Save Rs. ${(Math.round(p.price * 1.15 / 50) * 50 - p.price).toLocaleString()}</span>
+                </div>
+                <button class="btn btn-outline-primary btn-sm add-to-cart-btn mt-1" data-id="${p.id}" data-name="${p.name}" data-price="${p.price}" data-weight="${p.weight}" data-image="${p.image}">
+                  <i class="bi bi-cart-plus"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>`;
+      row.appendChild(col);
+    });
+  }
+  </script>
+</body>
+</html>

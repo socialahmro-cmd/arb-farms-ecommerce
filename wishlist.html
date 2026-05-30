@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Wishlist | ARB Farms Pakistan</title>
+  <meta name="description" content="View and manage your saved products on ARB Farms. Easily move saved items to your cart for purchase.">
+  
+  <!-- Bootstrap & Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+  
+  <!-- Custom Styles -->
+  <link href="css/index.css?v=f43db6fe" rel="stylesheet">
+</head>
+<body>
+
+  <!-- Announcement Banner -->
+  <div id="fomo-announcement-banner">
+    <div class="container text-center py-2 text-white fw-bold">
+      <span>📦 50% Advance 50% After Delivery available all over Pakistan!</span>
+    </div>
+  </div>
+
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg bg-forest sticky-top shadow-sm py-2">
+    <div class="container">
+      <a class="navbar-brand d-flex align-items-center" href="index.html">
+        <img src="catalog/arbfarms-logo.svg" alt="ARB Farms Logo" class="me-2">
+        <span class="font-primary text-white fs-4 tracking-wide">ARB FARMS</span>
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar" aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
+        <div class="arb-hamburger" aria-hidden="true">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+      </button>
+      
+      <div class="collapse navbar-collapse" id="mainNavbar">
+        <ul class="navbar-nav mx-auto mb-2 mb-lg-0 gap-lg-3">
+          <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+          <li class="nav-item"><a class="nav-link" href="shop.html">Shop Catalog</a></li>
+          <li class="nav-item"><a class="nav-link" href="about.html">About Us</a></li>
+          <li class="nav-item"><a class="nav-link" href="calculator.html">Sowing Tools</a></li>
+          <li class="nav-item"><a class="nav-link" href="contact.html">Contact Us</a></li>
+        </ul>
+        
+        <div class="d-flex align-items-center gap-3">
+          <button id="search-trigger" aria-label="Search products" title="Search"><i class="bi bi-search"></i></button>
+          <a href="account.html" class="text-white fs-5" aria-label="My Account" title="My Account"><i class="bi bi-person"></i></a>
+          <a href="compare.html" class="text-white fs-5" aria-label="Compare Seeds" title="Compare Seeds"><i class="bi bi-arrow-left-right"></i></a>
+          <a href="wishlist.html" class="position-relative text-white fs-5" aria-label="View Wishlist">
+            <i class="bi bi-heart"></i>
+            <span id="wishlist-count" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size: 0.65rem;">0</span>
+          </a>
+          <a href="cart.html" class="position-relative text-white fs-5" aria-label="View Cart">
+            <i class="bi bi-cart3"></i>
+            <span id="cart-count" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-warning text-dark" style="font-size: 0.65rem;">0</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Page Header -->
+  <header class="py-4" style="background-color: #ede1ca;">
+    <div class="container text-center text-md-start">
+      <h1 class="font-primary text-primary mb-1">My Saved Wishlist</h1>
+      <p class="text-muted mb-0 font-accent">Keep track of your favorite organic items and sowing seeds.</p>
+    </div>
+  </header>
+
+  <!-- Wishlist Area -->
+  <main class="container py-5">
+    <!-- Empty Wishlist -->
+    <div id="wishlist-empty" class="text-center py-5">
+      <i class="bi bi-heart fs-1 text-muted mb-3 d-block"></i>
+      <h2 class="h4 font-primary text-dark">Your Wishlist is Empty</h2>
+      <p class="text-muted max-width-sm mx-auto">Explore our catalog and click the heart icon on any product to save it here for later.</p>
+      <a href="shop.html" class="btn btn-primary mt-3"><i class="bi bi-bag-check-fill me-2"></i> Visit Shop Catalog</a>
+    </div>
+
+    <!-- Active Wishlist Grid -->
+    <div id="wishlist-grid-container" class="d-none">
+      <div class="row g-4" id="wishlist-grid">
+        <!-- Dynamic Cards Load Here -->
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="py-5 bg-forest text-white" style="border-top: 5px solid var(--color-secondary);">
+    <div class="container">
+      <div class="row g-4 mb-5">
+        <div class="col-lg-4">
+          <h4 class="h5 text-gold mb-3">ARB Farms &amp; Organics</h4>
+          <p class="small text-white-50">Providing organic dietary staples and high-nutrition livestock forage directly from our off-grid farm in Multan, Pakistan.</p>
+          <p class="small text-white-50"><i class="bi bi-geo-alt-fill text-gold me-2"></i> Street 1, Fatima Avenue, Opp. Fatima Masjid, Near Prime Mart. MPS Road, Multan, Punjab, Pakistan</p>
+          <p class="small text-white-50"><i class="bi bi-telephone-fill text-gold me-2"></i> +92 320 000 5367</p>
+        </div>
+        
+        <div class="col-md-4 col-lg-3 offset-lg-1">
+          <h4 class="h5 text-gold mb-3">Product Catalogs</h4>
+          <ul class="list-unstyled small d-flex flex-column gap-2">
+            <li><a href="shop.html?category=edible-seeds" class="text-white-50 text-decoration-none">Superfood &amp; Edible Seeds</a></li>
+            <li><a href="shop.html?category=dairy-organic" class="text-white-50 text-decoration-none">Desi Ghee &amp; Raw Honey</a></li>
+            <li><a href="shop.html?category=feed-agri" class="text-white-50 text-decoration-none">Livestock Silage &amp; Baled Fodder</a></li>
+          </ul>
+        </div>
+        
+        <div class="col-md-4 col-lg-2">
+          <h4 class="h5 text-gold mb-3">Customer Service</h4>
+          <ul class="list-unstyled small d-flex flex-column gap-2">
+            <li><a href="about.html" class="text-white-50 text-decoration-none">About Us</a></li>
+            <li><a href="contact.html" class="text-white-50 text-decoration-none">Contact Us</a></li>
+            <li><a href="legal/shipping-policy.html" class="text-white-50 text-decoration-none">Shipping Tiers &amp; Rules</a></li>
+            <li><a href="legal/refund-policy.html" class="text-white-50 text-decoration-none">Return Policy</a></li>
+            <li><a href="legal/terms-conditions.html" class="text-white-50 text-decoration-none">Terms of Service</a></li>
+            <li><a href="legal/privacy-policy.html" class="text-white-50 text-decoration-none">Privacy Policy</a></li>
+          </ul>
+        </div>
+        
+        <div class="col-md-4 col-lg-2">
+          <h4 class="h5 text-gold mb-3">Follow Our Farm</h4>
+          <div class="d-flex gap-3 fs-5">
+            <a href="https://www.tiktok.com/@arborganics" class="text-white-50"><i class="bi bi-tiktok"></i></a>
+            <a href="https://www.instagram.com/arb.organicsouq/" class="text-white-50"><i class="bi bi-instagram"></i></a>
+            <a href="https://www.facebook.com/ARBORGANIC" class="text-white-50"><i class="bi bi-facebook"></i></a>
+            <a href="https://wa.me/923200005367" class="text-white-50"><i class="bi bi-whatsapp"></i></a>
+          </div>
+        </div>
+      </div>
+      
+      <div class="border-top border-secondary pt-4 d-flex flex-wrap justify-content-between align-items-center gap-3">
+        <p class="small mb-0 text-white-50">&copy; 2026 ARB Farms Organics. All rights reserved.</p>
+        <div class="d-flex align-items-center gap-3">
+          <span class="small text-white-50">Accepted Methods:</span>
+          <span class="badge bg-secondary">50% Advance 50% After Delivery</span>
+          <span class="badge bg-secondary">EasyPaisa / JazzCash</span>
+          <span class="badge bg-secondary">Card Settlement</span>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="js/products-db.js?v=801124bf"></script>
+  <script src="js/main.js?v=90f821b8"></script>
+  <script src="js/fomo.js?v=d687853f"></script>
+
+  <!-- Wishlist Renderer -->
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const emptyDiv = document.getElementById("wishlist-empty");
+      const gridContainer = document.getElementById("wishlist-grid-container");
+      const grid = document.getElementById("wishlist-grid");
+
+      function renderWishlist() {
+        const wishlist = JSON.parse(localStorage.getItem('arb_wishlist')) || [];
+
+        if (wishlist.length === 0) {
+          emptyDiv.classList.remove("d-none");
+          gridContainer.classList.add("d-none");
+          return;
+        }
+
+        emptyDiv.classList.add("d-none");
+        gridContainer.classList.remove("d-none");
+
+        // Map list IDs to database objects
+        const items = wishlist.map(id => window.productsDb.find(p => p.id === id)).filter(Boolean);
+
+        grid.innerHTML = items.map(product => `
+          <div class="col-lg-3 col-md-4 col-sm-6" id="wishlist-card-${product.id}">
+            <div class="card h-100 product-card border-0 shadow-sm position-relative">
+              <span class="badge position-absolute m-3 bg-secondary text-white z-2">${product.sku}</span>
+              <button class="wishlist-btn position-absolute top-0 end-0 m-3 border-0 active z-2" onclick="removeWishlistItem('${product.id}', '${product.name.replace(/'/g, "\\'")}')" aria-label="Remove from Wishlist">
+                <i class="bi bi-heart-fill"></i>
+              </button>
+              <div class="product-image-container">
+                <a href="product/detail?id=${product.id}" class="product-image-link">
+                  <img src="${product.image}" class="product-image-base" alt="${product.name} illustration">
+                  <img src="${product.hoverImage}" class="product-image-hover" alt="${product.name} Benefits">
+                </a>
+              </div>
+              <div class="card-body d-flex flex-column p-4">
+                <span class="text-uppercase text-muted small fw-bold">${product.category.replace("-", " & ")}</span>
+                <h3 class="h5 my-2 font-primary text-dark">${product.name}</h3>
+                <p class="small text-muted flex-grow-1">Purity guaranteed agricultural and dietary supplies.</p>
+                <div class="d-flex justify-content-between align-items-center pt-3 border-top">
+                  <div>
+                    <span class="text-muted small">${product.weight}</span>
+                    <span class="text-primary fw-bold h5 mb-0 d-block">Rs. ${product.price.toLocaleString()}</span>
+                  </div>
+                  <button class="btn btn-primary add-to-cart-btn btn-sm" 
+                          data-id="${product.id}" 
+                          data-name="${product.name}" 
+                          data-price="${product.price}" 
+                          data-weight="${product.weight.replace(/[^0-9.]/g, '')}" 
+                          data-image="${product.image}">
+                    <i class="bi bi-cart-plus"></i> Add
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        `).join("");
+      }
+
+      // Remove handler
+      window.removeWishlistItem = function(id, name) {
+        let wishlist = JSON.parse(localStorage.getItem('arb_wishlist')) || [];
+        wishlist = wishlist.filter(item => item !== id);
+        localStorage.setItem('arb_wishlist', JSON.stringify(wishlist));
+        renderWishlist();
+        if (typeof window.updateBadges === "function") {
+          window.updateBadges();
+        }
+        if (typeof window.showToast === "function") {
+          window.showToast(`${name || 'Product'} removed from wishlist.`);
+        }
+      }
+
+      renderWishlist();
+    });
+  </script>
+</body>
+</html>

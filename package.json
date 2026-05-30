@@ -1,0 +1,19 @@
+{
+  "name": "organic-websiste",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "dev-server": "npx vercel dev --local",
+    "cache-bust": "node scripts/cache-buster.js",
+    "build": "node scripts/cache-buster.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@vercel/blob": "^2.4.0",
+    "@vercel/postgres": "^0.10.0"
+  }
+}

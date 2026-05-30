@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Compare Products | ARB Farms Pakistan</title>
+  <meta name="description" content="Compare purity, pricing, weights, germination rates, and soil parameters side-by-side for ARB Farms products.">
+  
+  <!-- Bootstrap & Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+  
+  <!-- Custom Styles -->
+  <link href="css/index.css?v=f43db6fe" rel="stylesheet">
+</head>
+<body>
+
+  <!-- Announcement Banner -->
+  <div id="fomo-announcement-banner">
+    <div class="container text-center py-2 text-white fw-bold">
+      <span>📦 50% Advance 50% After Delivery available all over Pakistan!</span>
+    </div>
+  </div>
+
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg bg-forest sticky-top shadow-sm py-2">
+    <div class="container">
+      <a class="navbar-brand d-flex align-items-center" href="index.html">
+        <img src="catalog/arbfarms-logo.svg" alt="ARB Farms Logo" class="me-2">
+        <span class="font-primary text-white fs-4 tracking-wide">ARB FARMS</span>
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar" aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
+        <div class="arb-hamburger" aria-hidden="true">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+      </button>
+      
+      <div class="collapse navbar-collapse" id="mainNavbar">
+        <ul class="navbar-nav mx-auto mb-2 mb-lg-0 gap-lg-3">
+          <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+          <li class="nav-item"><a class="nav-link" href="shop.html">Shop Catalog</a></li>
+          <li class="nav-item"><a class="nav-link" href="about.html">About Us</a></li>
+          <li class="nav-item"><a class="nav-link" href="calculator.html">Sowing Tools</a></li>
+          <li class="nav-item"><a class="nav-link" href="contact.html">Contact Us</a></li>
+        </ul>
+        
+        <div class="d-flex align-items-center gap-3">
+          <button id="search-trigger" aria-label="Search products" title="Search"><i class="bi bi-search"></i></button>
+          <a href="account.html" class="text-white fs-5" aria-label="My Account" title="My Account"><i class="bi bi-person"></i></a>
+          <a href="compare.html" class="text-white fs-5" aria-label="Compare Seeds" title="Compare Seeds"><i class="bi bi-arrow-left-right"></i></a>
+          <a href="wishlist.html" class="position-relative text-white fs-5" aria-label="View Wishlist">
+            <i class="bi bi-heart"></i>
+            <span id="wishlist-count" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size: 0.65rem;">0</span>
+          </a>
+          <a href="cart.html" class="position-relative text-white fs-5" aria-label="View Cart">
+            <i class="bi bi-cart3"></i>
+            <span id="cart-count" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-warning text-dark" style="font-size: 0.65rem;">0</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Page Header -->
+  <header class="py-4" style="background-color: #ede1ca;">
+    <div class="container text-center text-md-start">
+      <h1 class="font-primary text-primary mb-1">Product Comparison Matrix</h1>
+      <p class="text-muted mb-0 font-accent">Add up to 3 products from the catalog to compare pricing, weights, and specifications.</p>
+    </div>
+  </header>
+
+  <!-- Main Content Matrix -->
+  <main class="container py-5">
+    <!-- Empty comparison state -->
+    <div id="compare-empty" class="text-center py-5">
+      <i class="bi bi-shuffle fs-1 text-muted mb-3 d-block"></i>
+      <h2 class="h4 font-primary text-dark">Comparison List is Empty</h2>
+      <p class="text-muted max-width-sm mx-auto">You haven't selected any items for comparison yet. Head over to our catalog to select products.</p>
+      <a href="shop.html" class="btn btn-primary mt-3"><i class="bi bi-bag-check-fill me-2"></i> Visit Shop Catalog</a>
+    </div>
+
+    <!-- Active comparison table -->
+    <div id="compare-content" class="table-responsive d-none">
+      <table class="table table-bordered table-striped align-middle bg-white rounded-3 overflow-hidden shadow-sm">
+        <thead>
+          <tr id="row-header" class="table-dark">
+            <th style="width: 25%;" class="font-primary">Specification</th>
+            <!-- Dynamic Headers will load here -->
+          </tr>
+        </thead>
+        <tbody>
+          <tr id="row-image">
+            <td class="fw-bold text-muted small">Image &amp; Remove</td>
+            <!-- Dynamic cell images -->
+          </tr>
+          <tr id="row-name">
+            <td class="fw-bold text-muted small">Product Name</td>
+            <!-- Dynamic cell names -->
+          </tr>
+          <tr id="row-sku">
+            <td class="fw-bold text-muted small">SKU Code</td>
+            <!-- Dynamic cell SKUs -->
+          </tr>
+          <tr id="row-price">
+            <td class="fw-bold text-muted small">Price (PKR)</td>
+            <!-- Dynamic cell prices -->
+          </tr>
+          <tr id="row-weight">
+            <td class="fw-bold text-muted small">Pack Weight</td>
+            <!-- Dynamic cell weights -->
+          </tr>
+          <tr id="row-category">
+            <td class="fw-bold text-muted small">Category</td>
+            <!-- Dynamic cell categories -->
+          </tr>
+          <tr id="row-purity">
+            <td class="fw-bold text-muted small">Purity / Purity Metric</td>
+            <!-- Dynamic cell metrics -->
+          </tr>
+          <tr id="row-soil">
+            <td class="fw-bold text-muted small">Cultivation / Recommendation</td>
+            <!-- Dynamic cell soil specs -->
+          </tr>
+          <tr id="row-action">
+            <td class="fw-bold text-muted small">Actions</td>
+            <!-- Dynamic cell cart triggers -->
+          </tr>
+        </tbody>
+      </table>
+      <div class="text-end mt-4">
+        <button class="btn btn-outline-danger btn-sm" onclick="clearComparison()"><i class="bi bi-trash me-2"></i> Clear All Comparison</button>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="py-5 bg-forest text-white" style="border-top: 5px solid var(--color-secondary);">
+    <div class="container">
+      <div class="row g-4 mb-5">
+        <div class="col-lg-4">
+          <h4 class="h5 text-gold mb-3">ARB Farms &amp; Organics</h4>
+          <p class="small text-white-50">Providing organic dietary staples and high-nutrition livestock forage directly from our off-grid farm in Multan, Pakistan.</p>
+          <p class="small text-white-50"><i class="bi bi-geo-alt-fill text-gold me-2"></i> Street 1, Fatima Avenue, Opp. Fatima Masjid, Near Prime Mart. MPS Road, Multan, Punjab, Pakistan</p>
+          <p class="small text-white-50"><i class="bi bi-telephone-fill text-gold me-2"></i> +92 320 000 5367</p>
+        </div>
+        
+        <div class="col-md-4 col-lg-3 offset-lg-1">
+          <h4 class="h5 text-gold mb-3">Product Catalogs</h4>
+          <ul class="list-unstyled small d-flex flex-column gap-2">
+            <li><a href="shop.html?category=edible-seeds" class="text-white-50 text-decoration-none">Superfood &amp; Edible Seeds</a></li>
+            <li><a href="shop.html?category=dairy-organic" class="text-white-50 text-decoration-none">Desi Ghee &amp; Raw Honey</a></li>
+            <li><a href="shop.html?category=feed-agri" class="text-white-50 text-decoration-none">Livestock Silage &amp; Baled Fodder</a></li>
+          </ul>
+        </div>
+        
+        <div class="col-md-4 col-lg-2">
+          <h4 class="h5 text-gold mb-3">Customer Service</h4>
+          <ul class="list-unstyled small d-flex flex-column gap-2">
+            <li><a href="about.html" class="text-white-50 text-decoration-none">About Us</a></li>
+            <li><a href="contact.html" class="text-white-50 text-decoration-none">Contact Us</a></li>
+            <li><a href="legal/shipping-policy.html" class="text-white-50 text-decoration-none">Shipping Tiers &amp; Rules</a></li>
+            <li><a href="legal/refund-policy.html" class="text-white-50 text-decoration-none">Return Policy</a></li>
+            <li><a href="legal/terms-conditions.html" class="text-white-50 text-decoration-none">Terms of Service</a></li>
+            <li><a href="legal/privacy-policy.html" class="text-white-50 text-decoration-none">Privacy Policy</a></li>
+          </ul>
+        </div>
+        
+        <div class="col-md-4 col-lg-2">
+          <h4 class="h5 text-gold mb-3">Follow Our Farm</h4>
+          <div class="d-flex gap-3 fs-5">
+            <a href="https://www.tiktok.com/@arborganics" class="text-white-50"><i class="bi bi-tiktok"></i></a>
+            <a href="https://www.instagram.com/arb.organicsouq/" class="text-white-50"><i class="bi bi-instagram"></i></a>
+            <a href="https://www.facebook.com/ARBORGANIC" class="text-white-50"><i class="bi bi-facebook"></i></a>
+            <a href="https://wa.me/923200005367" class="text-white-50"><i class="bi bi-whatsapp"></i></a>
+          </div>
+        </div>
+      </div>
+      
+      <div class="border-top border-secondary pt-4 d-flex flex-wrap justify-content-between align-items-center gap-3">
+        <p class="small mb-0 text-white-50">&copy; 2026 ARB Farms Organics. All rights reserved.</p>
+        <div class="d-flex align-items-center gap-3">
+          <span class="small text-white-50">Accepted Methods:</span>
+          <span class="badge bg-secondary">50% Advance 50% After Delivery</span>
+          <span class="badge bg-secondary">EasyPaisa / JazzCash</span>
+          <span class="badge bg-secondary">Card Settlement</span>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="js/products-db.js?v=801124bf"></script>
+  <script src="js/main.js?v=90f821b8"></script>
+  <script src="js/fomo.js?v=d687853f"></script>
+
+  <!-- Comparison Matrix Renderer -->
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const emptyDiv = document.getElementById("compare-empty");
+      const contentDiv = document.getElementById("compare-content");
+
+      // Spec mapping mock database details for seeds vs foods
+      const specsDb = {
+        // Seeds Purity/Germination and Soil details
+        "sowing-seeds": {
+          purity: "95% Germination Rate • 99% Physical Purity",
+          soil: "Well-drained loamy/sandy soils. Keep moist during sprout cycle."
+        },
+        "edible-seeds": {
+          purity: "100% Purity • Chemical residue-free laboratory certified",
+          soil: "Direct consumption. Store in airtight container below 25°C."
+        },
+        "dairy-organic": {
+          purity: "Traditional slow-cooked / raw pasture grass-fed",
+          soil: "Direct dietary consumption. Refrigerate fresh milk items."
+        },
+        "feed-agri": {
+          purity: "High nutrient crude protein dry matter bale",
+          soil: "Dairy livestock fodder. Store in cool, dry ventilated shed."
+        },
+        "ogn-065-mango": {
+          purity: "100% Premium Samar Bahisht Chaunsa • Hot Water Treated",
+          soil: "Keep at room temperature until ripe, then refrigerate. Best consumed fresh."
+        }
+      };
+
+      function renderMatrix() {
+        const compareList = JSON.parse(localStorage.getItem('arb_compare')) || [];
+        
+        if (compareList.length === 0) {
+          emptyDiv.classList.remove("d-none");
+          contentDiv.classList.add("d-none");
+          return;
+        }
+
+        emptyDiv.classList.add("d-none");
+        contentDiv.classList.remove("d-none");
+
+        // Filter product database objects
+        const items = compareList.map(id => window.productsDb.find(p => p.id === id)).filter(Boolean);
+
+        // Header Names
+        const headerRow = document.getElementById("row-header");
+        headerRow.innerHTML = `<th style="width: 25%;">Specification</th>` + 
+          items.map(item => `<th class="text-center font-primary">${item.name}</th>`).join("");
+
+        // Image row
+        const imgRow = document.getElementById("row-image");
+        imgRow.innerHTML = `<td class="fw-bold text-muted small">Image &amp; Remove</td>` +
+          items.map(item => `
+            <td class="text-center position-relative">
+              <div class="mx-auto" style="width: 100px; height: 100px; background-color: var(--color-accent-light);">
+                <img src="${item.image}" alt="${item.name}" class="w-100 h-100 object-fit-contain">
+              </div>
+              <button class="btn btn-sm btn-outline-danger mt-2 py-1 px-2" onclick="removeCompareItem('${item.id}')" title="Remove from Comparison">
+                <i class="bi bi-trash"></i> Remove
+              </button>
+            </td>
+          `).join("");
+
+        // Name row
+        const nameRow = document.getElementById("row-name");
+        nameRow.innerHTML = `<td class="fw-bold text-muted small">Product Name</td>` +
+          items.map(item => `<td class="text-center fw-semibold text-dark">${item.name}</td>`).join("");
+
+        // SKU row
+        const skuRow = document.getElementById("row-sku");
+        skuRow.innerHTML = `<td class="fw-bold text-muted small">SKU Code</td>` +
+          items.map(item => `<td class="text-center font-monospace small">${item.sku}</td>`).join("");
+
+        // Price row
+        const priceRow = document.getElementById("row-price");
+        priceRow.innerHTML = `<td class="fw-bold text-muted small">Price</td>` +
+          items.map(item => `<td class="text-center text-primary fw-bold">Rs. ${item.price.toLocaleString()}</td>`).join("");
+
+        // Weight row
+        const weightRow = document.getElementById("row-weight");
+        weightRow.innerHTML = `<td class="fw-bold text-muted small">Weight</td>` +
+          items.map(item => `<td class="text-center">${item.weight}</td>`).join("");
+
+        // Category row
+        const categoryRow = document.getElementById("row-category");
+        categoryRow.innerHTML = `<td class="fw-bold text-muted small">Category</td>` +
+          items.map(item => `<td class="text-center text-capitalize">${item.category.replace("-", " & ")}</td>`).join("");
+
+        // Purity row
+        const purityRow = document.getElementById("row-purity");
+        purityRow.innerHTML = `<td class="fw-bold text-muted small">Quality Standard</td>` +
+          items.map(item => {
+            const spec = specsDb[item.id] || specsDb[item.category] || { purity: "100% natural organic product" };
+            return `<td class="text-center small">${spec.purity}</td>`;
+          }).join("");
+
+        // Soil row
+        const soilRow = document.getElementById("row-soil");
+        soilRow.innerHTML = `<td class="fw-bold text-muted small">Use Recommendation</td>` +
+          items.map(item => {
+            const spec = specsDb[item.id] || specsDb[item.category] || { soil: "N/A - Direct dietary consumption" };
+            return `<td class="text-center small text-muted font-accent">${spec.soil}</td>`;
+          }).join("");
+
+        // Action row
+        const actionRow = document.getElementById("row-action");
+        actionRow.innerHTML = `<td class="fw-bold text-muted small">Add to Cart</td>` +
+          items.map(item => `
+            <td class="text-center">
+              <button class="btn btn-primary btn-sm add-to-cart-btn" 
+                      data-id="${item.id}" 
+                      data-name="${item.name}" 
+                      data-price="${item.price}" 
+                      data-weight="${item.weight.replace(/[^0-9.]/g, '')}" 
+                      data-image="${item.image}">
+                <i class="bi bi-cart-plus me-1"></i> Add to Cart
+              </button>
+            </td>
+          `).join("");
+      }
+
+      // Action listener hooks
+      window.removeCompareItem = function(id) {
+        let compareList = JSON.parse(localStorage.getItem('arb_compare')) || [];
+        compareList = compareList.filter(item => item !== id);
+        localStorage.setItem('arb_compare', JSON.stringify(compareList));
+        renderMatrix();
+        if (typeof window.showToast === "function") {
+          window.showToast("Product removed from comparison matrix.");
+        }
+      }
+
+      window.clearComparison = function() {
+        localStorage.setItem('arb_compare', JSON.stringify([]));
+        renderMatrix();
+        if (typeof window.showToast === "function") {
+          window.showToast("Cleared comparison list.");
+        }
+      }
+
+      renderMatrix();
+    });
+  </script>
+</body>
+</html>

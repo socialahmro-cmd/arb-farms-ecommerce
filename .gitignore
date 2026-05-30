@@ -1,0 +1,11 @@
+.DS_Store
+node_modules/
+.tempmediaStorage/
+*.pyc
+__pycache__/
+.vercel
+.env
+.env.*
+.env.local
+.env.*.local
+

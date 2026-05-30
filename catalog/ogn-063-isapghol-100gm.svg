@@ -1,0 +1,105 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500" width="100%" height="100%">
+  <defs>
+    <!-- Background Gradient -->
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fdfaf4" />
+      <stop offset="100%" stop-color="#ede1ca" />
+    </linearGradient>
+    
+    <!-- Sack Gradient -->
+    <linearGradient id="sackGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#d4b27a" />
+      <stop offset="100%" stop-color="#9a7c4a" />
+    </linearGradient>
+    
+    <!-- Kraft Paper Gradient -->
+    <linearGradient id="kraftGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#dfc5a0" />
+      <stop offset="100%" stop-color="#b89a70" />
+    </linearGradient>
+    
+    <!-- Drop Shadow -->
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="8" stdDeviation="6" flood-color="#121912" flood-opacity="0.15" />
+    </filter>
+  </defs>
+  
+  <!-- Outer Box -->
+  <rect width="500" height="500" rx="20" fill="url(#bgGrad)"/>
+  <rect x="15" y="15" width="470" height="470" rx="15" fill="none" stroke="#365733" stroke-width="1.5" stroke-dasharray="8,6" opacity="0.4"/>
+  
+  <!-- Main Illustration with Drop Shadow -->
+  <g filter="url(#shadow)">
+    
+        <!-- Stand-up Pouch Pack Graphic -->
+        <g transform="translate(160, 95)">
+          <!-- Pouch Top Seal -->
+          <path d="M15,40 L165,40 L160,25 L20,25 Z" fill="#b0936b" stroke="#8c714c" stroke-width="1" />
+          <line x1="20" y1="33" x2="160" y2="33" stroke="#5c482e" stroke-width="1.5" stroke-dasharray="3,3" />
+          
+          <!-- Pouch Body -->
+          <path d="M18,40 L162,40 C170,120 180,240 160,285 C145,295 110,298 90,298 C70,298 35,295 20,285 C0,240 10,120 18,40 Z" fill="url(#kraftGrad)" />
+          
+          <!-- Oval Window showing seeds inside -->
+          <ellipse cx="90" cy="225" rx="45" ry="30" fill="#2d2215" opacity="0.9" />
+          <!-- Seed Dots -->
+          <g fill="#fdfaf4">
+            <circle cx="65" cy="220" r="2" /><circle cx="72" cy="212" r="1.5" /><circle cx="80" cy="225" r="2" /><circle cx="88" cy="218" r="1.5" />
+            <circle cx="95" cy="228" r="2" /><circle cx="102" cy="215" r="1.5" /><circle cx="110" cy="222" r="2" /><circle cx="115" cy="232" r="1.5" />
+            <circle cx="75" cy="235" r="1.5" /><circle cx="85" cy="240" r="2" /><circle cx="98" cy="238" r="1.5" /><circle cx="105" cy="230" r="2" />
+          </g>
+          <ellipse cx="90" cy="225" rx="45" ry="30" fill="none" stroke="#5c482e" stroke-width="2" />
+          
+          <!-- Pouch Label -->
+          <!-- ARB Organics Mini Badge Label -->
+          <g transform="translate(90.0,115.0)">
+            <!-- Outer cream fill + dark green ring -->
+            <circle cx="0" cy="0" r="62.4" fill="#ede2cb" stroke="#526e4a" stroke-width="3.2"/>
+            <!-- Inner gold ring -->
+            <circle cx="0" cy="0" r="58.4" fill="none" stroke="#b29158" stroke-width="2.1"/>
+
+            <!-- Symmetrical Leaves at the Top -->
+            <g fill="#33522f">
+              <!-- Left Leaf -->
+              <path d="M -2.1,-26.6 C -10.6,-26.6 -23.4,-32.4 -23.4,-46.5 C -10.1,-46.5 -3.5,-36.6 -2.1,-26.6 Z" />
+              <path d="M -2.1,-26.6 Q -10.6,-32.4 -16.7,-40.6" stroke="#ede2cb" stroke-width="0.7" fill="none" stroke-linecap="round" />
+
+              <!-- Right Leaf -->
+              <path d="M 2.1,-26.6 C 10.6,-26.6 23.4,-32.4 23.4,-46.5 C 10.1,-46.5 3.5,-36.6 2.1,-26.6 Z" />
+              <path d="M 2.1,-26.6 Q 10.6,-32.4 16.7,-40.6" stroke="#ede2cb" stroke-width="0.7" fill="none" stroke-linecap="round" />
+            </g>
+
+            <!-- 100% NATURAL -->
+            <text x="0" y="-15.4" font-family="'Impact','Arial Black','Outfit',sans-serif" font-size="7.4" font-weight="900" fill="#33522f" text-anchor="middle" letter-spacing="0.1">100% NATURAL</text>
+
+            <!-- ARB large text -->
+            <text x="0" y="8.5" font-family="'Times New Roman','Lora','Georgia',serif" font-size="31.3" font-weight="900" fill="#000000" text-anchor="middle" letter-spacing="-1">ARB</text>
+
+            <!-- ORGANICS -->
+            <text x="0" y="22.3" font-family="'Times New Roman','Lora','Georgia',serif" font-size="11.2" font-weight="bold" fill="#33522f" text-anchor="middle" letter-spacing="1">ORGANICS</text>
+
+            <!-- Curved bottom text "Your Organic Food store" -->
+            <defs>
+              <path id="arc_90_115" d="M -47.8,13.3 A 51.8,51.8 0 0,0 47.8,13.3" fill="none"/>
+            </defs>
+            <text font-family="'Arial','Helvetica','Inter',sans-serif" font-size="8.8" font-weight="bold" fill="#111111">
+              <textPath href="#arc_90_115" startOffset="50%" text-anchor="middle">Your Organic Food store</textPath>
+            </text>
+          </g>
+          
+          
+          <!-- Label Details -->
+          
+          
+          
+          
+          
+        </g>
+        
+  </g>
+  
+  <!-- Content Labels -->
+  <text x="250" y="420" font-family="'Outfit', sans-serif" font-size="20" font-weight="bold" fill="#365733" text-anchor="middle">ISAPGHOL</text>
+  <text x="250" y="445" font-family="'Lora', serif" font-size="14" font-style="italic" fill="#b5925e" text-anchor="middle">Weight: 100 gm &#8226; SKU: OGN-063</text>
+  <text x="250" y="470" font-family="'Inter', sans-serif" font-size="12" fill="#5a6459" text-anchor="middle">Price: Rs. 1,400 &#8226; Sourced by ARB Farms</text>
+</svg>

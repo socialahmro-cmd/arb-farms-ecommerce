@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Order Confirmation | ARB Farms Pakistan</title>
+  <meta name="description" content="Thank you for your order at ARB Farms. Your order details are being verified.">
+  
+  <!-- Bootstrap & Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+  
+  <!-- Custom Styles -->
+  <link href="css/index.css?v=f43db6fe" rel="stylesheet">
+</head>
+<body>
+
+  <!-- Announcement Banner -->
+  <div id="fomo-announcement-banner">
+    <div class="container text-center py-2 text-white fw-bold">
+      <span>📦 50% Advance 50% After Delivery available all over Pakistan!</span>
+    </div>
+  </div>
+
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg bg-forest sticky-top shadow-sm py-2">
+    <div class="container">
+      <a class="navbar-brand d-flex align-items-center" href="index.html">
+        <img src="catalog/arbfarms-logo.svg" alt="ARB Farms Logo" class="me-2">
+        <span class="font-primary text-white fs-4 tracking-wide">ARB FARMS</span>
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar" aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
+        <div class="arb-hamburger" aria-hidden="true">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+      </button>
+      
+      <div class="collapse navbar-collapse" id="mainNavbar">
+        <ul class="navbar-nav mx-auto mb-2 mb-lg-0 gap-lg-3">
+          <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+          <li class="nav-item"><a class="nav-link" href="shop.html">Shop Catalog</a></li>
+          <li class="nav-item"><a class="nav-link" href="about.html">About Us</a></li>
+          <li class="nav-item"><a class="nav-link" href="calculator.html">Sowing Tools</a></li>
+          <li class="nav-item"><a class="nav-link" href="contact.html">Contact Us</a></li>
+        </ul>
+        
+        <div class="d-flex align-items-center gap-3">
+          <button id="search-trigger" aria-label="Search products" title="Search"><i class="bi bi-search"></i></button>
+          <a href="account.html" class="text-white fs-5" aria-label="My Account" title="My Account"><i class="bi bi-person"></i></a>
+          <a href="compare.html" class="text-white fs-5" aria-label="Compare Seeds" title="Compare Seeds"><i class="bi bi-arrow-left-right"></i></a>
+          <a href="wishlist.html" class="position-relative text-white fs-5" aria-label="View Wishlist">
+            <i class="bi bi-heart"></i>
+            <span id="wishlist-count" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size: 0.65rem;">0</span>
+          </a>
+          <a href="cart.html" class="position-relative text-white fs-5" aria-label="View Cart">
+            <i class="bi bi-cart3"></i>
+            <span id="cart-count" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-warning text-dark" style="font-size: 0.65rem;">0</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Page Content -->
+  <main class="container py-5">
+    <!-- Progress Stepper -->
+    <div class="row justify-content-center mb-5">
+      <div class="col-md-8">
+        <div class="stepper">
+          <div class="stepper-step completed">1</div>
+          <div class="stepper-step completed">2</div>
+          <div class="stepper-step active">3</div>
+        </div>
+        <div class="d-flex justify-content-between text-muted small" style="margin-top: -15px;">
+          <span>Cart Summary</span>
+          <span>Shipping &amp; Delivery</span>
+          <span class="fw-bold text-primary">Confirmation</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Success message card -->
+    <div class="row justify-content-center">
+      <div class="col-md-8 text-center mb-4">
+        <div class="p-5 bg-white border rounded-3 shadow-sm">
+          <i class="bi bi-check-circle-fill text-success" style="font-size: 4rem;"></i>
+          <h1 class="h2 font-primary text-primary mt-3 mb-2">Thank You for Your Order!</h1>
+          <p class="lead text-muted font-accent">Your order is being processed. Below are the summary details.</p>
+          
+          <div class="row text-start mt-5 g-4">
+            <div class="col-sm-6">
+              <div class="p-3 border rounded">
+                <span class="text-muted small d-block">Order Reference:</span>
+                <strong id="confirm-ordernum" class="text-dark">ARB-000000</strong>
+              </div>
+            </div>
+            
+            <div class="col-sm-6">
+              <div class="p-3 border rounded">
+                <span class="text-muted small d-block">Payment Method:</span>
+                <strong id="confirm-payment" class="text-dark">50% Advance 50% After Delivery</strong>
+              </div>
+            </div>
+
+            <div class="col-sm-6">
+              <div class="p-3 border rounded">
+                <span class="text-muted small d-block">Delivery To:</span>
+                <strong id="confirm-name" class="text-dark">John Doe</strong>
+                <span id="confirm-address" class="text-muted small d-block mt-1">Street 1, Fatima Avenue, Opp. Fatima Masjid, Near Prime Mart. MPS Road, Multan</span>
+              </div>
+            </div>
+
+            <div class="col-sm-6">
+              <div class="p-3 border rounded">
+                <span class="text-muted small d-block">Total Settlement (including shipping):</span>
+                <strong id="confirm-total" class="text-primary h5 d-block mt-1">Rs. 0</strong>
+              </div>
+            </div>
+          </div>
+
+          <div class="alert alert-info mt-4 text-start small">
+            <div class="mb-3">
+              <i class="bi bi-info-circle-fill me-2"></i> Please transfer the 50% advance to our bank account. Once payment is verified, our logistics team will dispatch your products via Leopards/TCS. Expect delivery within <strong>2 to 4 business days</strong>.
+            </div>
+            <div class="p-3 bg-white border rounded-3 text-dark">
+              <span class="text-muted small d-block mb-1">Official Bank Account:</span>
+              <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
+                <div>
+                  <strong class="text-primary font-primary">Bank Al-Falah</strong>
+                  <div class="small text-dark mt-1">Account Number: <strong class="fs-6 font-monospace">56235001952299</strong></div>
+                  <div class="small text-muted">Title: <strong>ARB Farms</strong></div>
+                </div>
+                <button class="btn btn-sm btn-outline-secondary" onclick="navigator.clipboard.writeText('56235001952299'); alert('Bank account number copied to clipboard!');">
+                  <i class="bi bi-copy"></i> Copy Account
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Receipt Upload Widget -->
+          <div class="my-4 p-4 border rounded-3 text-start bg-light" id="receipt-upload-container">
+            <h3 class="h6 font-primary text-dark mb-2"><i class="bi bi-cloud-arrow-up-fill text-primary me-2"></i> Upload Payment Receipt (50% Advance)</h3>
+            <p class="small text-muted mb-3">To accelerate verification, drag &amp; drop or click to upload your mobile transfer screenshot below.</p>
+            
+            <div class="receipt-upload-zone p-4 text-center border-dashed rounded-3" id="drop-zone" style="background-color: var(--color-accent-light); border: 2px dashed var(--color-secondary); cursor: pointer;">
+              <i class="bi bi-file-earmark-image-fill fs-2 text-secondary d-block mb-2"></i>
+              <span class="small fw-bold text-dark d-block">Drop screenshot here, or <span class="text-primary text-decoration-underline">browse files</span></span>
+              <span class="text-muted d-block mt-1" style="font-size: 0.7rem;">Accepted: PNG, JPG, PDF (Max 5MB)</span>
+              <input type="file" id="receipt-file-input" class="d-none" accept="image/*,application/pdf">
+            </div>
+
+            <!-- Progress Bar -->
+            <div class="mt-3 d-none" id="upload-progress-container">
+              <div class="progress" style="height: 6px;">
+                <div class="progress-bar progress-bar-striped progress-bar-animated bg-success" role="progressbar" style="width: 0%;" id="upload-progress-bar"></div>
+              </div>
+              <span class="small text-muted mt-2 d-block" id="upload-progress-text">Uploading transaction receipt...</span>
+            </div>
+
+            <!-- Success Alert -->
+            <div class="alert alert-success d-none mt-3 mb-0" id="upload-success-alert">
+              <i class="bi bi-check-circle-fill me-2"></i>
+              <strong>Receipt Submitted!</strong> Our farm team is validating your transfer. You can track this in your Client Portal.
+            </div>
+          </div>
+
+          <!-- Validation Warning for WhatsApp -->
+          <div class="alert alert-warning d-none mt-4 text-start mx-auto" id="whatsapp-warning" style="max-width: 600px;">
+            <i class="bi bi-exclamation-triangle-fill text-warning me-2"></i>
+            <strong>Action Required:</strong> Please upload your payment receipt screenshot above to verify your order and proceed to WhatsApp.
+          </div>
+
+          <div class="d-flex flex-wrap gap-3 justify-content-center mt-4">
+            <a href="shop.html" class="btn btn-primary"><i class="bi bi-bag-check-fill me-1"></i> Continue Shopping</a>
+            <a href="https://wa.me/923200005367?text=Hi%20ARB%20Farms,%20I'd%20like%20to%20verify%20my%20order" target="_blank" class="btn btn-outline-success" id="whatsapp-btn"><i class="bi bi-whatsapp me-1"></i> Direct WhatsApp Verify</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="py-5 bg-forest text-white" style="border-top: 5px solid var(--color-secondary);">
+    <div class="container">
+      <div class="row g-4 mb-5">
+        <div class="col-lg-4">
+          <h4 class="h5 text-gold mb-3">ARB Farms &amp; Organics</h4>
+          <p class="small text-white-50">Providing organic dietary staples and high-nutrition livestock forage directly from our off-grid farm in Multan, Pakistan.</p>
+          <p class="small text-white-50"><i class="bi bi-geo-alt-fill text-gold me-2"></i> Street 1, Fatima Avenue, Opp. Fatima Masjid, Near Prime Mart. MPS Road, Multan, Punjab, Pakistan</p>
+          <p class="small text-white-50"><i class="bi bi-telephone-fill text-gold me-2"></i> +92 320 000 5367</p>
+        </div>
+        
+        <div class="col-md-4 col-lg-3 offset-lg-1">
+          <h4 class="h5 text-gold mb-3">Product Catalogs</h4>
+          <ul class="list-unstyled small d-flex flex-column gap-2">
+            <li><a href="shop.html?category=edible-seeds" class="text-white-50 text-decoration-none">Superfood &amp; Edible Seeds</a></li>
+            <li><a href="shop.html?category=dairy-organic" class="text-white-50 text-decoration-none">Desi Ghee &amp; Raw Honey</a></li>
+            <li><a href="shop.html?category=feed-agri" class="text-white-50 text-decoration-none">Livestock Silage &amp; Baled Fodder</a></li>
+          </ul>
+        </div>
+        
+        <div class="col-md-4 col-lg-2">
+          <h4 class="h5 text-gold mb-3">Customer Service</h4>
+          <ul class="list-unstyled small d-flex flex-column gap-2">
+            <li><a href="about.html" class="text-white-50 text-decoration-none">About Us</a></li>
+            <li><a href="contact.html" class="text-white-50 text-decoration-none">Contact Us</a></li>
+            <li><a href="legal/shipping-policy.html" class="text-white-50 text-decoration-none">Shipping Tiers &amp; Rules</a></li>
+            <li><a href="legal/refund-policy.html" class="text-white-50 text-decoration-none">Return Policy</a></li>
+            <li><a href="legal/terms-conditions.html" class="text-white-50 text-decoration-none">Terms of Service</a></li>
+            <li><a href="legal/privacy-policy.html" class="text-white-50 text-decoration-none">Privacy Policy</a></li>
+          </ul>
+        </div>
+        
+        <div class="col-md-4 col-lg-2">
+          <h4 class="h5 text-gold mb-3">Follow Our Farm</h4>
+          <div class="d-flex gap-3 fs-5">
+            <a href="https://www.tiktok.com/@arborganics" class="text-white-50"><i class="bi bi-tiktok"></i></a>
+            <a href="https://www.instagram.com/arb.organicsouq/" class="text-white-50"><i class="bi bi-instagram"></i></a>
+            <a href="https://www.facebook.com/ARBORGANIC" class="text-white-50"><i class="bi bi-facebook"></i></a>
+            <a href="https://wa.me/923200005367" class="text-white-50"><i class="bi bi-whatsapp"></i></a>
+          </div>
+        </div>
+      </div>
+      
+      <div class="border-top border-secondary pt-4 d-flex flex-wrap justify-content-between align-items-center gap-3">
+        <p class="small mb-0 text-white-50">&copy; 2026 ARB Farms Organics. All rights reserved.</p>
+        <div class="d-flex align-items-center gap-3">
+          <span class="small text-white-50">Accepted Methods:</span>
+          <span class="badge bg-secondary">50% Advance 50% After Delivery</span>
+          <span class="badge bg-secondary">EasyPaisa / JazzCash</span>
+          <span class="badge bg-secondary">Card Settlement</span>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+  <!-- Load Order Data -->
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      // Check query parameter first for direct link loading
+      const urlParams = new URLSearchParams(window.location.search);
+      const orderId = urlParams.get('order');
+      let order = null;
+
+      if (orderId) {
+        // Try to find the order in arb_all_orders in localStorage
+        const clientOrders = JSON.parse(localStorage.getItem("arb_all_orders")) || [];
+        order = clientOrders.find(o => o.orderNumber === orderId);
+        
+        if (!order) {
+          // If not found in localStorage (different device), we can still display a placeholder order
+          order = {
+            orderNumber: orderId,
+            customerName: "Customer",
+            phone: "N/A",
+            address: "N/A",
+            city: "N/A",
+            paymentMethod: "50% Advance 50% After Delivery",
+            subtotal: 0,
+            weight: 0,
+            shipping: 0,
+            total: 0,
+            items: [],
+            receiptUploaded: false
+          };
+        }
+        // Save to sessionStorage so all page features function
+        sessionStorage.setItem("arb_latest_order", JSON.stringify(order));
+      }
+
+      // Fallback to sessionStorage
+      if (!order) {
+        const orderJson = sessionStorage.getItem("arb_latest_order");
+        if (orderJson) {
+          order = JSON.parse(orderJson);
+        }
+      }
+
+      if (!order) {
+        window.location.href = "index.html";
+        return;
+      }
+
+      document.getElementById("confirm-ordernum").textContent = order.orderNumber;
+      document.getElementById("confirm-payment").textContent = order.paymentMethod;
+      document.getElementById("confirm-name").textContent = order.customerName;
+      document.getElementById("confirm-address").textContent = `${order.address}, ${order.city.toUpperCase()}`;
+      document.getElementById("confirm-total").textContent = `Rs. ${order.total.toLocaleString()}`;
+
+      // Update whatsapp link text dynamically with order details and upload link
+      function updateWhatsAppLink(orderObj) {
+        const waLink = document.getElementById("whatsapp-btn");
+        if (!waLink) return;
+
+        const baseUrl = "https://wa.me/923200005367";
+        const uploadLink = `${window.location.origin}${window.location.pathname}?order=${orderObj.orderNumber}`;
+        
+        let itemsText = "No items specified";
+        if (orderObj.items && Array.isArray(orderObj.items) && orderObj.items.length > 0) {
+          itemsText = orderObj.items.map(item => `- ${item.qty}x ${item.name} (${item.weight} kg) - Rs. ${(item.price * item.qty).toLocaleString()}`).join("\n");
+        }
+
+        const intro = orderObj.receiptUploaded 
+          ? "Hi ARB Farms, I have uploaded the 50% advance payment receipt for my order:"
+          : "Hi ARB Farms, I would like to verify my order:";
+
+        const messageText = `${intro}
+*Order Number:* ${orderObj.orderNumber}
+*Name:* ${orderObj.customerName}
+*Phone:* +92 ${orderObj.phone}
+*Shipping City:* ${orderObj.city.toUpperCase()}
+*Delivery Address:* ${orderObj.address}
+*Payment Method:* ${orderObj.paymentMethod}
+
+*Items Ordered:*
+${itemsText}
+
+*Subtotal:* Rs. ${orderObj.subtotal.toLocaleString()}
+*Shipping Fee:* Rs. ${orderObj.shipping.toLocaleString()}
+*Grand Total:* Rs. ${orderObj.total.toLocaleString()}
+
+*Upload Receipt Link:* ${uploadLink}`;
+
+        waLink.href = `${baseUrl}?text=${encodeURIComponent(messageText)}`;
+
+        // Handle disabled visual state and validation alerts
+        const waWarning = document.getElementById("whatsapp-warning");
+        if (orderObj.receiptUploaded) {
+          waLink.classList.remove("opacity-50");
+          if (waWarning) waWarning.classList.add("d-none");
+        } else {
+          waLink.classList.add("opacity-50");
+        }
+      }
+
+      updateWhatsAppLink(order);
+
+      // Block WhatsApp verify if receipt not uploaded, scroll to upload widget
+      const waLink = document.getElementById("whatsapp-btn");
+      const waWarning = document.getElementById("whatsapp-warning");
+      if (waLink) {
+        waLink.addEventListener("click", (e) => {
+          const currentOrder = JSON.parse(sessionStorage.getItem("arb_latest_order")) || {};
+          if (!currentOrder.receiptUploaded) {
+            e.preventDefault();
+            if (waWarning) waWarning.classList.remove("d-none");
+            
+            // Scroll to the receipt upload widget
+            const uploadContainer = document.getElementById("receipt-upload-container");
+            if (uploadContainer) {
+              uploadContainer.scrollIntoView({ behavior: "smooth", block: "center" });
+            }
+            
+            // Pulse the drop zone border red to grab attention
+            const dropZone = document.getElementById("drop-zone");
+            if (dropZone) {
+              dropZone.style.setProperty("border-color", "#dc3545", "important");
+              setTimeout(() => {
+                dropZone.style.removeProperty("border-color");
+              }, 1500);
+            }
+          }
+        });
+      }
+
+      // Drag and Drop Uploader Handlers
+      const dropZone = document.getElementById("drop-zone");
+      const fileInput = document.getElementById("receipt-file-input");
+      const progressContainer = document.getElementById("upload-progress-container");
+      const progressBar = document.getElementById("upload-progress-bar");
+      const successAlert = document.getElementById("upload-success-alert");
+
+      if (dropZone && fileInput) {
+        dropZone.addEventListener("click", () => fileInput.click());
+
+        dropZone.addEventListener("dragover", (e) => {
+          e.preventDefault();
+          dropZone.style.backgroundColor = "var(--color-accent)";
+        });
+
+        dropZone.addEventListener("dragleave", () => {
+          dropZone.style.backgroundColor = "var(--color-accent-light)";
+        });
+
+        dropZone.addEventListener("drop", (e) => {
+          e.preventDefault();
+          dropZone.style.backgroundColor = "var(--color-accent-light)";
+          const files = e.dataTransfer.files;
+          if (files.length > 0) {
+            handleReceiptUpload(files[0]);
+          }
+        });
+
+        fileInput.addEventListener("change", () => {
+          if (fileInput.files.length > 0) {
+            handleReceiptUpload(fileInput.files[0]);
+          }
+        });
+      }
+
+      function handleReceiptUpload(file) {
+        dropZone.classList.add("d-none");
+        progressContainer.classList.remove("d-none");
+        
+        let percentage = 0;
+        const interval = setInterval(() => {
+          percentage += 20;
+          progressBar.style.width = percentage + "%";
+          
+          if (percentage >= 100) {
+            clearInterval(interval);
+            setTimeout(() => {
+              progressContainer.classList.add("d-none");
+              successAlert.classList.remove("d-none");
+              
+              // Mark order as receipt uploaded in sessionStorage
+              const latestOrder = JSON.parse(sessionStorage.getItem("arb_latest_order")) || {};
+              latestOrder.status = "Advance Settle Pending";
+              latestOrder.receiptUploaded = true;
+              sessionStorage.setItem("arb_latest_order", JSON.stringify(latestOrder));
+              
+              // Update WhatsApp link text to include confirmation of upload
+              updateWhatsAppLink(latestOrder);
+
+              // Append this order to client history list in localStorage
+              const clientOrders = JSON.parse(localStorage.getItem("arb_all_orders")) || [];
+              const match = clientOrders.find(o => o.orderNumber === latestOrder.orderNumber);
+              if (match) {
+                match.status = "Advance Settle Pending";
+                match.receiptUploaded = true;
+                localStorage.setItem("arb_all_orders", JSON.stringify(clientOrders));
+              }
+            }, 300);
+          }
+        }, 150);
+      }
+    });
+  </script>
+</body>
+</html>
