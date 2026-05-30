@@ -184,6 +184,28 @@ const productsDb = [
     tags: ["wheat", "gandum", "grain", "flour", "staple"]
   },
   {
+    id: "ogn-018-5kg",
+    sku: "OGN-018",
+    name: "Gandum (Wheat)",
+    weight: "5 Kg",
+    price: 1100,
+    category: "edible-seeds",
+    image: "catalog/ogn-018-gandum-40kg.svg",
+    hoverImage: "catalog/ogn-018-gandum-40kg-hover.svg",
+    tags: ["wheat", "gandum", "grain", "flour", "staple"]
+  },
+  {
+    id: "ogn-018-40kg",
+    sku: "OGN-018",
+    name: "Gandum (Wheat)",
+    weight: "40 Kg (Maund)",
+    price: 9000,
+    category: "edible-seeds",
+    image: "catalog/ogn-018-gandum-40kg.svg",
+    hoverImage: "catalog/ogn-018-gandum-40kg-hover.svg",
+    tags: ["wheat", "gandum", "grain", "flour", "staple", "bulk"]
+  },
+  {
     id: "ogn-027-edible",
     sku: "OGN-027",
     name: "Kalonji (Black Seed)",
@@ -419,6 +441,9 @@ const productsDb = [
 ];
 
 const productVariations = {
+  "ogn-018": ["ogn-018", "ogn-018-5kg", "ogn-018-40kg"],  // Wheat (Gandum)
+  "ogn-018-5kg": ["ogn-018", "ogn-018-5kg", "ogn-018-40kg"],
+  "ogn-018-40kg": ["ogn-018", "ogn-018-5kg", "ogn-018-40kg"],
   "ogn-011": ["ogn-011", "ogn-012"], // Honey
   "ogn-012": ["ogn-011", "ogn-012"],
   "ogn-013": ["ogn-013", "ogn-014"], // Ghee
