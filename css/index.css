@@ -760,9 +760,9 @@ h1, h2, h3, h4, h5, h6, .font-primary {
     align-items: center !important;
   }
 
-  /* Hide the logo brand image on mobile to match textual style in mockup */
+  /* Show the logo brand image on mobile */
   nav.navbar .navbar-brand img {
-    display: none !important;
+    display: block !important;
   }
 
   /* Flexbox order adjustments to align hamburger (left), brand (middle), tray (right) */
