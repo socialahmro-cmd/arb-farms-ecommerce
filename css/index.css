@@ -788,7 +788,7 @@ h1, h2, h3, h4, h5, h6, .font-primary {
     order: 3 !important;
     margin-left: auto !important;
     margin-right: 0 !important;
-    gap: 0.85rem !important;
+    gap: 0.5rem !important;
     z-index: 1050;
   }
 
@@ -801,8 +801,8 @@ h1, h2, h3, h4, h5, h6, .font-primary {
   .navbar-brand span {
     color: var(--color-secondary) !important;
     font-weight: 800 !important;
-    font-size: 1.35rem !important;
-    letter-spacing: 0.08em !important;
+    font-size: 1.2rem !important;
+    letter-spacing: 0.04em !important;
   }
 
   /* Hide the desktop action icons div from inside the collapse drawer on mobile */
@@ -820,7 +820,7 @@ h1, h2, h3, h4, h5, h6, .font-primary {
     border: none !important;
     color: var(--color-secondary) !important;
     box-shadow: none !important;
-    font-size: 1.35rem !important;
+    font-size: 1.15rem !important;
     width: auto !important;
     height: auto !important;
     padding: 0 !important;
@@ -1103,39 +1103,42 @@ h1, h2, h3, h4, h5, h6, .font-primary {
 /* Responsive Navbar Brand and Mobile Tray Refinements */
 @media (max-width: 576px) {
   nav.navbar .navbar-brand span {
-    font-size: 1.15rem !important;
+    font-size: 1rem !important;
+    letter-spacing: 0.02em !important;
   }
   nav.navbar .navbar-brand img {
-    max-height: 35px !important;
+    max-height: 28px !important;
+    margin-right: 0.25rem !important;
   }
   .mobile-nav-tray {
-    margin-right: 0.5rem !important;
-    gap: 0.25rem !important;
+    margin-right: 0.25rem !important;
+    gap: 0.15rem !important;
   }
   .mobile-nav-tray a,
   .mobile-nav-tray button {
-    width: 34px !important;
-    height: 34px !important;
-    font-size: 0.95rem !important;
+    width: 28px !important;
+    height: 28px !important;
+    font-size: 0.9rem !important;
   }
 }
 
 @media (max-width: 375px) {
   nav.navbar .navbar-brand span {
-    font-size: 0.95rem !important;
+    font-size: 0.85rem !important;
+    letter-spacing: 0.01em !important;
   }
   nav.navbar .navbar-brand img {
-    max-height: 28px !important;
+    max-height: 24px !important;
     margin-right: 0.2rem !important;
   }
   .mobile-nav-tray {
-    margin-right: 0.3rem !important;
-    gap: 0.15rem !important;
+    margin-right: 0.15rem !important;
+    gap: 0.1rem !important;
   }
   .mobile-nav-tray a,
   .mobile-nav-tray button {
-    width: 30px !important;
-    height: 30px !important;
+    width: 24px !important;
+    height: 24px !important;
     font-size: 0.85rem !important;
   }
   nav.navbar .navbar-toggler {
