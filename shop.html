@@ -344,14 +344,9 @@
           return `
             <div class="col-xl-3 col-lg-3 col-md-4 col-sm-6 col-6 mb-3 px-1">
               <div class="card h-100 product-card border-0 shadow-sm">
-                <!-- Save badge above image (mobile/tablet only) -->
-                <div class="d-lg-none text-center pt-2 pb-1 px-2">
-                  <span class="badge rounded-pill fw-bold d-inline-flex align-items-center gap-1" style="background:#fff3cd;color:#856404;border:1.5px solid #ffc107;font-size:0.72rem;padding:4px 10px;">
-                    <i class="bi bi-tag-fill"></i>Save Rs. ${_saveAmt.toLocaleString()}
-                  </span>
-                </div>
-                <!-- Image -->
+                <!-- Image (top) -->
                 <div class="position-relative product-image-col">
+                  <span class="badge rounded-pill position-absolute z-2 save-badge-top d-lg-none" style="top:0.5rem;left:0.5rem;background:#fff3cd;color:#856404;border:1.5px solid #ffc107;font-size:0.65rem;font-weight:700;padding:3px 8px;"><i class="bi bi-tag-fill me-1"></i>Save Rs. ${_saveAmt.toLocaleString()}</span>
                   <button class="wishlist-btn position-absolute top-0 end-0 m-2 border-0 z-2" aria-label="Add to Wishlist" data-id="${product.id}">
                     <i class="bi bi-heart"></i>
                   </button>
