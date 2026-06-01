@@ -205,10 +205,10 @@ function startSocialProofPopups() {
   
   document.body.appendChild(popupContainer);
   
-  // Trigger first notification shortly after load, then repeat
+  // Trigger first notification after 60 seconds, then repeat
   setTimeout(() => {
     showRandomNotification(popupContainer);
-  }, 4000);
+  }, 60000);
   
   setInterval(() => {
     showRandomNotification(popupContainer);
