@@ -245,8 +245,8 @@ const productsDb = [
     weight: "500 gm",
     price: 2700,
     category: "edible-seeds",
-    image: "catalog/ogn-048-chia-seed-500gm.svg",
-    hoverImage: "catalog/ogn-048-chia-seed-500gm-hover.svg",
+    image: "catalog/ogn-028-chia-seed-250gm.svg",
+    hoverImage: "catalog/ogn-028-chia-seed-250gm-hover.svg",
     tags: ["chia", "seeds", "fiber", "weight loss", "superfood"]
   },
   {
