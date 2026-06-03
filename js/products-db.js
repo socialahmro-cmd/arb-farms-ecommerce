@@ -355,8 +355,8 @@ const productsDb = [
     weight: "500 gm",
     price: 1350,
     category: "edible-seeds",
-    image: "catalog/ogn-060-sesame-seed-500gm.svg",
-    hoverImage: "catalog/ogn-060-sesame-seed-500gm-hover.svg",
+    image: "catalog/ogn-059-sesame-seed-250gm.svg",
+    hoverImage: "catalog/ogn-059-sesame-seed-250gm-hover.svg",
     tags: ["sesame", "til", "calcium", "baking"]
   },
   {
