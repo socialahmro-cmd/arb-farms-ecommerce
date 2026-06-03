@@ -13,7 +13,7 @@ const productsDb = [
     price: 330,
     category: "dairy-organic",
     image: "catalog/ogn-004-cow-milk-1ltr.svg",
-    hoverImage: "catalog/ogn-005-hover.svg",
+    hoverImage: "catalog/ogn-004-cow-milk-1ltr-hover.svg",
     tags: ["milk", "dairy", "fresh", "cow", "multan"]
   },
   {
@@ -35,7 +35,7 @@ const productsDb = [
     price: 1000,
     category: "dairy-organic",
     image: "catalog/ogn-006-goat-milk-1ltr.svg",
-    hoverImage: "catalog/ogn-005-hover.svg",
+    hoverImage: "catalog/ogn-006-goat-milk-1ltr-hover.svg",
     tags: ["milk", "dairy", "fresh", "goat", "multan"]
   },
   {
@@ -46,7 +46,7 @@ const productsDb = [
     price: 720,
     category: "dairy-organic",
     image: "catalog/ogn-007-desi-organic-gurr-1kg.svg",
-    hoverImage: "catalog/ogn-005-hover.svg",
+    hoverImage: "catalog/ogn-007-desi-organic-gurr-1kg-hover.svg",
     tags: ["gurr", "sweetener", "jaggery", "sugar"]
   },
   {
@@ -57,7 +57,7 @@ const productsDb = [
     price: 1800,
     category: "dairy-organic",
     image: "catalog/ogn-008-gurr-with-dry-fruits-1kg.svg",
-    hoverImage: "catalog/ogn-005-hover.svg",
+    hoverImage: "catalog/ogn-008-gurr-with-dry-fruits-1kg-hover.svg",
     tags: ["gurr", "sweetener", "premium", "dry fruits", "nuts"]
   },
   {
@@ -68,7 +68,7 @@ const productsDb = [
     price: 810,
     category: "dairy-organic",
     image: "catalog/ogn-009-organic-shakar-1kg.svg",
-    hoverImage: "catalog/ogn-005-hover.svg",
+    hoverImage: "catalog/ogn-009-organic-shakar-1kg-hover.svg",
     tags: ["shakar", "sweetener", "sugar", "brown"]
   },
   {
@@ -79,7 +79,7 @@ const productsDb = [
     price: 4400,
     category: "dairy-organic",
     image: "catalog/ogn-010-organic-shakar-6kg.svg",
-    hoverImage: "catalog/ogn-005-hover.svg",
+    hoverImage: "catalog/ogn-010-organic-shakar-6kg-hover.svg",
     tags: ["shakar", "sweetener", "sugar", "bulk"]
   },
   {
@@ -90,7 +90,7 @@ const productsDb = [
     price: 5000,
     category: "dairy-organic",
     image: "catalog/honey.svg?v=2",
-    hoverImage: "catalog/ogn-005-hover.svg",
+    hoverImage: "catalog/honey.svg?v=2",
     tags: ["honey", "sidr", "sweet", "small", "remedy"]
   },
   {
@@ -101,7 +101,7 @@ const productsDb = [
     price: 9000,
     category: "dairy-organic",
     image: "catalog/honey.svg?v=2",
-    hoverImage: "catalog/ogn-005-hover.svg",
+    hoverImage: "catalog/honey.svg?v=2",
     tags: ["honey", "sidr", "sweet", "large", "premium"]
   },
   {
@@ -112,7 +112,7 @@ const productsDb = [
     price: 5000,
     category: "dairy-organic",
     image: "catalog/ogn-013-desi-ghee-500gm.svg",
-    hoverImage: "catalog/ogn-005-hover.svg",
+    hoverImage: "catalog/ogn-013-desi-ghee-500gm-hover.svg",
     tags: ["ghee", "desi", "butter", "dairy", "fat"]
   },
   {
@@ -123,7 +123,7 @@ const productsDb = [
     price: 9000,
     category: "dairy-organic",
     image: "catalog/ogn-014-desi-ghee-1kg.svg",
-    hoverImage: "catalog/ogn-005-hover.svg",
+    hoverImage: "catalog/ogn-014-desi-ghee-1kg-hover.svg",
     tags: ["ghee", "desi", "butter", "dairy", "fat", "premium"]
   },
   {
@@ -134,7 +134,7 @@ const productsDb = [
     price: 700,
     category: "dairy-organic",
     image: "catalog/ogn-015-organic-achaar-400gm.svg",
-    hoverImage: "catalog/ogn-005-hover.svg",
+    hoverImage: "catalog/ogn-015-organic-achaar-400gm-hover.svg",
     tags: ["achaar", "pickle", "traditional", "oil", "mango"]
   },
   {
@@ -145,7 +145,7 @@ const productsDb = [
     price: 1000,
     category: "dairy-organic",
     image: "catalog/ogn-016-organic-achaar-750gm.svg",
-    hoverImage: "catalog/ogn-005-hover.svg",
+    hoverImage: "catalog/ogn-016-organic-achaar-750gm-hover.svg",
     tags: ["achaar", "pickle", "traditional", "oil", "medium"]
   },
   {
@@ -156,7 +156,7 @@ const productsDb = [
     price: 1400,
     category: "dairy-organic",
     image: "catalog/ogn-017-organic-achaar-1kg.svg",
-    hoverImage: "catalog/ogn-005-hover.svg",
+    hoverImage: "catalog/ogn-017-organic-achaar-1kg-hover.svg",
     tags: ["achaar", "pickle", "traditional", "oil", "large"]
   },
   {
@@ -167,7 +167,7 @@ const productsDb = [
     price: 0,
     category: "dairy-organic",
     image: "catalog/ogn-065-mango-5kg.png",
-    hoverImage: "catalog/ogn-005-hover.svg",
+    hoverImage: "catalog/ogn-065-mango-5kg-hover.png",
     tags: ["mango", "chaunsa", "fruit", "fresh", "organic", "pre-booking", "multan"]
   },
 
@@ -180,7 +180,7 @@ const productsDb = [
     price: 225,
     category: "edible-seeds",
     image: "catalog/ogn-018-gandum-40kg.svg",
-    hoverImage: "catalog/ogn-005-hover.svg",
+    hoverImage: "catalog/ogn-018-gandum-40kg-hover.svg",
     tags: ["wheat", "gandum", "grain", "flour", "staple"]
   },
   {
@@ -191,7 +191,7 @@ const productsDb = [
     price: 1100,
     category: "edible-seeds",
     image: "catalog/ogn-018-gandum-40kg.svg",
-    hoverImage: "catalog/ogn-005-hover.svg",
+    hoverImage: "catalog/ogn-018-gandum-40kg-hover.svg",
     tags: ["wheat", "gandum", "grain", "flour", "staple"]
   },
   {
@@ -202,7 +202,7 @@ const productsDb = [
     price: 9000,
     category: "edible-seeds",
     image: "catalog/ogn-018-gandum-40kg.svg",
-    hoverImage: "catalog/ogn-005-hover.svg",
+    hoverImage: "catalog/ogn-018-gandum-40kg-hover.svg",
     tags: ["wheat", "gandum", "grain", "flour", "staple", "bulk"]
   },
   {
@@ -213,7 +213,7 @@ const productsDb = [
     price: 720,
     category: "edible-seeds",
     image: "catalog/ogn-027-kalonji-250gm.svg",
-    hoverImage: "catalog/ogn-005-hover.svg",
+    hoverImage: "catalog/ogn-027-kalonji-250gm-hover.svg",
     tags: ["kalonji", "black seed", "superfood", "spice"]
   },
   {
@@ -224,7 +224,7 @@ const productsDb = [
     price: 1350,
     category: "edible-seeds",
     image: "catalog/ogn-046-kalonji-500gm.svg",
-    hoverImage: "catalog/ogn-005-hover.svg",
+    hoverImage: "catalog/ogn-046-kalonji-500gm-hover.svg",
     tags: ["kalonji", "black seed", "superfood", "spice"]
   },
   {
@@ -235,7 +235,7 @@ const productsDb = [
     price: 1400,
     category: "edible-seeds",
     image: "catalog/ogn-028-chia-seed-250gm.svg",
-    hoverImage: "catalog/ogn-005-hover.svg",
+    hoverImage: "catalog/ogn-028-chia-seed-250gm-hover.svg",
     tags: ["chia", "seeds", "fiber", "weight loss", "superfood"]
   },
   {
@@ -246,7 +246,7 @@ const productsDb = [
     price: 2700,
     category: "edible-seeds",
     image: "catalog/ogn-048-chia-seed-500gm.svg",
-    hoverImage: "catalog/ogn-005-hover.svg",
+    hoverImage: "catalog/ogn-048-chia-seed-500gm-hover.svg",
     tags: ["chia", "seeds", "fiber", "weight loss", "superfood"]
   },
   {
@@ -257,7 +257,7 @@ const productsDb = [
     price: 1400,
     category: "edible-seeds",
     image: "catalog/ogn-063-isapghol-100gm.svg",
-    hoverImage: "catalog/ogn-005-hover.svg",
+    hoverImage: "catalog/ogn-063-isapghol-100gm-hover.svg",
     tags: ["isapghol", "husk", "fiber", "digestion", "laxative"]
   },
   {
@@ -268,7 +268,7 @@ const productsDb = [
     price: 2700,
     category: "edible-seeds",
     image: "catalog/ogn-064-isapghol-250gm.svg",
-    hoverImage: "catalog/ogn-005-hover.svg",
+    hoverImage: "catalog/ogn-064-isapghol-250gm-hover.svg",
     tags: ["isapghol", "husk", "fiber", "digestion", "laxative"]
   },
   {
@@ -279,7 +279,7 @@ const productsDb = [
     price: 1400,
     category: "edible-seeds",
     image: "catalog/ogn-053-moringa-powder-250gm.svg",
-    hoverImage: "catalog/ogn-005-hover.svg",
+    hoverImage: "catalog/ogn-053-moringa-powder-250gm-hover.svg",
     tags: ["moringa", "suhunjna", "powder", "health", "herbal"]
   },
   {
@@ -290,7 +290,7 @@ const productsDb = [
     price: 2700,
     category: "edible-seeds",
     image: "catalog/ogn-054-moringa-powder-500gm.svg",
-    hoverImage: "catalog/ogn-005-hover.svg",
+    hoverImage: "catalog/ogn-054-moringa-powder-500gm-hover.svg",
     tags: ["moringa", "suhunjna", "powder", "health", "herbal"]
   },
   {
@@ -301,7 +301,7 @@ const productsDb = [
     price: 720,
     category: "edible-seeds",
     image: "catalog/ogn-055-flax-seed-250gm.svg",
-    hoverImage: "catalog/ogn-005-hover.svg",
+    hoverImage: "catalog/ogn-055-flax-seed-250gm-hover.svg",
     tags: ["flax", "alsi", "omega-3", "oils", "superfood"]
   },
   {
@@ -312,7 +312,7 @@ const productsDb = [
     price: 1350,
     category: "edible-seeds",
     image: "catalog/ogn-056-flax-seed-500gm.svg",
-    hoverImage: "catalog/ogn-005-hover.svg",
+    hoverImage: "catalog/ogn-056-flax-seed-500gm-hover.svg",
     tags: ["flax", "alsi", "omega-3", "oils", "superfood"]
   },
   {
@@ -323,7 +323,7 @@ const productsDb = [
     price: 720,
     category: "edible-seeds",
     image: "catalog/ogn-057-sunflower-seed-250gm.svg",
-    hoverImage: "catalog/ogn-005-hover.svg",
+    hoverImage: "catalog/ogn-057-sunflower-seed-250gm-hover.svg",
     tags: ["sunflower", "seeds", "snack", "nuts", "healthy"]
   },
   {
@@ -334,7 +334,7 @@ const productsDb = [
     price: 1350,
     category: "edible-seeds",
     image: "catalog/ogn-058-sunflower-seed-500gm.svg",
-    hoverImage: "catalog/ogn-005-hover.svg",
+    hoverImage: "catalog/ogn-058-sunflower-seed-500gm-hover.svg",
     tags: ["sunflower", "seeds", "snack", "nuts", "healthy"]
   },
   {
@@ -345,7 +345,7 @@ const productsDb = [
     price: 720,
     category: "edible-seeds",
     image: "catalog/ogn-059-sesame-seed-250gm.svg",
-    hoverImage: "catalog/ogn-005-hover.svg",
+    hoverImage: "catalog/ogn-059-sesame-seed-250gm-hover.svg",
     tags: ["sesame", "til", "calcium", "baking"]
   },
   {
@@ -356,7 +356,7 @@ const productsDb = [
     price: 1350,
     category: "edible-seeds",
     image: "catalog/ogn-060-sesame-seed-500gm.svg",
-    hoverImage: "catalog/ogn-005-hover.svg",
+    hoverImage: "catalog/ogn-060-sesame-seed-500gm-hover.svg",
     tags: ["sesame", "til", "calcium", "baking"]
   },
   {
@@ -367,7 +367,7 @@ const productsDb = [
     price: 720,
     category: "edible-seeds",
     image: "catalog/ogn-051-basil-seed-250gm.svg",
-    hoverImage: "catalog/ogn-005-hover.svg",
+    hoverImage: "catalog/ogn-051-basil-seed-250gm-hover.svg",
     tags: ["basil", "tukh malanga", "cooling", "drink"]
   },
   {
@@ -378,7 +378,7 @@ const productsDb = [
     price: 1350,
     category: "edible-seeds",
     image: "catalog/ogn-061-basil-seed-500gm.svg",
-    hoverImage: "catalog/ogn-005-hover.svg",
+    hoverImage: "catalog/ogn-061-basil-seed-500gm-hover.svg",
     tags: ["basil", "tukh malanga", "cooling", "drink"]
   },
   {
@@ -389,7 +389,7 @@ const productsDb = [
     price: 1400,
     category: "edible-seeds",
     image: "catalog/ogn-052-pumpkin-seed-250gm.svg",
-    hoverImage: "catalog/ogn-005-hover.svg",
+    hoverImage: "catalog/ogn-052-pumpkin-seed-250gm-hover.svg",
     tags: ["pumpkin", "kaddu", "snack", "premium", "zinc"]
   },
   {
@@ -400,7 +400,7 @@ const productsDb = [
     price: 2700,
     category: "edible-seeds",
     image: "catalog/ogn-053-pumpkin-seed-500gm.svg",
-    hoverImage: "catalog/ogn-005-hover.svg",
+    hoverImage: "catalog/ogn-053-pumpkin-seed-500gm-hover.svg",
     tags: ["pumpkin", "kaddu", "snack", "premium", "zinc"]
   },
 
@@ -413,7 +413,7 @@ const productsDb = [
     price: 900,
     category: "feed-agri",
     image: "catalog/ogn-041-silage-40kg.svg",
-    hoverImage: "catalog/ogn-005-hover.svg",
+    hoverImage: "catalog/ogn-041-silage-40kg-hover.svg",
     tags: ["silage", "fodder", "animal feed", "cows", "maund"]
   },
   {
@@ -424,7 +424,7 @@ const productsDb = [
     price: 5400,
     category: "feed-agri",
     image: "catalog/ogn-042-hay-40kg.svg",
-    hoverImage: "catalog/ogn-005-hover.svg",
+    hoverImage: "catalog/ogn-042-hay-40kg-hover.svg",
     tags: ["hay", "alfalfa", "animal feed", "cows", "maund"]
   },
   {
@@ -435,7 +435,7 @@ const productsDb = [
     price: 1100,
     category: "feed-agri",
     image: "catalog/ogn-044-toori-40kg.svg",
-    hoverImage: "catalog/ogn-005-hover.svg",
+    hoverImage: "catalog/ogn-044-toori-40kg-hover.svg",
     tags: ["toori", "wheat straw", "roughage", "animal bedding", "fodder"]
   }
 ];
