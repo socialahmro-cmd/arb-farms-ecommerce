@@ -377,8 +377,8 @@ const productsDb = [
     weight: "500 gm",
     price: 1350,
     category: "edible-seeds",
-    image: "catalog/ogn-061-basil-seed-500gm.svg",
-    hoverImage: "catalog/ogn-061-basil-seed-500gm-hover.svg",
+    image: "catalog/ogn-051-basil-seed-250gm.svg",
+    hoverImage: "catalog/ogn-051-basil-seed-250gm-hover.svg",
     tags: ["basil", "tukh malanga", "cooling", "drink"]
   },
   {
