@@ -629,12 +629,12 @@
           <div class="pdp-image-panel">
             <div class="pdp-image-wrap">
               <div class="pdp-img-container">
-                <img id="detail-image-base" src="" class="pdp-img-base" alt="Product Benefits">
-                <img id="detail-image-hover" src="" class="pdp-img-hover" alt="Product Front View">
+                <img id="detail-image-base" src="" class="pdp-img-base" alt="Product Front View">
+                <img id="detail-image-hover" src="" class="pdp-img-hover" alt="Product Benefits">
               </div>
               <p class="pdp-image-hint">
                 <i class="bi bi-hand-index-thumb"></i>
-                Hover to reveal product packaging &amp; front view
+                Hover to reveal product benefits &amp; details
               </p>
             </div>
           </div>
@@ -1068,10 +1068,10 @@
     document.getElementById('tabs-reviews-title').textContent = `Reviews (${reviewCount})`;
 
     // Images
-    document.getElementById('detail-image-base').src = '../../' + p.hoverImage;
-    document.getElementById('detail-image-base').alt = `${p.name} benefits`;
-    document.getElementById('detail-image-hover').src = '../../' + p.image;
-    document.getElementById('detail-image-hover').alt = `${p.name} front view`;
+    document.getElementById('detail-image-base').src = '../../' + p.image;
+    document.getElementById('detail-image-base').alt = `${p.name} front view`;
+    document.getElementById('detail-image-hover').src = '../../' + p.hoverImage;
+    document.getElementById('detail-image-hover').alt = `${p.name} benefits`;
 
     // Short description
     if (typeof getProductDescription === 'function') {
