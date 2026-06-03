@@ -901,6 +901,8 @@ const ARB_SEARCH_INDEX = [
   { id:"ogn-048", name:"Chia Seed 500gm", price:2700, weight:"500 gm", category:"Edible Seeds", image:"catalog/ogn-048-chia-seed-500gm.svg", tags:["chia","fiber","omega"] },
   { id:"ogn-063", name:"Isapghol 100gm", price:1400, weight:"100 gm", category:"Edible Seeds", image:"catalog/ogn-063-isapghol-100gm.svg", tags:["isapghol","husk","digestion"] },
   { id:"ogn-053-moringa", name:"Moringa Powder 250gm", price:1400, weight:"250 gm", category:"Edible Seeds", image:"catalog/ogn-053-moringa-powder-250gm.svg", tags:["moringa","powder","herbal","health"] },
+  { id:"ogn-051", name:"Basil Seed (Tukh Malanga) 250gm", price:720, weight:"250 gm", category:"Edible Seeds", image:"catalog/ogn-051-basil-seed-250gm.svg", tags:["basil","tukh","malanga","seeds"] },
+  { id:"ogn-061-edible", name:"Basil Seed (Tukh Malanga) 500gm", price:1350, weight:"500 gm", category:"Edible Seeds", image:"catalog/ogn-051-basil-seed-250gm.svg", tags:["basil","tukh","malanga","seeds"] },
   // Feed & Agri
   { id:"ogn-039-feed", name:"Corn Silage Bale 80Kg", price:3000, weight:"80 Kg", category:"Feed & Agri", image:"catalog/ogn-041-silage-40kg.svg", tags:["feed","silage","fodder","livestock","corn"] },
 ];
