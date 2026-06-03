@@ -267,8 +267,8 @@ const productsDb = [
     weight: "250 gm",
     price: 2700,
     category: "edible-seeds",
-    image: "catalog/ogn-064-isapghol-250gm.svg",
-    hoverImage: "catalog/ogn-064-isapghol-250gm-hover.svg",
+    image: "catalog/ogn-063-isapghol-100gm.svg",
+    hoverImage: "catalog/ogn-063-isapghol-100gm-hover.svg",
     tags: ["isapghol", "husk", "fiber", "digestion", "laxative"]
   },
   {
