@@ -223,8 +223,8 @@ const productsDb = [
     weight: "500 gm",
     price: 1350,
     category: "edible-seeds",
-    image: "catalog/ogn-046-kalonji-500gm.svg",
-    hoverImage: "catalog/ogn-046-kalonji-500gm-hover.svg",
+    image: "catalog/ogn-027-kalonji-250gm.svg",
+    hoverImage: "catalog/ogn-027-kalonji-250gm-hover.svg",
     tags: ["kalonji", "black seed", "superfood", "spice"]
   },
   {

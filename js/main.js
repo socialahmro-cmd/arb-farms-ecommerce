@@ -896,7 +896,7 @@ const ARB_SEARCH_INDEX = [
   { id:"ogn-018-5kg", name:"Gandum (Wheat) 5 Kg", price:1100, weight:"5 Kg", category:"Edible Seeds", image:"catalog/ogn-018-gandum-40kg.svg", tags:["wheat","gandum","grain","flour"] },
   { id:"ogn-018-40kg", name:"Gandum (Wheat) 40 Kg", price:9000, weight:"40 Kg Maund", category:"Edible Seeds", image:"catalog/ogn-018-gandum-40kg.svg", tags:["wheat","gandum","grain","flour","bulk"] },
   { id:"ogn-027-edible", name:"Kalonji (Black Seed) 250gm", price:720, weight:"250 gm", category:"Edible Seeds", image:"catalog/ogn-027-kalonji-250gm.svg", tags:["kalonji","black seed","superfood"] },
-  { id:"ogn-046", name:"Kalonji (Black Seed) 500gm", price:1350, weight:"500 gm", category:"Edible Seeds", image:"catalog/ogn-046-kalonji-500gm.svg", tags:["kalonji","black seed","spice"] },
+  { id:"ogn-046", name:"Kalonji (Black Seed) 500gm", price:1350, weight:"500 gm", category:"Edible Seeds", image:"catalog/ogn-027-kalonji-250gm.svg", tags:["kalonji","black seed","spice"] },
   { id:"ogn-028-edible", name:"Chia Seed 250gm", price:1400, weight:"250 gm", category:"Edible Seeds", image:"catalog/ogn-028-chia-seed-250gm.svg", tags:["chia","fiber","superfood","weight loss"] },
   { id:"ogn-048", name:"Chia Seed 500gm", price:2700, weight:"500 gm", category:"Edible Seeds", image:"catalog/ogn-028-chia-seed-250gm.svg", tags:["chia","fiber","omega"] },
   { id:"ogn-063", name:"Isapghol 100gm", price:1400, weight:"100 gm", category:"Edible Seeds", image:"catalog/ogn-063-isapghol-100gm.svg", tags:["isapghol","husk","digestion"] },
