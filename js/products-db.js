@@ -399,8 +399,8 @@ const productsDb = [
     weight: "500 gm",
     price: 2700,
     category: "edible-seeds",
-    image: "catalog/ogn-053-pumpkin-seed-500gm.svg",
-    hoverImage: "catalog/ogn-053-pumpkin-seed-500gm-hover.svg",
+    image: "catalog/ogn-052-pumpkin-seed-250gm.svg",
+    hoverImage: "catalog/ogn-052-pumpkin-seed-250gm-hover.svg",
     tags: ["pumpkin", "kaddu", "snack", "premium", "zinc"]
   },
 
