@@ -886,7 +886,7 @@ const ARB_SEARCH_INDEX = [
   { id:"ogn-011", name:"Sidr Honey Small", price:5000, weight:"500 gm", category:"Organic", image:"catalog/honey.svg?v=2", tags:["honey","sidr","sweet"] },
   { id:"ogn-012", name:"Sidr Honey Large", price:9000, weight:"1 Kg", category:"Organic", image:"catalog/honey.svg?v=2", tags:["honey","sidr","premium"] },
   { id:"ogn-013", name:"Desi Ghee Small", price:5000, weight:"500 gm", category:"Organic", image:"catalog/ogn-013-desi-ghee-500gm.svg", tags:["ghee","desi","butter","fat"] },
-  { id:"ogn-014", name:"Desi Ghee Large", price:9000, weight:"1 Kg", category:"Organic", image:"catalog/ogn-014-desi-ghee-1kg.svg", tags:["ghee","desi","butter","premium"] },
+  { id:"ogn-014", name:"Desi Ghee Large", price:9000, weight:"1 Kg", category:"Organic", image:"catalog/ogn-013-desi-ghee-500gm.svg", tags:["ghee","desi","butter","premium"] },
   { id:"ogn-015", name:"Organic Achaar Small", price:700, weight:"400 gm", category:"Organic", image:"catalog/ogn-015-organic-achaar-400gm.svg", tags:["achaar","pickle","mango"] },
   { id:"ogn-016", name:"Organic Achaar Medium", price:1000, weight:"750 gm", category:"Organic", image:"catalog/ogn-016-organic-achaar-750gm.svg", tags:["achaar","pickle"] },
   { id:"ogn-017", name:"Organic Achaar Large", price:1400, weight:"1 Kg", category:"Organic", image:"catalog/ogn-017-organic-achaar-1kg.svg", tags:["achaar","pickle","large"] },

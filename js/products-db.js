@@ -122,8 +122,8 @@ const productsDb = [
     weight: "1 Kg",
     price: 9000,
     category: "dairy-organic",
-    image: "catalog/ogn-014-desi-ghee-1kg.svg",
-    hoverImage: "catalog/ogn-014-desi-ghee-1kg-hover.svg",
+    image: "catalog/ogn-013-desi-ghee-500gm.svg",
+    hoverImage: "catalog/ogn-013-desi-ghee-500gm-hover.svg",
     tags: ["ghee", "desi", "butter", "dairy", "fat", "premium"]
   },
   {
