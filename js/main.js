@@ -882,7 +882,7 @@ const ARB_SEARCH_INDEX = [
   { id:"ogn-007", name:"Desi Organic Gurr", price:720, weight:"1 Kg", category:"Organic", image:"catalog/ogn-007-desi-organic-gurr-1kg.svg", tags:["gurr","jaggery","sweetener"] },
   { id:"ogn-008", name:"Gurr with Dry Fruits", price:1800, weight:"1 Kg", category:"Organic", image:"catalog/ogn-008-gurr-with-dry-fruits-1kg.svg", tags:["gurr","dry fruits","premium"] },
   { id:"ogn-009", name:"Organic Shakar", price:810, weight:"1 Kg", category:"Organic", image:"catalog/ogn-009-organic-shakar-1kg.svg", tags:["shakar","sugar","brown"] },
-  { id:"ogn-010", name:"Organic Shakar Bulk", price:4400, weight:"6 Kg", category:"Organic", image:"catalog/ogn-010-organic-shakar-6kg.svg", tags:["shakar","sugar","bulk"] },
+  { id:"ogn-010", name:"Organic Shakar Bulk", price:4400, weight:"6 Kg", category:"Organic", image:"catalog/ogn-009-organic-shakar-1kg.svg", tags:["shakar","sugar","bulk"] },
   { id:"ogn-011", name:"Sidr Honey Small", price:5000, weight:"500 gm", category:"Organic", image:"catalog/honey.svg?v=2", tags:["honey","sidr","sweet"] },
   { id:"ogn-012", name:"Sidr Honey Large", price:9000, weight:"1 Kg", category:"Organic", image:"catalog/honey.svg?v=2", tags:["honey","sidr","premium"] },
   { id:"ogn-013", name:"Desi Ghee Small", price:5000, weight:"500 gm", category:"Organic", image:"catalog/ogn-013-desi-ghee-500gm.svg", tags:["ghee","desi","butter","fat"] },

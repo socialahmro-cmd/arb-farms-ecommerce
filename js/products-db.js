@@ -78,8 +78,8 @@ const productsDb = [
     weight: "6 Kg",
     price: 4400,
     category: "dairy-organic",
-    image: "catalog/ogn-010-organic-shakar-6kg.svg",
-    hoverImage: "catalog/ogn-010-organic-shakar-6kg-hover.svg",
+    image: "catalog/ogn-009-organic-shakar-1kg.svg",
+    hoverImage: "catalog/ogn-009-organic-shakar-1kg-hover.svg",
     tags: ["shakar", "sweetener", "sugar", "bulk"]
   },
   {
