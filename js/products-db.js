@@ -289,8 +289,8 @@ const productsDb = [
     weight: "500 gm",
     price: 2700,
     category: "edible-seeds",
-    image: "catalog/ogn-054-moringa-powder-500gm.svg",
-    hoverImage: "catalog/ogn-054-moringa-powder-500gm-hover.svg",
+    image: "catalog/ogn-053-moringa-powder-250gm.svg",
+    hoverImage: "catalog/ogn-053-moringa-powder-250gm-hover.svg",
     tags: ["moringa", "suhunjna", "powder", "health", "herbal"]
   },
   {
