@@ -134,7 +134,7 @@ const productsDb = [
     price: 700,
     category: "dairy-organic",
     image: "catalog/ogn-015-organic-achaar-400gm.svg",
-    hoverImage: "catalog/ogn-015-organic-achaar-400gm-hover.svg",
+    hoverImage: "catalog/ogn-017-organic-achaar-1kg-hover.svg",
     tags: ["achaar", "pickle", "traditional", "oil", "mango"]
   },
   {
@@ -145,7 +145,7 @@ const productsDb = [
     price: 1000,
     category: "dairy-organic",
     image: "catalog/ogn-016-organic-achaar-750gm.svg",
-    hoverImage: "catalog/ogn-016-organic-achaar-750gm-hover.svg",
+    hoverImage: "catalog/ogn-017-organic-achaar-1kg-hover.svg",
     tags: ["achaar", "pickle", "traditional", "oil", "medium"]
   },
   {
