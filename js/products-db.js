@@ -57,7 +57,7 @@ const productsDb = [
     price: 1800,
     category: "dairy-organic",
     image: "catalog/ogn-008-gurr-with-dry-fruits-1kg.svg",
-    hoverImage: "catalog/ogn-008-gurr-with-dry-fruits-1kg-hover.svg",
+    hoverImage: "catalog/ogn-007-desi-organic-gurr-1kg-hover.svg",
     tags: ["gurr", "sweetener", "premium", "dry fruits", "nuts"]
   },
   {
