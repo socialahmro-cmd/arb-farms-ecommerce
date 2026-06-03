@@ -311,8 +311,8 @@ const productsDb = [
     weight: "500 gm",
     price: 1350,
     category: "edible-seeds",
-    image: "catalog/ogn-056-flax-seed-500gm.svg",
-    hoverImage: "catalog/ogn-056-flax-seed-500gm-hover.svg",
+    image: "catalog/ogn-055-flax-seed-250gm.svg",
+    hoverImage: "catalog/ogn-055-flax-seed-250gm-hover.svg",
     tags: ["flax", "alsi", "omega-3", "oils", "superfood"]
   },
   {
