@@ -333,8 +333,8 @@ const productsDb = [
     weight: "500 gm",
     price: 1350,
     category: "edible-seeds",
-    image: "catalog/ogn-058-sunflower-seed-500gm.svg",
-    hoverImage: "catalog/ogn-058-sunflower-seed-500gm-hover.svg",
+    image: "catalog/ogn-057-sunflower-seed-250gm.svg",
+    hoverImage: "catalog/ogn-057-sunflower-seed-250gm-hover.svg",
     tags: ["sunflower", "seeds", "snack", "nuts", "healthy"]
   },
   {
