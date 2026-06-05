@@ -52,39 +52,48 @@
     
     <!-- Analytics Header Cards -->
     <div class="row g-3 mb-4">
-      <div class="col-6 col-lg-3">
-        <div class="admin-card p-3 d-flex align-items-center gap-3">
-          <div class="bg-primary text-white p-2 rounded-3 fs-4"><i class="bi bi-wallet2"></i></div>
+      <div class="col-6 col-md-4 col-lg-2">
+        <div class="admin-card p-3 d-flex align-items-center gap-3 h-100">
+          <div class="bg-primary text-white p-2 rounded-3 fs-5"><i class="bi bi-wallet2"></i></div>
           <div>
             <span class="text-muted small d-block">Total Sales</span>
-            <strong class="h5 mb-0 font-primary text-dark" id="stat-sales">Rs. 0</strong>
+            <strong class="h6 mb-0 font-primary text-dark" id="stat-sales">Rs. 0</strong>
           </div>
         </div>
       </div>
-      <div class="col-6 col-lg-3">
-        <div class="admin-card p-3 d-flex align-items-center gap-3">
-          <div class="bg-warning text-dark p-2 rounded-3 fs-4"><i class="bi bi-clock-history"></i></div>
+      <div class="col-6 col-md-4 col-lg-2">
+        <div class="admin-card p-3 d-flex align-items-center gap-3 h-100">
+          <div class="bg-info text-white p-2 rounded-3 fs-5"><i class="bi bi-calendar-day"></i></div>
+          <div>
+            <span class="text-muted small d-block">Orders Today</span>
+            <strong class="h6 mb-0 font-primary text-dark" id="stat-today">0</strong>
+          </div>
+        </div>
+      </div>
+      <div class="col-6 col-md-4 col-lg-3">
+        <div class="admin-card p-3 d-flex align-items-center gap-3 h-100">
+          <div class="bg-warning text-dark p-2 rounded-3 fs-5"><i class="bi bi-clock-history"></i></div>
           <div>
             <span class="text-muted small d-block">Pending Review</span>
-            <strong class="h5 mb-0 font-primary text-dark" id="stat-pending">0</strong>
+            <strong class="h6 mb-0 font-primary text-dark" id="stat-pending">0</strong>
           </div>
         </div>
       </div>
-      <div class="col-6 col-lg-3">
-        <div class="admin-card p-3 d-flex align-items-center gap-3">
-          <div class="bg-success text-white p-2 rounded-3 fs-4"><i class="bi bi-box-seam"></i></div>
+      <div class="col-6 col-md-6 col-lg-2">
+        <div class="admin-card p-3 d-flex align-items-center gap-3 h-100">
+          <div class="bg-success text-white p-2 rounded-3 fs-5"><i class="bi bi-box-seam"></i></div>
           <div>
             <span class="text-muted small d-block">Dispatched</span>
-            <strong class="h5 mb-0 font-primary text-dark" id="stat-dispatched">0</strong>
+            <strong class="h6 mb-0 font-primary text-dark" id="stat-dispatched">0</strong>
           </div>
         </div>
       </div>
-      <div class="col-6 col-lg-3">
-        <div class="admin-card p-3 d-flex align-items-center gap-3">
-          <div class="bg-secondary text-white p-2 rounded-3 fs-4"><i class="bi bi-scale"></i></div>
+      <div class="col-12 col-md-6 col-lg-3">
+        <div class="admin-card p-3 d-flex align-items-center gap-3 h-100">
+          <div class="bg-secondary text-white p-2 rounded-3 fs-5"><i class="bi bi-scale"></i></div>
           <div>
             <span class="text-muted small d-block">Total Weight</span>
-            <strong class="h5 mb-0 font-primary text-dark" id="stat-weight">0 kg</strong>
+            <strong class="h6 mb-0 font-primary text-dark" id="stat-weight">0 kg</strong>
           </div>
         </div>
       </div>
@@ -92,27 +101,55 @@
 
     <!-- Active Orders list -->
     <div class="admin-card p-4">
-      <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
-        <h2 class="h5 font-primary mb-0 text-dark">Customer Order Management</h2>
-        <span class="badge bg-forest py-2 px-3 small" id="orders-count-badge">0 orders active</span>
+      <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-3">
+        <h2 class="h5 font-primary mb-0 text-dark d-flex align-items-center gap-2">
+          Customer Order Management
+          <span class="badge bg-forest py-1 px-2 small" id="orders-count-badge">0</span>
+        </h2>
+        
+        <div class="d-flex gap-2 flex-wrap">
+          <div class="input-group input-group-sm" style="width: 250px;">
+            <span class="input-group-text bg-light"><i class="bi bi-search"></i></span>
+            <input type="text" id="search-input" class="form-control" placeholder="Search order, name, phone...">
+          </div>
+          <select id="filter-status" class="form-select form-select-sm" style="width: 150px;">
+            <option value="">All Statuses</option>
+            <option value="Awaiting Receipt">Awaiting Receipt</option>
+            <option value="Awaiting Verification">Verifying</option>
+            <option value="Verified & Processing">Processing</option>
+            <option value="Dispatched">Dispatched</option>
+            <option value="Cancelled">Cancelled</option>
+          </select>
+          <button class="btn btn-sm btn-outline-success" id="export-btn"><i class="bi bi-file-earmark-spreadsheet me-1"></i> Export CSV</button>
+        </div>
+      </div>
+
+      <div class="mb-2 d-none" id="bulk-actions-container">
+        <select id="bulk-action-select" class="form-select form-select-sm d-inline-block w-auto">
+          <option value="">Bulk Actions...</option>
+          <option value="Dispatched">Mark Dispatched</option>
+        </select>
+        <button class="btn btn-sm btn-primary" id="apply-bulk-btn">Apply</button>
       </div>
 
       <div class="table-responsive">
         <table class="table align-middle table-hover text-dark">
           <thead class="table-light">
             <tr>
+              <th scope="col" style="width: 40px;"><input class="form-check-input" type="checkbox" id="select-all-cb"></th>
               <th scope="col" style="font-size:0.8rem; text-transform:uppercase;">Order #</th>
+              <th scope="col" style="font-size:0.8rem; text-transform:uppercase;">Date</th>
               <th scope="col" style="font-size:0.8rem; text-transform:uppercase;">Customer</th>
               <th scope="col" style="font-size:0.8rem; text-transform:uppercase;">City</th>
               <th scope="col" style="font-size:0.8rem; text-transform:uppercase;">Products</th>
               <th scope="col" style="font-size:0.8rem; text-transform:uppercase;">Amount</th>
-              <th scope="col" style="font-size:0.8rem; text-transform:uppercase;">Receipt</th>
               <th scope="col" style="font-size:0.8rem; text-transform:uppercase;">Status</th>
+              <th scope="col" style="font-size:0.8rem; text-transform:uppercase;">Actions</th>
             </tr>
           </thead>
           <tbody id="orders-table-body">
             <tr>
-              <td colspan="7" class="text-center py-5 text-muted">
+              <td colspan="9" class="text-center py-5 text-muted">
                 <div class="spinner-border spinner-border-sm me-2 text-primary" role="status"></div> Loading live order feed...
               </td>
             </tr>
@@ -129,7 +166,7 @@
   <script type="module">
     import { auth, db } from "../js/firebase-init.js";
     import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-    import { collection, query, orderBy, onSnapshot, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { collection, query, orderBy, onSnapshot, doc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
     const userDisplay = document.getElementById("user-email-display");
     const tableBody = document.getElementById("orders-table-body");
@@ -140,7 +177,19 @@
     const statPending = document.getElementById("stat-pending");
     const statDispatched = document.getElementById("stat-dispatched");
     const statWeight = document.getElementById("stat-weight");
+    const statToday = document.getElementById("stat-today");
     const ordersCountBadge = document.getElementById("orders-count-badge");
+
+    // Controls
+    const searchInput = document.getElementById("search-input");
+    const filterStatus = document.getElementById("filter-status");
+    const exportBtn = document.getElementById("export-btn");
+    const selectAllCb = document.getElementById("select-all-cb");
+    const bulkActionsContainer = document.getElementById("bulk-actions-container");
+    const bulkActionSelect = document.getElementById("bulk-action-select");
+    const applyBulkBtn = document.getElementById("apply-bulk-btn");
+
+    let allOrders = [];
 
     // Auth State Route Guard
     onAuthStateChanged(auth, (user) => {
@@ -159,9 +208,7 @@
     });
 
     logoutBtn.addEventListener("click", () => {
-      signOut(auth).then(() => {
-        window.location.href = "../account.html";
-      });
+      signOut(auth).then(() => window.location.href = "../account.html");
     });
 
     // Realtime Database Feed
@@ -169,125 +216,225 @@
       const ordersRef = collection(db, "orders");
       const q = query(ordersRef, orderBy("orderDate", "desc"));
 
-      function processSnapshot(snapshot, docsSource) {
-        let totalSalesVal = 0;
-        let pendingVal = 0;
-        let dispatchedVal = 0;
-        let totalWeightVal = 0;
-        let ordersCount = snapshot.size;
-
+      onSnapshot(q, (snapshot) => {
         if (snapshot.empty) {
-          tableBody.innerHTML = `<tr><td colspan="7" class="text-center py-5 text-muted">No orders found in database.</td></tr>`;
-          updateStats(0, 0, 0, 0, 0);
+          allOrders = [];
+          renderTable();
           return;
         }
-
-        let docs = snapshot.docs;
-        if (docsSource === 'fallback') {
-          // Sort in-memory by parsed orderDate or orderNumber descending
-          docs = [...docs].sort((a, b) => {
-            const dateA = Date.parse(a.data().orderDate || 0) || 0;
-            const dateB = Date.parse(b.data().orderDate || 0) || 0;
-            if (dateA !== dateB) return dateB - dateA;
-            return (b.data().orderNumber || '').localeCompare(a.data().orderNumber || '');
-          });
-        }
-
-        tableBody.innerHTML = docs.map(docSnap => {
-          const order = docSnap.data();
-          const id = docSnap.id;
-
-          // Compute stats
-          totalSalesVal += order.total || 0;
-          if (order.status === "Awaiting Verification") pendingVal++;
-          if (order.status === "Dispatched") dispatchedVal++;
-          totalWeightVal += order.weight || 0;
-
-          // Status Badge Classes
-          let badgeClass = "bg-secondary";
-          if (order.status === "Awaiting Verification") badgeClass = "bg-warning text-dark";
-          if (order.status === "Verified & Processing") badgeClass = "bg-info text-dark";
-          if (order.status === "Dispatched") badgeClass = "bg-success";
-          if (order.status === "Cancelled") badgeClass = "bg-danger";
-
-          // Items formatter
-          const itemsText = order.items && order.items.length > 0 
-            ? order.items.map(item => `${item.qty}x ${item.name}`).join("<br>")
-            : "No items";
-
-          // Receipt link builder
-          const receiptLink = order.receiptUrl 
-            ? `<a href="${order.receiptUrl}" target="_blank" class="btn btn-xs btn-outline-primary py-1 px-2 small"><i class="bi bi-file-earmark-image"></i> View Receipt</a>`
-            : `<span class="text-muted small">No receipt</span>`;
-
-          return `
-            <tr>
-              <td><strong class="font-monospace text-primary">${order.orderNumber}</strong></td>
-              <td>
-                <div class="fw-bold">${order.customerName}</div>
-                <div class="text-muted small">+92 ${order.phone}</div>
-              </td>
-              <td><span class="text-uppercase small fw-semibold">${order.city}</span></td>
-              <td class="small">${itemsText}</td>
-              <td class="fw-semibold">Rs. ${(order.total || 0).toLocaleString()}</td>
-              <td>${receiptLink}</td>
-              <td>
-                <select class="form-select form-select-sm border-0 shadow-sm fw-bold ${badgeClass}" style="width:160px; font-size:0.75rem;" onchange="window.updateOrderStatus('${id}', this.value)">
-                  <option value="Awaiting Receipt" ${order.status === 'Awaiting Receipt' ? 'selected' : ''}>Awaiting Receipt</option>
-                  <option value="Awaiting Verification" ${order.status === 'Awaiting Verification' ? 'selected' : ''}>Awaiting Verification</option>
-                  <option value="Verified & Processing" ${order.status === 'Verified & Processing' ? 'selected' : ''}>Verified & Processing</option>
-                  <option value="Dispatched" ${order.status === 'Dispatched' ? 'selected' : ''}>Dispatched</option>
-                  <option value="Cancelled" ${order.status === 'Cancelled' ? 'selected' : ''}>Cancelled</option>
-                </select>
-              </td>
-            </tr>
-          `;
-        }).join("");
-
-        updateStats(totalSalesVal, pendingVal, dispatchedVal, totalWeightVal, ordersCount);
-      }
-
-      onSnapshot(q, (snapshot) => {
-        processSnapshot(snapshot, 'ordered');
+        allOrders = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        renderTable();
       }, (err) => {
         console.warn("Firestore ordered snapshot query failed. Trying fallback query without orderBy. Error details:", err);
         const fallbackQ = query(ordersRef);
         onSnapshot(fallbackQ, (snapshot) => {
-          processSnapshot(snapshot, 'fallback');
+          allOrders = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+          allOrders.sort((a, b) => {
+            const dateA = Date.parse(a.orderDate || 0) || 0;
+            const dateB = Date.parse(b.orderDate || 0) || 0;
+            if (dateA !== dateB) return dateB - dateA;
+            return (b.orderNumber || '').localeCompare(a.orderNumber || '');
+          });
+          renderTable();
         }, (fallbackErr) => {
           console.error("Firestore fallback snapshot query also failed:", fallbackErr);
-          tableBody.innerHTML = `
-            <tr>
-              <td colspan="7" class="text-center py-5 text-danger">
-                <i class="bi bi-exclamation-octagon-fill fs-4 d-block mb-2"></i>
-                <strong>Database connection failed:</strong> ${fallbackErr.message}<br>
-                <span class="small text-muted">Please check your Firebase Firestore rules or connection.</span>
-              </td>
-            </tr>
-          `;
-          updateStats(0, 0, 0, 0, 0);
+          tableBody.innerHTML = `<tr><td colspan="9" class="text-center py-5 text-danger">Database connection failed.</td></tr>`;
         });
       });
     }
 
-    function updateStats(sales, pending, dispatched, weight, count) {
+    function renderTable() {
+      const searchTerm = searchInput.value.toLowerCase().trim();
+      const statusFilter = filterStatus.value;
+
+      let filteredOrders = allOrders.filter(order => {
+        let match = true;
+        if (statusFilter) {
+          // Map short status back to full if needed, or exact match
+          match = (order.status === statusFilter) || 
+                  (statusFilter === "Awaiting Verification" && order.status === "Awaiting Verification") ||
+                  (statusFilter === "Verified & Processing" && order.status === "Verified & Processing");
+        }
+        if (match && searchTerm) {
+          const textToSearch = `${order.orderNumber} ${order.customerName} ${order.phone} ${order.city}`.toLowerCase();
+          match = textToSearch.includes(searchTerm);
+        }
+        return match;
+      });
+
+      let totalSalesVal = 0, pendingVal = 0, dispatchedVal = 0, totalWeightVal = 0, todayOrdersVal = 0;
+      const todayString = new Date().toISOString().split('T')[0];
+
+      if (filteredOrders.length === 0) {
+        tableBody.innerHTML = `<tr><td colspan="9" class="text-center py-5 text-muted">No orders found.</td></tr>`;
+        updateStats(0, 0, 0, 0, 0, 0);
+        return;
+      }
+
+      // Compute stats on allOrders to keep KPIs stable globally
+      allOrders.forEach(order => {
+        totalSalesVal += order.total || 0;
+        if (order.status === "Awaiting Verification") pendingVal++;
+        if (order.status === "Dispatched") dispatchedVal++;
+        totalWeightVal += order.weight || 0;
+        if (order.orderDate && order.orderDate.startsWith(todayString)) todayOrdersVal++;
+      });
+      updateStats(totalSalesVal, pendingVal, dispatchedVal, totalWeightVal, allOrders.length, todayOrdersVal);
+
+      tableBody.innerHTML = filteredOrders.map(order => {
+        let badgeClass = "bg-secondary";
+        let shortStatus = order.status;
+        if (order.status === "Awaiting Receipt") shortStatus = "Receipt";
+        if (order.status === "Awaiting Verification") { badgeClass = "bg-warning text-dark"; shortStatus = "Verifying"; }
+        if (order.status === "Verified & Processing") { badgeClass = "bg-info text-dark"; shortStatus = "Processing"; }
+        if (order.status === "Dispatched") { badgeClass = "bg-success"; shortStatus = "Dispatched"; }
+        if (order.status === "Cancelled") { badgeClass = "bg-danger"; shortStatus = "Cancelled"; }
+
+        const itemsText = order.items && order.items.length > 0 
+          ? order.items.map(item => `${item.qty}x ${item.name}`).join("<br>")
+          : "No items";
+
+        const orderDateFormatted = order.orderDate ? new Date(order.orderDate).toLocaleDateString() : "N/A";
+        const receiptLink = order.receiptUrl 
+          ? `<a href="${order.receiptUrl}" target="_blank" class="btn btn-xs btn-outline-primary py-1 px-2 small"><i class="bi bi-file-earmark-image"></i></a>`
+          : `<span class="text-muted small">No receipt</span>`;
+
+        return `
+          <tr>
+            <td><input class="form-check-input row-cb" type="checkbox" value="${order.id}"></td>
+            <td><strong class="font-monospace text-primary">${order.orderNumber}</strong></td>
+            <td class="small text-muted">${orderDateFormatted}</td>
+            <td>
+              <div class="fw-bold">${order.customerName}</div>
+              <div class="text-muted small">+92 ${order.phone}</div>
+            </td>
+            <td><span class="text-uppercase small fw-semibold">${order.city}</span></td>
+            <td class="small">${itemsText}</td>
+            <td class="fw-semibold">Rs. ${(order.total || 0).toLocaleString()}</td>
+            <td>
+              <select class="form-select form-select-sm border-0 shadow-sm fw-bold ${badgeClass}" style="width:130px; font-size:0.75rem;" onchange="window.updateOrderStatus('${order.id}', this.value)">
+                <option value="Awaiting Receipt" ${order.status === 'Awaiting Receipt' ? 'selected' : ''}>Receipt</option>
+                <option value="Awaiting Verification" ${order.status === 'Awaiting Verification' ? 'selected' : ''}>Verifying</option>
+                <option value="Verified & Processing" ${order.status === 'Verified & Processing' ? 'selected' : ''}>Processing</option>
+                <option value="Dispatched" ${order.status === 'Dispatched' ? 'selected' : ''}>Dispatched</option>
+                <option value="Cancelled" ${order.status === 'Cancelled' ? 'selected' : ''}>Cancelled</option>
+              </select>
+            </td>
+            <td>
+              <div class="dropdown">
+                <button class="btn btn-sm btn-light" type="button" data-bs-toggle="dropdown"><i class="bi bi-three-dots-vertical"></i></button>
+                <ul class="dropdown-menu shadow-sm dropdown-menu-end">
+                  ${order.receiptUrl ? `<li><a class="dropdown-item small" href="${order.receiptUrl}" target="_blank"><i class="bi bi-file-earmark-image me-2"></i>View Receipt</a></li>` : ''}
+                  <li><hr class="dropdown-divider"></li>
+                  <li><a class="dropdown-item small text-danger" href="#" onclick="window.deleteOrder('${order.id}')"><i class="bi bi-trash me-2"></i>Delete</a></li>
+                </ul>
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join("");
+      
+      updateBulkActionsUI();
+    }
+
+    function updateStats(sales, pending, dispatched, weight, count, todayCount) {
       statSales.textContent = `Rs. ${sales.toLocaleString()}`;
       statPending.textContent = pending;
       statDispatched.textContent = dispatched;
       statWeight.textContent = `${weight.toFixed(2)} kg`;
-      ordersCountBadge.textContent = `${count} orders active`;
+      if(statToday) statToday.textContent = todayCount;
+      ordersCountBadge.textContent = `${count} orders`;
     }
 
-    // Global hook for dropdown status change
+    // Export to CSV
+    exportBtn.addEventListener("click", () => {
+      if (allOrders.length === 0) return alert("No orders to export.");
+      
+      const csvRows = [];
+      // Headers
+      csvRows.push(["Order #", "Date", "Customer", "Phone", "City", "Amount", "Status", "Items"].join(","));
+      
+      allOrders.forEach(order => {
+        const items = order.items ? order.items.map(i => `${i.qty}x ${i.name}`).join(" | ") : "";
+        const row = [
+          `"${order.orderNumber}"`,
+          `"${order.orderDate || ''}"`,
+          `"${order.customerName}"`,
+          `"${order.phone}"`,
+          `"${order.city}"`,
+          order.total || 0,
+          `"${order.status}"`,
+          `"${items}"`
+        ];
+        csvRows.push(row.join(","));
+      });
+      
+      const csvString = csvRows.join("\\n");
+      const blob = new Blob([csvString], { type: "text/csv" });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.setAttribute("href", url);
+      a.setAttribute("download", `orders_export_${new Date().toISOString().split('T')[0]}.csv`);
+      a.click();
+    });
+
+    // Event Listeners for Filters
+    searchInput.addEventListener("input", renderTable);
+    filterStatus.addEventListener("change", renderTable);
+
+    // Bulk Actions
+    selectAllCb.addEventListener("change", (e) => {
+      document.querySelectorAll(".row-cb").forEach(cb => cb.checked = e.target.checked);
+      updateBulkActionsUI();
+    });
+
+    tableBody.addEventListener("change", (e) => {
+      if (e.target.classList.contains("row-cb")) {
+        updateBulkActionsUI();
+      }
+    });
+
+    function updateBulkActionsUI() {
+      const anyChecked = document.querySelectorAll(".row-cb:checked").length > 0;
+      if (anyChecked) {
+        bulkActionsContainer.classList.remove("d-none");
+      } else {
+        bulkActionsContainer.classList.add("d-none");
+        selectAllCb.checked = false;
+      }
+    }
+
+    applyBulkBtn.addEventListener("click", async () => {
+      const selectedIds = Array.from(document.querySelectorAll(".row-cb:checked")).map(cb => cb.value);
+      const action = bulkActionSelect.value;
+      if (!action || selectedIds.length === 0) return;
+      
+      if (confirm(`Are you sure you want to change status to "${action}" for ${selectedIds.length} orders?`)) {
+        for (const id of selectedIds) {
+          const ref = doc(db, "orders", id);
+          await updateDoc(ref, { status: action });
+        }
+        alert("Bulk action applied successfully.");
+        selectAllCb.checked = false;
+        bulkActionsContainer.classList.add("d-none");
+      }
+    });
+
+    // Global hooks
     window.updateOrderStatus = function(orderId, newStatus) {
       const orderDocRef = doc(db, "orders", orderId);
-      updateDoc(orderDocRef, {
-        status: newStatus
-      })
-      .then(() => console.log("Order status updated in Firestore."))
+      updateDoc(orderDocRef, { status: newStatus })
+      .then(() => console.log("Order status updated."))
       .catch(err => alert("Error updating order status: " + err.message));
     };
 
+    window.deleteOrder = function(orderId) {
+      if(confirm("Are you sure you want to permanently delete this order?")) {
+        deleteDoc(doc(db, "orders", orderId))
+        .then(() => console.log("Order deleted."))
+        .catch(err => alert("Error deleting order: " + err.message));
+      }
+    };
   </script>
 </body>
 </html>
