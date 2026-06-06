@@ -343,7 +343,8 @@
           const isWheat = itemId.includes('wheat') || 
                           itemId.includes('ogn-018') ||
                           itemName.includes('wheat') || 
-                          itemName.includes('gandum');
+                          itemName.includes('gandum') ||
+                          (item.category && item.category === 'agri-sowing-seed');
           if (isWheat) {
             wheatWeight += itemWeight;
           } else {

@@ -112,6 +112,10 @@
                 <input class="form-check-input category-checkbox" type="checkbox" value="feed-agri" id="cat-feed">
                 <label class="form-check-label text-dark" for="cat-feed">Livestock Feed</label>
               </div>
+              <div class="form-check">
+                <input class="form-check-input category-checkbox" type="checkbox" value="agri-sowing-seed" id="cat-sowing">
+                <label class="form-check-label text-dark" for="cat-sowing">Agri Sowing Seeds</label>
+              </div>
             </div>
           </div>
 
@@ -173,6 +177,7 @@
             <li><a href="shop.html?category=edible-seeds" class="text-white-50 text-decoration-none">Superfood &amp; Edible Seeds</a></li>
             <li><a href="shop.html?category=dairy-organic" class="text-white-50 text-decoration-none">Desi Ghee &amp; Raw Honey</a></li>
             <li><a href="shop.html?category=feed-agri" class="text-white-50 text-decoration-none">Livestock Silage &amp; Baled Fodder</a></li>
+            <li><a href="shop.html?category=agri-sowing-seed" class="text-white-50 text-decoration-none">Agri Sowing Seeds</a></li>
           </ul>
         </div>
         
@@ -261,7 +266,8 @@
           const friendlyNames = {
             "dairy-organic": "Dairy & Honey",
             "edible-seeds": "Superfoods & Seeds",
-            "feed-agri": "Livestock Feed"
+            "feed-agri": "Livestock Feed",
+            "agri-sowing-seed": "Agri Sowing Seeds"
           };
           const badges = checkedCategories.map(c => friendlyNames[c] || c).join(", ");
           activeFilterBadge.textContent = badges;

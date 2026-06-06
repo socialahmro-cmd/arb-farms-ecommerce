@@ -437,7 +437,32 @@ const productsDb = [
     image: "catalog/ogn-044-toori-40kg-v2.svg",
     hoverImage: "catalog/ogn-044-toori-40kg-hover-v2.svg",
     tags: ["toori", "wheat straw", "roughage", "animal bedding", "fodder"]
-  }
+  },
+  { id: "ogn-019", sku: "OGN-019", name: "Jodal (Oats Jodri) Sowing Seed", weight: "1 Kg", price: 1000, category: "agri-sowing-seed", image: "catalog/ogn-019-jodal-sowing-v2.svg", tags: ["seed", "sowing", "jodal"] },
+  { id: "ogn-020", sku: "OGN-020", name: "Desi Javi (Oats Seed) Sowing Seed", weight: "1 Kg", price: 1000, category: "agri-sowing-seed", image: "catalog/ogn-020-desi-javi-sowing-v2.svg", tags: ["seed", "sowing", "javi"] },
+  { id: "ogn-021", sku: "OGN-021", name: "Jou (Barley) Sowing Seed", weight: "1 Kg", price: 1000, category: "agri-sowing-seed", image: "catalog/ogn-021-jou-sowing-v2.svg", tags: ["seed", "sowing", "jou"] },
+  { id: "ogn-022", sku: "OGN-022", name: "Methi (Fenugreek) Sowing Seed", weight: "1 Kg", price: 2500, category: "agri-sowing-seed", image: "catalog/ogn-022-methi-sowing-v2.svg", tags: ["seed", "sowing", "methi"] },
+  { id: "ogn-023", sku: "OGN-023", name: "Pallak (Spinach) Sowing Seed", weight: "1 Kg", price: 1000, category: "agri-sowing-seed", image: "catalog/ogn-023-palak-sowing-v2.svg", tags: ["seed", "sowing", "pallak"] },
+  { id: "ogn-024", sku: "OGN-024", name: "Kaddo (Pumpkin) Sowing Seed", weight: "1 Kg", price: 3500, category: "agri-sowing-seed", image: "catalog/ogn-024-kaddu-sowing-v2.svg", tags: ["seed", "sowing", "kaddo"] },
+  { id: "ogn-025", sku: "OGN-025", name: "Torri (Gourd) Sowing Seed", weight: "1 Kg", price: 4000, category: "agri-sowing-seed", image: "catalog/ogn-025-torri-sowing-v2.svg", tags: ["seed", "sowing", "torri"] },
+  { id: "ogn-026", sku: "OGN-026", name: "Kapas (Cotton) Sowing Seed", weight: "1 Kg", price: 1000, category: "agri-sowing-seed", image: "catalog/ogn-026-kapas-sowing-v2.svg", tags: ["seed", "sowing", "kapas"] },
+  { id: "ogn-027-seed", sku: "OGN-027", name: "Kalonji Sowing Seed", weight: "1 Kg", price: 3000, category: "agri-sowing-seed", image: "catalog/ogn-027-kalonji-sowing-v2.svg", tags: ["seed", "sowing", "kalonji"] },
+  { id: "ogn-028-seed", sku: "OGN-028", name: "Chia Seed Sowing Seed", weight: "1 Kg", price: 4000, category: "agri-sowing-seed", image: "catalog/ogn-028-chia-seed-sowing-v2.svg", tags: ["seed", "sowing", "chia"] },
+  { id: "ogn-029-seed", sku: "OGN-029", name: "Isapghol Sowing Seed", weight: "1 Kg", price: 3000, category: "agri-sowing-seed", image: "catalog/ogn-029-isapghol-sowing-v2.svg", tags: ["seed", "sowing", "isapghol"] },
+  { id: "ogn-030", sku: "OGN-030", name: "Saunf (Fennel) Sowing Seed", weight: "1 Kg", price: 2000, category: "agri-sowing-seed", image: "catalog/ogn-030-saunf-sowing-v2.svg", tags: ["seed", "sowing", "saunf"] },
+  { id: "ogn-031", sku: "OGN-031", name: "Dhaniya (Coriander) Sowing Seed", weight: "1 Kg", price: 3000, category: "agri-sowing-seed", image: "catalog/ogn-031-dhaniya-sowing-v2.svg", tags: ["seed", "sowing", "dhaniya"] },
+  { id: "ogn-032", sku: "OGN-032", name: "Lehsun (Garlic) Sowing Seed", weight: "1 Kg", price: 1500, category: "agri-sowing-seed", image: "catalog/ogn-032-lehsun-sowing-v2.svg", tags: ["seed", "sowing", "lehsun"] },
+  { id: "ogn-033", sku: "OGN-033", name: "Piyaz (Onion) Sowing Seed", weight: "1 Kg", price: 8000, category: "agri-sowing-seed", image: "catalog/ogn-033-piyaz-sowing-v2.svg", tags: ["seed", "sowing", "piyaz"] },
+  { id: "ogn-034", sku: "OGN-034", name: "Gajar (Carrot) Sowing Seed", weight: "1 Kg", price: 3000, category: "agri-sowing-seed", image: "catalog/ogn-034-gajar-sowing-v2.svg", tags: ["seed", "sowing", "gajar"] },
+  { id: "ogn-035", sku: "OGN-035", name: "Taramira (Rocket) Sowing Seed", weight: "1 Kg", price: 1500, category: "agri-sowing-seed", image: "catalog/ogn-035-taramira-sowing-v2.svg", tags: ["seed", "sowing", "taramira"] },
+  { id: "ogn-036", sku: "OGN-036", name: "Desi Moong (Mung Bean) Sowing Seed", weight: "1 Kg", price: 1500, category: "agri-sowing-seed", image: "catalog/ogn-036-moong-sowing-v2.svg", tags: ["seed", "sowing", "moong"] },
+  { id: "ogn-037", sku: "OGN-037", name: "Chollay (Chickpea) Sowing Seed", weight: "1 Kg", price: 1000, category: "agri-sowing-seed", image: "catalog/ogn-037-chollay-sowing-v2.svg", tags: ["seed", "sowing", "chollay"] },
+  { id: "ogn-038", sku: "OGN-038", name: "Tukh Malango (Black Seeds) Sowing Seed", weight: "1 Kg", price: 2000, category: "agri-sowing-seed", image: "catalog/ogn-038-tukh-malango-sowing-v2.svg", tags: ["seed", "sowing", "tukh"] },
+  { id: "ogn-039", sku: "OGN-039", name: "Lucerne Sowing Seed", weight: "1 Kg", price: 6000, category: "agri-sowing-seed", image: "catalog/ogn-039-lucerne-fodder-v2.svg", tags: ["seed", "sowing", "lucerne"] },
+  { id: "ogn-040", sku: "OGN-040", name: "Bajra (Pearl Millet) Sowing Seed", weight: "1 Kg", price: 1000, category: "agri-sowing-seed", image: "catalog/ogn-040-bajra-sowing-v2.svg", tags: ["seed", "sowing", "bajra"] },
+  { id: "ogn-061", sku: "OGN-061", name: "Okra Seed (less than 40kg)", weight: "1 Kg", price: 3000, category: "agri-sowing-seed", image: "catalog/ogn-061-okra-retail-v2.svg", tags: ["seed", "sowing", "okra"] },
+  { id: "ogn-062", sku: "OGN-062", name: "Okra Seed (more than 40kg)", weight: "1 Kg", price: 2500, category: "agri-sowing-seed", image: "catalog/ogn-062-okra-bulk-v2.svg", tags: ["seed", "sowing", "okra"] },
+  { id: "ogn-004-seed", sku: "OGN-004", name: "Organic Wheat Sowing Seed", weight: "40 Kg", price: 4500, category: "agri-sowing-seed", image: "catalog/ogn-004-wheat-sowing-v2.svg", tags: ["seed", "sowing", "wheat"] }
 ];
 
 const productVariations = {

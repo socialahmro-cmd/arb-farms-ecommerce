@@ -205,14 +205,9 @@ function updateBadges() {
 
 // --- Tiered Pricing Logic ---
 const tieredPricingConfig = {
-  "ogn-014": [ // Desi Ghee 1 Kg
-    { minQty: 3, price: 7200 },
-    { minQty: 2, price: 8100 },
-    { minQty: 1, price: 9000 }
-  ],
-  "ogn-018-40kg": [ // Gandum 40 Kg (Maund)
-    { minQty: 7, price: 6300 }, // >6 units (>240 kg)
-    { minQty: 1, price: 9000 }  // 1-6 units (40-240 kg)
+  "ogn-061": [ // Okra Seed
+    { minQty: 40, price: 2500 },
+    { minQty: 1, price: 3000 }
   ]
 };
 
@@ -256,6 +251,7 @@ function addToCart(product) {
       price: price,
       basePrice: parseFloat(product.price),
       weight: parsedWeight,
+      category: product.category || '',
       image: product.image || 'catalog/sowing-seeds-v2.svg',
       qty: qty
     });
