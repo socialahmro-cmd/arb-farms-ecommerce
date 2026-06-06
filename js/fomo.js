@@ -13,13 +13,13 @@ const pakistaniCities = [
 
 // 2. Featured product dataset for popups
 const fomoProducts = [
-  { name: "Organic Desi Ghee", image: "catalog/ogn-013-desi-ghee-500gm.svg" },
-  { name: "Sidr Honey Large", image: "catalog/ogn-011-sidr-honey-small-500gm.svg" },
-  { name: "Premium Silage Animal Feed", image: "catalog/ogn-041-silage-40kg.svg" },
-  { name: "Edible Chia Seeds", image: "catalog/ogn-028-chia-seed-250gm.svg" },
-  { name: "Organic Wheat Seeds", image: "catalog/ogn-018-gandum-40kg.svg" },
-  { name: "Basil Seed (Tukh Malanga)", image: "catalog/ogn-051-basil-seed-250gm.svg" },
-  { name: "High-Nutrient Fodder Hay", image: "catalog/ogn-042-hay-40kg.svg" }
+  { name: "Organic Desi Ghee", image: "catalog/ogn-013-desi-ghee-500gm-v2.svg" },
+  { name: "Sidr Honey Large", image: "catalog/ogn-011-sidr-honey-small-500gm-v2.svg" },
+  { name: "Premium Silage Animal Feed", image: "catalog/ogn-041-silage-40kg-v2.svg" },
+  { name: "Edible Chia Seeds", image: "catalog/ogn-028-chia-seed-250gm-v2.svg" },
+  { name: "Organic Wheat Seeds", image: "catalog/ogn-018-gandum-40kg-v2.svg" },
+  { name: "Basil Seed (Tukh Malanga)", image: "catalog/ogn-051-basil-seed-250gm-v2.svg" },
+  { name: "High-Nutrient Fodder Hay", image: "catalog/ogn-042-hay-40kg-v2.svg" }
 ];
 
 // 3. Campaign configuration based on date thresholds

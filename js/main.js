@@ -202,6 +202,29 @@ function updateBadges() {
 }
 
 // 3. Cart Actions
+
+// --- Tiered Pricing Logic ---
+const tieredPricingConfig = {
+  "ogn-014": [ // Desi Ghee 1 Kg
+    { minQty: 3, price: 7200 },
+    { minQty: 2, price: 8100 },
+    { minQty: 1, price: 9000 }
+  ],
+  "ogn-018-40kg": [ // Gandum 40 Kg (Maund)
+    { minQty: 7, price: 6300 }, // >6 units (>240 kg)
+    { minQty: 1, price: 9000 }  // 1-6 units (40-240 kg)
+  ]
+};
+
+function calculateTieredPrice(id, qty, basePrice) {
+  const tiers = tieredPricingConfig[id];
+  if (!tiers) return parseFloat(basePrice);
+  
+  const applicableTier = tiers.find(tier => qty >= tier.minQty);
+  return applicableTier ? applicableTier.price : parseFloat(basePrice);
+}
+// ----------------------------
+
 function addToCart(product) {
   let cart = getStorageItem('arb_cart');
   const existing = cart.find(item => item.id === product.id);
@@ -223,14 +246,18 @@ function addToCart(product) {
   if (existing) {
     existing.qty += product.qty || 1;
     existing.weight = parsedWeight; // Keep it normalized
+    existing.price = calculateTieredPrice(existing.id, existing.qty, existing.basePrice || product.price);
   } else {
+    const qty = product.qty || 1;
+    const price = calculateTieredPrice(product.id, qty, product.price);
     cart.push({
       id: product.id,
       name: product.name.replace(/ (Small|Large|Medium|Bulk)$/i, ''),
-      price: parseFloat(product.price),
+      price: price,
+      basePrice: parseFloat(product.price),
       weight: parsedWeight,
-      image: product.image || 'catalog/sowing-seeds.svg',
-      qty: product.qty || 1
+      image: product.image || 'catalog/sowing-seeds-v2.svg',
+      qty: qty
     });
   }
   
@@ -259,6 +286,8 @@ function updateCartQty(id, qty) {
     item.qty = parseInt(qty);
     if (item.qty <= 0) {
       cart = cart.filter(item => item.id !== id);
+    } else {
+      item.price = calculateTieredPrice(item.id, item.qty, item.basePrice || item.price);
     }
     setStorageItem('arb_cart', cart);
     updateBadges();
@@ -629,13 +658,17 @@ function updateSidebarCart() {
       imgSrc = prefix + imgSrc;
     }
 
+    const isDiscounted = item.basePrice && item.price < item.basePrice;
+    const discountBadge = isDiscounted ? `<span class="badge bg-success mt-1" style="font-size: 0.6rem;">Volume Discount</span>` : '';
+
     html += `
       <div class="d-flex gap-3 mb-3 pb-3 border-bottom align-items-center">
         <img src="${imgSrc}" alt="${item.name}" class="rounded border" style="width: 60px; height: 60px; object-fit: cover;">
         <div class="flex-grow-1">
           <h6 class="mb-0 text-dark fw-bold" style="font-size: 0.9rem;">${item.name}</h6>
           <span class="text-muted small d-block mb-1">${item.weight} kg | Rs. ${item.price.toLocaleString()}</span>
-          <div class="d-flex align-items-center gap-2">
+          ${discountBadge}
+          <div class="d-flex align-items-center gap-2 mt-1">
             <div class="btn-group btn-group-sm" style="max-height: 24px;">
               <button class="btn btn-outline-secondary py-0 px-2 sidebar-qty-btn" data-id="${item.id}" data-action="decrease">-</button>
               <span class="px-2 bg-light border-top border-bottom small d-flex align-items-center justify-content-center" style="min-width: 24px;">${item.qty}</span>
@@ -704,7 +737,7 @@ function getRecommendations(cart) {
       name: "Desi Ghee Small",
       price: 5000,
       weight: 0.5,
-      image: "catalog/ogn-013-desi-ghee-500gm.svg",
+      image: "catalog/ogn-013-desi-ghee-500gm-v2.svg",
       badge: "🔥 Best Seller",
       badgeClass: "bg-danger text-white",
       tagline: "Pure off-grid farm recipe by Ahmad Raees Baloch",
@@ -715,7 +748,7 @@ function getRecommendations(cart) {
       name: "Sidr Honey Small",
       price: 5000,
       weight: 0.5,
-      image: "catalog/ogn-011-sidr-honey-small-500gm.svg",
+      image: "catalog/ogn-011-sidr-honey-small-500gm-v2.svg",
       badge: "⚡ Selling Fast",
       badgeClass: "bg-warning text-dark",
       tagline: "100% wild forest harvest — limited stock",
@@ -726,7 +759,7 @@ function getRecommendations(cart) {
       name: "Gandum (Wheat) 1 Kg",
       price: 225,
       weight: 1,
-      image: "catalog/ogn-018-gandum-40kg.svg",
+      image: "catalog/ogn-018-gandum-40kg-v2.svg",
       badge: "❄️ Season Special",
       badgeClass: "bg-info text-white",
       tagline: "Premium whole organic wheat grains from ARB Farms",
@@ -737,7 +770,7 @@ function getRecommendations(cart) {
       name: "Silage 40 kg",
       price: 900,
       weight: 40,
-      image: "catalog/ogn-041-silage-40kg.svg",
+      image: "catalog/ogn-041-silage-40kg-v2.svg",
       badge: "🌾 Animal Feed",
       badgeClass: "bg-success text-white",
       tagline: "Premium corn silage for dairy cows",
@@ -876,35 +909,35 @@ function renderCartPageRecommendations(cart) {
 // Lightweight product index for instant search (no dependency on products-db.js)
 const ARB_SEARCH_INDEX = [
   // Dairy & Organic
-  { id:"ogn-004-milk", name:"Cow Milk", price:330, weight:"1 Ltr", category:"Dairy", image:"catalog/ogn-004-cow-milk-1ltr.svg", tags:["milk","dairy","fresh","cow"] },
-  { id:"ogn-005", name:"Buffalo Milk", price:390, weight:"1 Ltr", category:"Dairy", image:"catalog/ogn-005-buffalo-milk-1ltr.svg", tags:["milk","buffalo","dairy"] },
-  { id:"ogn-006", name:"Goat Milk", price:1000, weight:"1 Ltr", category:"Dairy", image:"catalog/ogn-006-goat-milk-1ltr.svg", tags:["milk","goat","dairy"] },
-  { id:"ogn-007", name:"Desi Organic Gurr", price:720, weight:"1 Kg", category:"Organic", image:"catalog/ogn-007-desi-organic-gurr-1kg.svg", tags:["gurr","jaggery","sweetener"] },
-  { id:"ogn-008", name:"Gurr with Dry Fruits", price:1800, weight:"1 Kg", category:"Organic", image:"catalog/ogn-008-gurr-with-dry-fruits-1kg.svg", tags:["gurr","dry fruits","premium"] },
-  { id:"ogn-009", name:"Organic Shakar", price:810, weight:"1 Kg", category:"Organic", image:"catalog/ogn-009-organic-shakar-1kg.svg", tags:["shakar","sugar","brown"] },
-  { id:"ogn-010", name:"Organic Shakar Bulk", price:4400, weight:"6 Kg", category:"Organic", image:"catalog/ogn-009-organic-shakar-1kg.svg", tags:["shakar","sugar","bulk"] },
-  { id:"ogn-011", name:"Sidr Honey Small", price:5000, weight:"500 gm", category:"Organic", image:"catalog/ogn-011-sidr-honey-small-500gm.svg", tags:["honey","sidr","sweet"] },
-  { id:"ogn-012", name:"Sidr Honey Large", price:9000, weight:"1 Kg", category:"Organic", image:"catalog/ogn-011-sidr-honey-small-500gm.svg", tags:["honey","sidr","premium"] },
-  { id:"ogn-013", name:"Desi Ghee Small", price:5000, weight:"500 gm", category:"Organic", image:"catalog/ogn-013-desi-ghee-500gm.svg", tags:["ghee","desi","butter","fat"] },
-  { id:"ogn-014", name:"Desi Ghee Large", price:9000, weight:"1 Kg", category:"Organic", image:"catalog/ogn-013-desi-ghee-500gm.svg", tags:["ghee","desi","butter","premium"] },
-  { id:"ogn-015", name:"Organic Achaar Small", price:700, weight:"400 gm", category:"Organic", image:"catalog/ogn-015-organic-achaar-400gm.svg", tags:["achaar","pickle","mango"] },
-  { id:"ogn-016", name:"Organic Achaar Medium", price:1000, weight:"750 gm", category:"Organic", image:"catalog/ogn-016-organic-achaar-750gm.svg", tags:["achaar","pickle"] },
-  { id:"ogn-017", name:"Organic Achaar Large", price:1400, weight:"1 Kg", category:"Organic", image:"catalog/ogn-017-organic-achaar-1kg.svg", tags:["achaar","pickle","large"] },
-  { id:"ogn-065-mango", name:"Multan Chaunsa Mangoes (Pre-Booking)", price:0, weight:"5 Kg Box", category:"Organic", image:"catalog/ogn-065-mango-5kg.png", tags:["mango","chaunsa","fruit","fresh","organic","pre-booking"] },
+  { id:"ogn-004-milk", name:"Cow Milk", price:330, weight:"1 Ltr", category:"Dairy", image:"catalog/ogn-004-cow-milk-1ltr-v2.svg", tags:["milk","dairy","fresh","cow"] },
+  { id:"ogn-005", name:"Buffalo Milk", price:390, weight:"1 Ltr", category:"Dairy", image:"catalog/ogn-005-buffalo-milk-1ltr-v2.svg", tags:["milk","buffalo","dairy"] },
+  { id:"ogn-006", name:"Goat Milk", price:1000, weight:"1 Ltr", category:"Dairy", image:"catalog/ogn-006-goat-milk-1ltr-v2.svg", tags:["milk","goat","dairy"] },
+  { id:"ogn-007", name:"Desi Organic Gurr", price:720, weight:"1 Kg", category:"Organic", image:"catalog/ogn-007-desi-organic-gurr-1kg-v2.svg", tags:["gurr","jaggery","sweetener"] },
+  { id:"ogn-008", name:"Gurr with Dry Fruits", price:1800, weight:"1 Kg", category:"Organic", image:"catalog/ogn-008-gurr-with-dry-fruits-1kg-v2.svg", tags:["gurr","dry fruits","premium"] },
+  { id:"ogn-009", name:"Organic Shakar", price:810, weight:"1 Kg", category:"Organic", image:"catalog/ogn-009-organic-shakar-1kg-v2.svg", tags:["shakar","sugar","brown"] },
+  { id:"ogn-010", name:"Organic Shakar Bulk", price:4400, weight:"6 Kg", category:"Organic", image:"catalog/ogn-009-organic-shakar-1kg-v2.svg", tags:["shakar","sugar","bulk"] },
+  { id:"ogn-011", name:"Sidr Honey Small", price:5000, weight:"500 gm", category:"Organic", image:"catalog/ogn-011-sidr-honey-small-500gm-v2.svg", tags:["honey","sidr","sweet"] },
+  { id:"ogn-012", name:"Sidr Honey Large", price:9000, weight:"1 Kg", category:"Organic", image:"catalog/ogn-011-sidr-honey-small-500gm-v2.svg", tags:["honey","sidr","premium"] },
+  { id:"ogn-013", name:"Desi Ghee Small", price:5000, weight:"500 gm", category:"Organic", image:"catalog/ogn-013-desi-ghee-500gm-v2.svg", tags:["ghee","desi","butter","fat"] },
+  { id:"ogn-014", name:"Desi Ghee Large", price:9000, weight:"1 Kg", category:"Organic", image:"catalog/ogn-013-desi-ghee-500gm-v2.svg", tags:["ghee","desi","butter","premium"] },
+  { id:"ogn-015", name:"Organic Achaar Small", price:700, weight:"400 gm", category:"Organic", image:"catalog/ogn-015-organic-achaar-400gm-v2.svg", tags:["achaar","pickle","mango"] },
+  { id:"ogn-016", name:"Organic Achaar Medium", price:1000, weight:"750 gm", category:"Organic", image:"catalog/ogn-016-organic-achaar-750gm-v2.svg", tags:["achaar","pickle"] },
+  { id:"ogn-017", name:"Organic Achaar Large", price:1400, weight:"1 Kg", category:"Organic", image:"catalog/ogn-017-organic-achaar-1kg-v2.svg", tags:["achaar","pickle","large"] },
+  { id:"ogn-065-mango", name:"Multan Chaunsa Mangoes (Pre-Booking)", price:0, weight:"5 Kg Box", category:"Organic", image:"catalog/ogn-065-mango-5kg-v2.png", tags:["mango","chaunsa","fruit","fresh","organic","pre-booking"] },
   // Edible Seeds
-  { id:"ogn-018", name:"Gandum (Wheat)", price:225, weight:"1 Kg", category:"Edible Seeds", image:"catalog/ogn-018-gandum-40kg.svg", tags:["wheat","gandum","grain","flour"] },
-  { id:"ogn-018-5kg", name:"Gandum (Wheat) 5 Kg", price:1100, weight:"5 Kg", category:"Edible Seeds", image:"catalog/ogn-018-gandum-40kg.svg", tags:["wheat","gandum","grain","flour"] },
-  { id:"ogn-018-40kg", name:"Gandum (Wheat) 40 Kg", price:9000, weight:"40 Kg Maund", category:"Edible Seeds", image:"catalog/ogn-018-gandum-40kg.svg", tags:["wheat","gandum","grain","flour","bulk"] },
-  { id:"ogn-027-edible", name:"Kalonji (Black Seed) 250gm", price:720, weight:"250 gm", category:"Edible Seeds", image:"catalog/ogn-027-kalonji-250gm.svg", tags:["kalonji","black seed","superfood"] },
-  { id:"ogn-046", name:"Kalonji (Black Seed) 500gm", price:1350, weight:"500 gm", category:"Edible Seeds", image:"catalog/ogn-027-kalonji-250gm.svg", tags:["kalonji","black seed","spice"] },
-  { id:"ogn-028-edible", name:"Chia Seed 250gm", price:1400, weight:"250 gm", category:"Edible Seeds", image:"catalog/ogn-028-chia-seed-250gm.svg", tags:["chia","fiber","superfood","weight loss"] },
-  { id:"ogn-048", name:"Chia Seed 500gm", price:2700, weight:"500 gm", category:"Edible Seeds", image:"catalog/ogn-028-chia-seed-250gm.svg", tags:["chia","fiber","omega"] },
-  { id:"ogn-063", name:"Isapghol 100gm", price:1400, weight:"100 gm", category:"Edible Seeds", image:"catalog/ogn-063-isapghol-100gm.svg", tags:["isapghol","husk","digestion"] },
-  { id:"ogn-053-moringa", name:"Moringa Powder 250gm", price:1400, weight:"250 gm", category:"Edible Seeds", image:"catalog/ogn-053-moringa-powder-250gm.svg", tags:["moringa","powder","herbal","health"] },
-  { id:"ogn-051", name:"Basil Seed (Tukh Malanga) 250gm", price:720, weight:"250 gm", category:"Edible Seeds", image:"catalog/ogn-051-basil-seed-250gm.svg", tags:["basil","tukh","malanga","seeds"] },
-  { id:"ogn-061-edible", name:"Basil Seed (Tukh Malanga) 500gm", price:1350, weight:"500 gm", category:"Edible Seeds", image:"catalog/ogn-051-basil-seed-250gm.svg", tags:["basil","tukh","malanga","seeds"] },
+  { id:"ogn-018", name:"Gandum (Wheat)", price:225, weight:"1 Kg", category:"Edible Seeds", image:"catalog/ogn-018-gandum-40kg-v2.svg", tags:["wheat","gandum","grain","flour"] },
+  { id:"ogn-018-5kg", name:"Gandum (Wheat) 5 Kg", price:1100, weight:"5 Kg", category:"Edible Seeds", image:"catalog/ogn-018-gandum-40kg-v2.svg", tags:["wheat","gandum","grain","flour"] },
+  { id:"ogn-018-40kg", name:"Gandum (Wheat) 40 Kg", price:9000, weight:"40 Kg Maund", category:"Edible Seeds", image:"catalog/ogn-018-gandum-40kg-v2.svg", tags:["wheat","gandum","grain","flour","bulk"] },
+  { id:"ogn-027-edible", name:"Kalonji (Black Seed) 250gm", price:720, weight:"250 gm", category:"Edible Seeds", image:"catalog/ogn-027-kalonji-250gm-v2.svg", tags:["kalonji","black seed","superfood"] },
+  { id:"ogn-046", name:"Kalonji (Black Seed) 500gm", price:1350, weight:"500 gm", category:"Edible Seeds", image:"catalog/ogn-027-kalonji-250gm-v2.svg", tags:["kalonji","black seed","spice"] },
+  { id:"ogn-028-edible", name:"Chia Seed 250gm", price:1400, weight:"250 gm", category:"Edible Seeds", image:"catalog/ogn-028-chia-seed-250gm-v2.svg", tags:["chia","fiber","superfood","weight loss"] },
+  { id:"ogn-048", name:"Chia Seed 500gm", price:2700, weight:"500 gm", category:"Edible Seeds", image:"catalog/ogn-028-chia-seed-250gm-v2.svg", tags:["chia","fiber","omega"] },
+  { id:"ogn-063", name:"Isapghol 100gm", price:1400, weight:"100 gm", category:"Edible Seeds", image:"catalog/ogn-063-isapghol-100gm-v2.svg", tags:["isapghol","husk","digestion"] },
+  { id:"ogn-053-moringa", name:"Moringa Powder 250gm", price:1400, weight:"250 gm", category:"Edible Seeds", image:"catalog/ogn-053-moringa-powder-250gm-v2.svg", tags:["moringa","powder","herbal","health"] },
+  { id:"ogn-051", name:"Basil Seed (Tukh Malanga) 250gm", price:720, weight:"250 gm", category:"Edible Seeds", image:"catalog/ogn-051-basil-seed-250gm-v2.svg", tags:["basil","tukh","malanga","seeds"] },
+  { id:"ogn-061-edible", name:"Basil Seed (Tukh Malanga) 500gm", price:1350, weight:"500 gm", category:"Edible Seeds", image:"catalog/ogn-051-basil-seed-250gm-v2.svg", tags:["basil","tukh","malanga","seeds"] },
   // Feed & Agri
-  { id:"ogn-039-feed", name:"Corn Silage Bale 80Kg", price:3000, weight:"80 Kg", category:"Feed & Agri", image:"catalog/ogn-041-silage-40kg.svg", tags:["feed","silage","fodder","livestock","corn"] },
+  { id:"ogn-039-feed", name:"Corn Silage Bale 80Kg", price:3000, weight:"80 Kg", category:"Feed & Agri", image:"catalog/ogn-041-silage-40kg-v2.svg", tags:["feed","silage","fodder","livestock","corn"] },
 ];
 
 function injectSearchOverlay() {

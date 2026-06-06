@@ -26,7 +26,7 @@
   <nav class="navbar navbar-expand-lg bg-forest sticky-top shadow-sm py-2">
     <div class="container">
       <a class="navbar-brand d-flex align-items-center" href="index.html">
-        <img src="catalog/arbfarms-logo.svg" alt="ARB Farms Logo" class="me-2">
+        <img src="catalog/arbfarms-logo-v2.svg" alt="ARB Farms Logo" class="me-2">
         <span class="font-primary text-white fs-4 tracking-wide">ARB FARMS</span>
       </a>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar" aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -332,6 +332,9 @@
           const parsedUnitWeight = parseItemWeight(item);
           const displayUnitWeight = parsedUnitWeight >= 1 ? `${parsedUnitWeight.toFixed(2)} kg` : `${(parsedUnitWeight * 1000).toFixed(0)} gm`;
           const itemSubtotal = item.price * item.qty;
+          const isDiscounted = item.basePrice && item.price < item.basePrice;
+          const discountBadge = isDiscounted ? `<br><span class="badge bg-success mt-1" style="font-size: 0.65rem;">Volume Discount!</span>` : '';
+
           return `
             <div class="row align-items-center py-3 border-bottom g-3">
               <div class="col-3 col-md-2">
@@ -348,6 +351,7 @@
               <div class="col-4 col-md-2">
                 <span class="text-muted small d-block d-md-none">Price:</span>
                 <span class="fw-semibold text-dark">Rs. ${item.price.toLocaleString()}</span>
+                ${discountBadge}
               </div>
               
               <div class="col-5 col-md-2">
