@@ -160,15 +160,92 @@ const productsDb = [
     tags: ["achaar", "pickle", "traditional", "oil", "large"]
   },
   {
-    id: "ogn-065-mango",
-    sku: "OGN-065",
-    name: "Multan Chaunsa Mangoes (Pre-Booking)",
+    id: "ogn-066-white-chaunsa-5kg",
+    sku: "OGN-066-5",
+    name: "White Chaunsa (Pre-Order)",
     weight: "5 Kg Box",
-    price: 0,
+    price: 2500,
     category: "dairy-organic",
-    image: "catalog/ogn-065-mango-5kg-v2.png",
-    hoverImage: "catalog/ogn-065-mango-5kg-hover-v2.png",
-    tags: ["mango", "chaunsa", "fruit", "fresh", "organic", "pre-booking", "multan"]
+    image: "catalog/White Chaunsa.svg",
+    hoverImage: "catalog/White Chaunsa.svg",
+    tags: ["mango", "chaunsa", "white chaunsa", "fruit", "fresh", "organic", "pre-booking"]
+  },
+  {
+    id: "ogn-066-white-chaunsa-9kg",
+    sku: "OGN-066-9",
+    name: "White Chaunsa (Pre-Order)",
+    weight: "9 Kg Box",
+    price: 3800,
+    category: "dairy-organic",
+    image: "catalog/White Chaunsa.svg",
+    hoverImage: "catalog/White Chaunsa.svg",
+    tags: ["mango", "chaunsa", "white chaunsa", "fruit", "fresh", "organic", "pre-booking"]
+  },
+  {
+    id: "ogn-067-sindhri-5kg",
+    sku: "OGN-067-5",
+    name: "Sindhri Mango (Pre-Order)",
+    weight: "5 Kg Box",
+    price: 1900,
+    category: "dairy-organic",
+    image: "catalog/Sindhri Mango.svg",
+    hoverImage: "catalog/Sindhri Mango.svg",
+    tags: ["mango", "sindhri", "fruit", "fresh", "organic", "pre-booking"]
+  },
+  {
+    id: "ogn-067-sindhri-9kg",
+    sku: "OGN-067-9",
+    name: "Sindhri Mango (Pre-Order)",
+    weight: "9 Kg Box",
+    price: 3100,
+    category: "dairy-organic",
+    image: "catalog/Sindhri Mango.svg",
+    hoverImage: "catalog/Sindhri Mango.svg",
+    tags: ["mango", "sindhri", "fruit", "fresh", "organic", "pre-booking"]
+  },
+  {
+    id: "ogn-068-dusehri-5kg",
+    sku: "OGN-068-5",
+    name: "Dusehri Mango (Pre-Order)",
+    weight: "5 Kg Box",
+    price: 2200,
+    category: "dairy-organic",
+    image: "catalog/Dusehri Mango.svg",
+    hoverImage: "catalog/Dusehri Mango.svg",
+    tags: ["mango", "dusehri", "fruit", "fresh", "organic", "pre-booking"]
+  },
+  {
+    id: "ogn-068-dusehri-9kg",
+    sku: "OGN-068-9",
+    name: "Dusehri Mango (Pre-Order)",
+    weight: "9 Kg Box",
+    price: 3400,
+    category: "dairy-organic",
+    image: "catalog/Dusehri Mango.svg",
+    hoverImage: "catalog/Dusehri Mango.svg",
+    tags: ["mango", "dusehri", "fruit", "fresh", "organic", "pre-booking"]
+  },
+  {
+    id: "ogn-069-anwar-ratol-5kg",
+    sku: "OGN-069-5",
+    name: "Anwar Ratol (Pre-Order)",
+    weight: "5 Kg Box",
+    price: 2700,
+    category: "dairy-organic",
+    image: "catalog/Anwar Ratol.svg",
+    hoverImage: "catalog/Anwar Ratol.svg",
+    tags: ["mango", "anwar ratol", "fruit", "fresh", "organic", "pre-booking"]
+  },
+  {
+    id: "ogn-069-anwar-ratol-9kg",
+    sku: "OGN-069-9",
+    name: "Anwar Ratol (Pre-Order)",
+    weight: "9 Kg Box",
+    price: 4100,
+    category: "dairy-organic",
+    image: "catalog/Anwar Ratol.svg",
+    hoverImage: "catalog/Anwar Ratol.svg",
+    tags: ["mango", "anwar ratol", "fruit", "fresh", "organic", "pre-booking"]
   },
 
   // B. Edible Seeds & Superfoods
