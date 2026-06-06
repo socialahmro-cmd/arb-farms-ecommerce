@@ -132,9 +132,10 @@
                         <select class="form-select" id="land-unit" style="max-width: 120px;">
                           <option value="acre" selected>Acres</option>
                           <option value="kanal">Kanals</option>
+                          <option value="marla">Marlas</option>
                         </select>
                       </div>
-                      <div class="form-text">Note: 1 Acre represents 8 Kanals in standard Punjab land units.</div>
+                      <div class="form-text">Note: 1 Acre represents 8 Kanals or 160 Marlas in standard Punjab land units.</div>
                     </div>
 
                     <div class="mb-3">
@@ -201,6 +202,7 @@
                         <option value="milking" selected>Lactating Cows / Buffaloes (High consumption)</option>
                         <option value="dry">Dry Cattle (Medium consumption)</option>
                         <option value="calves">Heifers &amp; Calves (Low consumption)</option>
+                        <option value="goat_sheep">Goat And Sheep (Lowest consumption)</option>
                       </select>
                     </div>
 
@@ -367,6 +369,8 @@
         let sizeInAcres = sizeInput;
         if (unit === "kanal") {
           sizeInAcres = sizeInput / 8;
+        } else if (unit === "marla") {
+          sizeInAcres = sizeInput / 160;
         }
 
         const config = seedBaseConfig[crop];
@@ -394,7 +398,8 @@
       const livestockConfig = {
         milking: 18, // 18kg wet silage daily
         dry: 12,     // 12kg daily
-        calves: 6    // 6kg daily
+        calves: 6,   // 6kg daily
+        goat_sheep: 2 // 2kg daily
       };
 
       silageForm.addEventListener("submit", (e) => {
