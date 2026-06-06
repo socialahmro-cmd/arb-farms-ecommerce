@@ -797,12 +797,9 @@ h1, h2, h3, h4, h5, h6, .font-primary {
     background-color: var(--color-primary) !important;
   }
 
-  /* Style brand text logo to match mockup */
+  /* Hide brand text on mobile and make logo bigger */
   .navbar-brand span {
-    color: var(--color-secondary) !important;
-    font-weight: 800 !important;
-    font-size: 1.2rem !important;
-    letter-spacing: 0.04em !important;
+    display: none !important;
   }
 
   /* Hide the desktop action icons div from inside the collapse drawer on mobile */
@@ -1103,12 +1100,11 @@ h1, h2, h3, h4, h5, h6, .font-primary {
 /* Responsive Navbar Brand and Mobile Tray Refinements */
 @media (max-width: 576px) {
   nav.navbar .navbar-brand span {
-    font-size: 1rem !important;
-    letter-spacing: 0.02em !important;
+    display: none !important;
   }
   nav.navbar .navbar-brand img {
-    max-height: 28px !important;
-    margin-right: 0.25rem !important;
+    max-height: 42px !important;
+    margin-right: 0 !important;
   }
   .mobile-nav-tray {
     margin-right: 0.25rem !important;
@@ -1124,12 +1120,11 @@ h1, h2, h3, h4, h5, h6, .font-primary {
 
 @media (max-width: 375px) {
   nav.navbar .navbar-brand span {
-    font-size: 0.85rem !important;
-    letter-spacing: 0.01em !important;
+    display: none !important;
   }
   nav.navbar .navbar-brand img {
-    max-height: 24px !important;
-    margin-right: 0.2rem !important;
+    max-height: 38px !important;
+    margin-right: 0 !important;
   }
   .mobile-nav-tray {
     margin-right: 0.15rem !important;
