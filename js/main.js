@@ -1407,7 +1407,7 @@ function getProductsDb() {
   }
   return new Promise((resolve, reject) => {
     const script = document.createElement('script');
-    script.src = getPathPrefix() + 'js/products-db.js';
+    script.src = getPathPrefix() + 'js/products-db.js?v=' + Date.now();
     script.onload = () => {
       if (typeof productsDb !== 'undefined') {
         resolve(productsDb);
