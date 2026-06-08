@@ -575,8 +575,53 @@ const productVariations = {
   "ogn-053-pumpkin": ["ogn-052", "ogn-053-pumpkin"]
 };
 
+// Culturally Curated Bundles
+const bundlesDb = [
+  {
+    id: "bndl-desi-nashta",
+    name: "Desi Nashta Bundle",
+    description: "Traditional Weekend Breakfast. Includes Organic Desi Ghee (Small), Buffalo Milk, and Organic Achaar (Small).",
+    items: ["ogn-013", "ogn-005", "ogn-015"],
+    discountRate: 0.05,
+    cityRestriction: "multan",
+    image: "catalog/ogn-013-desi-ghee-500gm-v2.svg",
+    badge: "Multan Exclusive"
+  },
+  {
+    id: "bndl-aam-season",
+    name: "Aam Season Bundle",
+    description: "The ultimate summer treat. Includes Anwar Ratol, Dusehri, and Cow Milk for fresh shakes.",
+    items: ["ogn-069-anwar-ratol-5kg", "ogn-068-dusehri-5kg", "ogn-004-milk"],
+    discountRate: 0.05,
+    cityRestriction: "multan",
+    image: "catalog/Anwar ratol Mango.svg",
+    badge: "Multan Exclusive"
+  },
+  {
+    id: "bndl-ghee-shakkar",
+    name: "Sweet Paratha Bundle",
+    description: "The classic Punjabi comfort food pair. Organic Desi Ghee (Small) & Pure Shakkar.",
+    items: ["ogn-013", "ogn-009"],
+    discountRate: 0.05,
+    cityRestriction: "all",
+    image: "catalog/ogn-009-organic-shakar-1kg-v2.svg",
+    badge: "Nationwide Delivery"
+  },
+  {
+    id: "bndl-panjeeri",
+    name: "Taqat Ka Khazana (Panjeeri Base)",
+    description: "Perfect for winter or postpartum. Includes Ghee (Small), Shakkar, Chia Seeds, and Mixed Edible Seeds.",
+    items: ["ogn-013", "ogn-009", "ogn-028-edible", "ogn-051"], // Just selecting a few seeds
+    discountRate: 0.05,
+    cityRestriction: "all",
+    image: "catalog/ogn-028-chia-seed-250gm-v2.svg",
+    badge: "Nationwide Delivery"
+  }
+];
+
 // Share database globally
 if (typeof window !== "undefined") {
   window.productsDb = productsDb;
   window.productVariations = productVariations;
+  window.bundlesDb = bundlesDb;
 }

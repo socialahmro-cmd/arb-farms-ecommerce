@@ -122,6 +122,11 @@
             <span id="summary-weight" class="fw-semibold">0 kg</span>
           </div>
 
+          <div id="summary-discount-row" class="d-flex justify-content-between mb-2 d-none">
+            <span class="text-success"><i class="bi bi-tag-fill me-1"></i> Bundle Savings</span>
+            <span id="summary-discount" class="text-success fw-bold">- Rs. 0</span>
+          </div>
+
           <div class="d-flex justify-content-between mb-2 align-items-start gap-2">
             <span class="text-muted flex-shrink-0">Shipping Tier</span>
             <span id="summary-shipping-tier" class="badge bg-secondary font-monospace text-wrap text-end" style="font-size:0.75rem; max-width: 200px; word-break: break-word; white-space: normal;">Standard</span>
@@ -393,14 +398,21 @@
         }).join("");
 
         // Calculate aggregates
-        subtotal = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
-        totalWeight = cart.reduce((sum, item) => sum + (parseItemWeight(item) * item.qty), 0);
+        const totals = typeof window.calculateCartTotals === 'function' ? window.calculateCartTotals(cart) : {
+          subtotal: cart.reduce((sum, item) => sum + (item.price * item.qty), 0),
+          totalWeight: cart.reduce((sum, item) => sum + (parseItemWeight(item) * item.qty), 0),
+          discount: 0,
+          total: cart.reduce((sum, item) => sum + (item.price * item.qty), 0)
+        };
+        
+        subtotal = totals.subtotal;
+        totalWeight = totals.totalWeight;
         const shipping = calculateShipping(cart);
         
         actualShippingFee = shipping ? shipping.fee : 0;
         let tierLabel = shipping ? shipping.tier : "None";
 
-        grandTotal = subtotal + actualShippingFee;
+        grandTotal = totals.total + actualShippingFee;
 
         // Injects to Summary widgets
         subtotalEl.textContent = `Rs. ${subtotal.toLocaleString()}`;
@@ -409,6 +421,17 @@
         tierEl.textContent = tierLabel;
         shippingEl.textContent = `Rs. ${actualShippingFee.toLocaleString()}`;
         totalEl.textContent = `Rs. ${grandTotal.toLocaleString()}`;
+        
+        const discountRow = document.getElementById('summary-discount-row');
+        const discountEl = document.getElementById('summary-discount');
+        if (discountRow && discountEl) {
+          if (totals.discount > 0) {
+            discountEl.textContent = `- Rs. ${totals.discount.toLocaleString()}`;
+            discountRow.classList.remove('d-none');
+          } else {
+            discountRow.classList.add('d-none');
+          }
+        }
       }
 
       // Proceed to checkout click handler
@@ -426,6 +449,7 @@
             subtotal: subtotal,
             weight: totalWeight,
             shipping: actualShippingFee,
+            discount: typeof window.calculateCartTotals === 'function' ? window.calculateCartTotals(cartList).discount : 0,
             total: grandTotal,
             items: cartList
           };

@@ -640,14 +640,11 @@ function updateSidebarCart() {
 
   if (checkoutBtn) checkoutBtn.classList.remove('disabled');
 
-  let totalWeight = 0;
-  let subtotal = 0;
+  const totals = calculateCartTotals(cart);
 
   let html = '';
   cart.forEach(item => {
     const itemTotal = item.price * item.qty;
-    subtotal += itemTotal;
-    totalWeight += (item.weight || 0) * item.qty;
 
     let imgSrc = item.image;
     if (prefix && !imgSrc.startsWith('http') && !imgSrc.startsWith('data:') && !imgSrc.startsWith('../')) {
@@ -679,9 +676,18 @@ function updateSidebarCart() {
     `;
   });
 
+  if (totals.discount > 0) {
+    html += `
+      <div class="d-flex justify-content-between align-items-center mt-3 pt-2 border-top">
+        <span class="text-success fw-bold"><i class="bi bi-tag-fill me-1"></i> Bundle Savings</span>
+        <span class="text-success fw-bold">- Rs. ${totals.discount.toLocaleString()}</span>
+      </div>
+    `;
+  }
+
   itemsContainer.innerHTML = html;
-  if (weightEl) weightEl.textContent = `${totalWeight.toFixed(2)} kg`;
-  if (subtotalEl) subtotalEl.textContent = `Rs. ${subtotal.toLocaleString()}`;
+  if (weightEl) weightEl.textContent = `${totals.totalWeight.toFixed(2)} kg`;
+  if (subtotalEl) subtotalEl.textContent = `Rs. ${totals.total.toLocaleString()}`;
 
   // Use event delegation — listeners are attached once on the container,
   // so they survive innerHTML re-renders of individual items.
@@ -1681,3 +1687,144 @@ function injectProductSEO(product) {
   scriptBreadcrumb.text = JSON.stringify(breadcrumbSchema);
   document.head.appendChild(scriptBreadcrumb);
 }
+
+// ==== BUNDLE CALCULATION LOGIC ====
+function calculateCartTotals(cart) {
+  let subtotal = 0;
+  let totalWeight = 0;
+  
+  cart.forEach(item => {
+    subtotal += item.price * item.qty;
+    totalWeight += (item.weight || 0) * item.qty;
+  });
+
+  let discount = 0;
+  let activeBundles = [];
+  
+  // Apply Auto-Bundling logic
+  if (typeof window.bundlesDb !== 'undefined') {
+    // Determine how many of each item is in the cart
+    let cartCounts = {};
+    cart.forEach(item => {
+      cartCounts[item.id] = item.qty;
+    });
+
+    window.bundlesDb.forEach(bundle => {
+      // Check if all items for this bundle exist in the cart
+      const maxPossibleBundles = Math.min(...bundle.items.map(itemId => cartCounts[itemId] || 0));
+      
+      if (maxPossibleBundles > 0) {
+        // Calculate the base price of the items in this bundle
+        let bundleBasePrice = 0;
+        bundle.items.forEach(itemId => {
+          const cartItem = cart.find(i => i.id === itemId);
+          if (cartItem) {
+            bundleBasePrice += cartItem.price;
+          }
+        });
+        
+        // Calculate 5% discount for this bundle
+        const bundleDiscount = bundleBasePrice * bundle.discountRate * maxPossibleBundles;
+        discount += bundleDiscount;
+        
+        activeBundles.push({
+          name: bundle.name,
+          discount: bundleDiscount,
+          qty: maxPossibleBundles
+        });
+        
+        // Deduct the counts so items aren't double-counted for other bundles
+        bundle.items.forEach(itemId => {
+          cartCounts[itemId] -= maxPossibleBundles;
+        });
+      }
+    });
+  }
+
+  return {
+    subtotal,
+    discount,
+    total: subtotal - discount,
+    totalWeight,
+    activeBundles
+  };
+}
+
+function addBundleToCart(bundleId) {
+  if (typeof window.bundlesDb === 'undefined' || typeof window.productsDb === 'undefined') return;
+  const bundle = window.bundlesDb.find(b => b.id === bundleId);
+  if (!bundle) return;
+  
+  // Create an array of products to add
+  const productsToAdd = bundle.items.map(itemId => window.productsDb.find(p => p.id === itemId)).filter(Boolean);
+  
+  let currentCart = JSON.parse(localStorage.getItem('arb_cart')) || [];
+  
+  productsToAdd.forEach(product => {
+    const existing = currentCart.find(i => i.id === product.id);
+    if (existing) {
+      existing.qty += 1;
+    } else {
+      currentCart.push({ ...product, qty: 1 });
+    }
+  });
+  
+  localStorage.setItem('arb_cart', JSON.stringify(currentCart));
+  updateCartBadge();
+  updateSidebarCart();
+  
+  // Show toast notification
+  showToast(`Added ${bundle.name} to cart!`, 'success');
+}
+
+function renderBundlesOnHomepage() {
+  const container = document.getElementById('bundles-container');
+  if (!container || typeof window.bundlesDb === 'undefined' || typeof window.productsDb === 'undefined') return;
+
+  let html = '';
+  window.bundlesDb.forEach(bundle => {
+    // Calculate full original price
+    let originalPrice = 0;
+    bundle.items.forEach(itemId => {
+      const product = window.productsDb.find(p => p.id === itemId);
+      if (product) {
+        originalPrice += product.price;
+      }
+    });
+    
+    const discountedPrice = originalPrice * (1 - bundle.discountRate);
+    const badgeColor = bundle.cityRestriction === 'multan' ? 'bg-danger' : 'bg-primary';
+
+    html += `
+      <div class="col-lg-3 col-md-6 col-sm-12">
+        <div class="card h-100 border-0 shadow-sm transition-zoom">
+          <div class="position-relative p-4 text-center bg-light" style="height: 200px; display: flex; align-items: center; justify-content: center;">
+            <span class="position-absolute top-0 start-0 m-3 badge ${badgeColor} rounded-pill">${bundle.badge}</span>
+            <span class="position-absolute top-0 end-0 m-3 badge bg-success rounded-pill">-5% OFF</span>
+            <img src="${bundle.image}" alt="${bundle.name}" class="img-fluid" style="max-height: 120px;">
+          </div>
+          <div class="card-body d-flex flex-column">
+            <h5 class="card-title text-dark fw-bold">${bundle.name}</h5>
+            <p class="card-text text-muted small flex-grow-1">${bundle.description}</p>
+            <div class="d-flex justify-content-between align-items-center mt-3">
+              <div>
+                <span class="text-muted text-decoration-line-through small d-block">Rs. ${originalPrice.toLocaleString()}</span>
+                <span class="text-success fw-bold fs-5">Rs. ${discountedPrice.toLocaleString()}</span>
+              </div>
+              <button class="btn btn-primary btn-sm rounded-circle shadow-sm" onclick="addBundleToCart('${bundle.id}')" style="width: 40px; height: 40px;">
+                <i class="bi bi-cart-plus"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+  });
+
+  container.innerHTML = html;
+}
+
+// Call on load
+document.addEventListener('DOMContentLoaded', () => {
+  renderBundlesOnHomepage();
+});

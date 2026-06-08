@@ -229,6 +229,11 @@
             <span class="text-muted">Gross Weight</span>
             <span id="summary-weight" class="fw-semibold">0 kg</span>
           </div>
+
+          <div id="summary-discount-row" class="d-flex justify-content-between mb-2 d-none">
+            <span class="text-success"><i class="bi bi-tag-fill me-1"></i> Bundle Savings</span>
+            <span id="summary-discount" class="text-success fw-bold">- Rs. 0</span>
+          </div>
           
           <div class="d-flex justify-content-between mb-3">
             <span class="text-muted">Shipping Fee</span>
@@ -429,12 +434,24 @@
               totalWeight = draft.weight;
               shippingFee = draft.shipping;
               grandTotal = draft.total;
+              const discount = draft.discount || 0;
 
               subtotalEl.textContent = `Rs. ${subtotal.toLocaleString()}`;
               const displayTotalWeight = totalWeight >= 1 ? `${totalWeight.toFixed(2)} kg` : `${(totalWeight * 1000).toFixed(0)} gm`;
               weightEl.textContent = displayTotalWeight;
               shippingEl.textContent = `Rs. ${shippingFee.toLocaleString()}`;
               totalEl.textContent = `Rs. ${grandTotal.toLocaleString()}`;
+              
+              const discountRow = document.getElementById('summary-discount-row');
+              const discountEl = document.getElementById('summary-discount');
+              if (discountRow && discountEl) {
+                if (discount > 0) {
+                  discountEl.textContent = `- Rs. ${discount.toLocaleString()}`;
+                  discountRow.classList.remove('d-none');
+                } else {
+                  discountRow.classList.add('d-none');
+                }
+              }
             }
           } catch(e) {
             console.warn("Error parsing checkout draft:", e);
@@ -466,18 +483,36 @@
         }).join("");
 
         // Calculate aggregates
-        subtotal = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
-        totalWeight = cart.reduce((sum, item) => sum + (parseItemWeight(item) * item.qty), 0);
+        const totals = typeof window.calculateCartTotals === 'function' ? window.calculateCartTotals(cart) : {
+          subtotal: cart.reduce((sum, item) => sum + (item.price * item.qty), 0),
+          totalWeight: cart.reduce((sum, item) => sum + (parseItemWeight(item) * item.qty), 0),
+          discount: 0,
+          total: cart.reduce((sum, item) => sum + (item.price * item.qty), 0)
+        };
+        
+        subtotal = totals.subtotal;
+        totalWeight = totals.totalWeight;
         const shipping = calculateShipping(cart);
         shippingFee = shipping.fee;
 
-        grandTotal = subtotal + shippingFee;
+        grandTotal = totals.total + shippingFee;
 
         subtotalEl.textContent = `Rs. ${subtotal.toLocaleString()}`;
         const displayTotalWeight = totalWeight >= 1 ? `${totalWeight.toFixed(2)} kg` : `${(totalWeight * 1000).toFixed(0)} gm`;
         weightEl.textContent = displayTotalWeight;
         shippingEl.textContent = `Rs. ${shippingFee.toLocaleString()}`;
         totalEl.textContent = `Rs. ${grandTotal.toLocaleString()}`;
+        
+        const discountRow = document.getElementById('summary-discount-row');
+        const discountEl = document.getElementById('summary-discount');
+        if (discountRow && discountEl) {
+          if (totals.discount > 0) {
+            discountEl.textContent = `- Rs. ${totals.discount.toLocaleString()}`;
+            discountRow.classList.remove('d-none');
+          } else {
+            discountRow.classList.add('d-none');
+          }
+        }
       }
 
       // Check dairy restriction on city change
