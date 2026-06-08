@@ -52,6 +52,7 @@
     }
   ],
   "rewrites": [
-    { "source": "/product/detail", "destination": "/product/detail/index.html" }
+    { "source": "/product/detail", "destination": "/product/detail/index.html" },
+    { "source": "/product/:slug", "destination": "/product/detail/index.html?id=:slug" }
   ]
 }

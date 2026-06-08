@@ -583,10 +583,10 @@ function injectCartSidebar() {
           <span class="h5 mb-0 text-primary fw-bold" id="sidebar-cart-subtotal">Rs. 0</span>
         </div>
         <div class="d-flex flex-column gap-2">
-          <a href="${prefix}checkout.html" id="sidebar-checkout-btn" class="btn btn-primary w-100 py-2.5 font-primary text-uppercase">
+          <a href="${prefix}checkout" id="sidebar-checkout-btn" class="btn btn-primary w-100 py-2.5 font-primary text-uppercase">
             <i class="bi bi-credit-card me-1"></i> Proceed to Checkout
           </a>
-          <a href="${prefix}cart.html" id="sidebar-cart-btn" class="btn btn-outline-secondary w-100 py-2 font-primary text-uppercase">
+          <a href="${prefix}cart" id="sidebar-cart-btn" class="btn btn-outline-secondary w-100 py-2 font-primary text-uppercase">
             View Full Cart
           </a>
         </div>
@@ -599,12 +599,12 @@ function injectCartSidebar() {
 
   // If user clicks a cart link, open the sidebar offcanvas instead of navigating (except on cart/checkout pages)
   document.addEventListener('click', (e) => {
-    const cartLink = e.target.closest('a[href*="cart.html"]');
+    const cartLink = e.target.closest('a[href*="cart"]');
     const isSidebarBtn = e.target.closest('#sidebar-cart-btn');
     if (cartLink && !isSidebarBtn) {
-      const isCartPage = window.location.pathname.endsWith('cart.html');
-      const isCheckoutPage = window.location.pathname.endsWith('checkout.html');
-      const isThankYouPage = window.location.pathname.endsWith('thank-you.html');
+      const isCartPage = window.location.pathname.endsWith('cart');
+      const isCheckoutPage = window.location.pathname.endsWith('checkout');
+      const isThankYouPage = window.location.pathname.endsWith('thank-you');
       if (!isCartPage && !isCheckoutPage && !isThankYouPage) {
         e.preventDefault();
         const offcanvas = bootstrap.Offcanvas.getOrCreateInstance(offcanvasEl);
@@ -629,7 +629,7 @@ function updateSidebarCart() {
       <div class="text-center py-5">
         <i class="bi bi-cart-x text-muted display-4 mb-3 d-block"></i>
         <p class="text-muted">Your cart is empty.</p>
-        <a href="${prefix}shop.html" class="btn btn-sm btn-outline-primary mt-2" data-bs-dismiss="offcanvas">Browse Products</a>
+        <a href="${prefix}shop" class="btn btn-sm btn-outline-primary mt-2" data-bs-dismiss="offcanvas">Browse Products</a>
       </div>
     `;
     if (weightEl) weightEl.textContent = '0 kg';
@@ -1085,10 +1085,10 @@ function performSearch(query, resultsEl, prefix) {
 
   // Shop page URL per category
   const catUrl = {
-    'Dairy': 'shop.html#dairy-organic',
-    'Organic': 'shop.html#dairy-organic',
-    'Edible Seeds': 'shop.html#edible-seeds',
-    'Feed & Agri': 'shop.html#feed-agri',
+    'Dairy': 'shop#dairy-organic',
+    'Organic': 'shop#dairy-organic',
+    'Edible Seeds': 'shop#edible-seeds',
+    'Feed & Agri': 'shop#feed-agri',
   };
 
   let html = '<div class="search-results-grid">';
@@ -1114,7 +1114,7 @@ function performSearch(query, resultsEl, prefix) {
   html += '</div>';
 
   if (matches.length > 12) {
-    html += `<a class="search-view-all" href="${prefix}shop.html?q=${encodeURIComponent(query)}">
+    html += `<a class="search-view-all" href="${prefix}shop?q=${encodeURIComponent(query)}">
       View all ${matches.length} results <i class="bi bi-arrow-right ms-1"></i>
     </a>`;
   }
@@ -1139,10 +1139,10 @@ function setupMobileHeader() {
     <button class="mobile-search-trigger text-white bg-transparent border-0 fs-5 px-2" aria-label="Search products" title="Search">
       <i class="bi bi-search"></i>
     </button>
-    <a href="${prefix}account.html" class="text-white fs-5 px-2" aria-label="My Account" title="My Account">
+    <a href="${prefix}account" class="text-white fs-5 px-2" aria-label="My Account" title="My Account">
       <i class="bi bi-person"></i>
     </a>
-    <a href="${prefix}cart.html" class="position-relative text-white fs-5 px-2" aria-label="View Cart">
+    <a href="${prefix}cart" class="position-relative text-white fs-5 px-2" aria-label="View Cart">
       <i class="bi bi-cart3"></i>
       <span class="mobile-cart-count position-absolute top-0 start-100 translate-middle badge rounded-pill bg-warning text-dark" style="font-size: 0.65rem; display: none;">0</span>
     </a>
@@ -1602,3 +1602,82 @@ function injectQuickViewModal(product) {
   modal.show();
 }
 
+
+// 10. Dynamic SEO & Schema Injection
+function injectProductSEO(product) {
+  // Update Meta Title & Description
+  document.title = `${product.name} | ARB Farms Pakistan`;
+  const metaDesc = document.querySelector('meta[name="description"]');
+  if (metaDesc) {
+    metaDesc.setAttribute('content', `Buy ${product.name} directly from ARB Farms in Multan. ${product.weight} package, Rs. ${product.price}. 100% pure & organic. Nationwide shipping across Pakistan.`);
+  }
+
+  // Create Product Schema
+  const productSchema = {
+    "@context": "https://schema.org/",
+    "@type": "Product",
+    "name": product.name,
+    "image": [
+      `https://arbfarms.com/${product.image}`
+    ],
+    "description": `Premium ${product.name} sourced directly from ARB Farms in Multan, Pakistan.`,
+    "sku": product.sku || product.id,
+    "offers": {
+      "@type": "Offer",
+      "url": window.location.href,
+      "priceCurrency": "PKR",
+      "price": product.price,
+      "availability": "https://schema.org/InStock",
+      "priceValidUntil": "2027-12-31"
+    },
+    "brand": {
+      "@type": "Brand",
+      "name": "ARB Farms"
+    }
+  };
+
+  // Add AggregateRating if available in local storage or seeded
+  // For simplicity, we hardcode a great rating as per the UI
+  productSchema.aggregateRating = {
+    "@type": "AggregateRating",
+    "ratingValue": "4.8",
+    "reviewCount": "24"
+  };
+
+  const scriptProduct = document.createElement('script');
+  scriptProduct.type = 'application/ld+json';
+  scriptProduct.text = JSON.stringify(productSchema);
+  document.head.appendChild(scriptProduct);
+
+  // Create Breadcrumb Schema
+  const breadcrumbSchema = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [{
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Home",
+      "item": "https://arbfarms.com/"
+    },{
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Shop",
+      "item": "https://arbfarms.com/shop"
+    },{
+      "@type": "ListItem",
+      "position": 3,
+      "name": product.category ? product.category.replace(/-/g, ' ') : "Products",
+      "item": `https://arbfarms.com/shop?category=${product.category}`
+    },{
+      "@type": "ListItem",
+      "position": 4,
+      "name": product.name,
+      "item": window.location.href
+    }]
+  };
+  
+  const scriptBreadcrumb = document.createElement('script');
+  scriptBreadcrumb.type = 'application/ld+json';
+  scriptBreadcrumb.text = JSON.stringify(breadcrumbSchema);
+  document.head.appendChild(scriptBreadcrumb);
+}

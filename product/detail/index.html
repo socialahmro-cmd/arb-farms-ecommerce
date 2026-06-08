@@ -577,7 +577,7 @@
   <!-- Navbar -->
   <nav class="navbar navbar-expand-lg bg-forest sticky-top shadow-sm py-2">
     <div class="container">
-      <a class="navbar-brand d-flex align-items-center" href="../../index.html">
+      <a class="navbar-brand d-flex align-items-center" href="/">
         <img src="../../catalog/arbfarms-logo-v2.svg" alt="ARB Farms Logo" class="me-2">
         <span class="font-primary text-white fs-4 tracking-wide">ARB FARMS</span>
       </a>
@@ -586,20 +586,20 @@
       </button>
       <div class="collapse navbar-collapse" id="mainNavbar">
         <ul class="navbar-nav mx-auto mb-2 mb-lg-0 gap-lg-3">
-          <li class="nav-item"><a class="nav-link" href="../../index.html">Home</a></li>
-          <li class="nav-item"><a class="nav-link active" href="../../shop.html">Shop Catalog</a></li>
-          <li class="nav-item"><a class="nav-link" href="../../about.html">About Us</a></li>
-          <li class="nav-item"><a class="nav-link" href="../../calculator.html">Sowing Tools</a></li>
-          <li class="nav-item"><a class="nav-link" href="../../contact.html">Contact Us</a></li>
+          <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
+          <li class="nav-item"><a class="nav-link active" href="../../shop">Shop Catalog</a></li>
+          <li class="nav-item"><a class="nav-link" href="../../about">About Us</a></li>
+          <li class="nav-item"><a class="nav-link" href="../../calculator">Sowing Tools</a></li>
+          <li class="nav-item"><a class="nav-link" href="../../contact">Contact Us</a></li>
         </ul>
         <div class="d-flex align-items-center gap-3">
           <button id="search-trigger" aria-label="Search products" title="Search"><i class="bi bi-search"></i></button>
-          <a href="../../account.html" class="text-white fs-5" aria-label="My Account"><i class="bi bi-person"></i></a>
-          <a href="../../wishlist.html" class="position-relative text-white fs-5" aria-label="Wishlist">
+          <a href="../../account" class="text-white fs-5" aria-label="My Account"><i class="bi bi-person"></i></a>
+          <a href="../../wishlist" class="position-relative text-white fs-5" aria-label="Wishlist">
             <i class="bi bi-heart"></i>
             <span id="wishlist-count" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size:.65rem">0</span>
           </a>
-          <a href="../../cart.html" class="position-relative text-white fs-5" aria-label="Cart">
+          <a href="../../cart" class="position-relative text-white fs-5" aria-label="Cart">
             <i class="bi bi-cart3"></i>
             <span id="cart-count" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-warning text-dark" style="font-size:.65rem">0</span>
           </a>
@@ -614,11 +614,11 @@
 
       <!-- Breadcrumb -->
       <nav class="pdp-breadcrumb" aria-label="Breadcrumb">
-        <a href="../../index.html"><i class="bi bi-house-fill me-1"></i>Home</a>
+        <a href="/"><i class="bi bi-house-fill me-1"></i>Home</a>
         <span class="sep">/</span>
-        <a href="../../shop.html">Shop</a>
+        <a href="../../shop">Shop</a>
         <span class="sep">/</span>
-        <a href="../../shop.html" id="breadcrumb-category-link">Category</a>
+        <a href="../../shop" id="breadcrumb-category-link">Category</a>
         <span class="sep">/</span>
         <span class="current" id="breadcrumb-product">Product</span>
       </nav>
@@ -837,7 +837,7 @@
       <i class="bi bi-exclamation-triangle-fill text-warning" style="font-size:4rem"></i>
       <h1 class="h3 font-primary mt-3 mb-2">Product Not Found</h1>
       <p class="text-muted mb-4">This product does not exist in our catalog or the link may be incorrect.</p>
-      <a href="../../shop.html" class="btn btn-primary px-4"><i class="bi bi-arrow-left me-2"></i>Back to Shop</a>
+      <a href="../../shop" class="btn btn-primary px-4"><i class="bi bi-arrow-left me-2"></i>Back to Shop</a>
     </div>
   </section>
 
@@ -875,8 +875,8 @@
           <p class="small text-white-50 mb-0">&copy; 2026 ARB Farms. Street 1, Fatima Avenue, Opp. Fatima Masjid, Near Prime Mart. MPS Road, Multan. All Rights Reserved.</p>
         </div>
         <div class="col-md-6 text-center text-md-end mt-2 mt-md-0">
-          <a href="../../legal/terms-conditions.html" class="text-white-50 text-decoration-none small me-3">Terms</a>
-          <a href="../../legal/privacy-policy.html" class="text-white-50 text-decoration-none small">Privacy Policy</a>
+          <a href="../../legal/terms-conditions" class="text-white-50 text-decoration-none small me-3">Terms</a>
+          <a href="../../legal/privacy-policy" class="text-white-50 text-decoration-none small">Privacy Policy</a>
         </div>
       </div>
     </div>
@@ -902,7 +902,15 @@
 
     // ── Load Product ──
     const params = new URLSearchParams(window.location.search);
-    const productId = params.get('id');
+    let productId = params.get('id');
+
+    // Clean URL fallback: if no id in search, check pathname (e.g., /product/ogn-066-white-chaunsa-5kg)
+    if (!productId) {
+      const pathParts = window.location.pathname.replace(/\/$/, '').split('/');
+      if (pathParts.includes('product') && pathParts[pathParts.length - 1] !== 'detail' && pathParts[pathParts.length - 1] !== 'product') {
+        productId = pathParts[pathParts.length - 1];
+      }
+    }
 
     if (!productId || typeof productsDb === 'undefined') { showError(); return; }
     const product = productsDb.find(p => p.id === productId);
@@ -910,6 +918,9 @@
 
     renderProduct(product);
     renderRelated(product);
+    if (typeof injectProductSEO === 'function') {
+      injectProductSEO(product);
+    }
 
     document.getElementById('product-detail-container').style.display = 'block';
     document.getElementById('mobile-sticky-cta').style.display = 'flex';

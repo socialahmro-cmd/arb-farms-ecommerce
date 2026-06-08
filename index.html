@@ -29,11 +29,34 @@
     "@context": "https://schema.org",
     "@type": "LocalBusiness",
     "name": "ARB Farms",
-    "image": "catalog/arbfarms-logo-v2.svg",
-    "logo": "catalog/arbfarms-logo-v2.svg",
+    "image": "https://arbfarms.com/catalog/arbfarms-logo-v2.svg",
+    "logo": "https://arbfarms.com/catalog/arbfarms-logo-v2.svg",
     "url": "https://arbfarms.com",
     "telephone": "+923200005367",
-    "priceRange": "$$",
+    "priceRange": "PKR",
+    "hasMap": "https://maps.google.com/?cid=ARB_FARMS_MAP_LINK",
+    "areaServed": [
+      {
+        "@type": "State",
+        "name": "Punjab"
+      },
+      {
+        "@type": "State",
+        "name": "Sindh"
+      },
+      {
+        "@type": "State",
+        "name": "Khyber Pakhtunkhwa"
+      },
+      {
+        "@type": "State",
+        "name": "Balochistan"
+      },
+      {
+        "@type": "Country",
+        "name": "Pakistan"
+      }
+    ],
     "address": {
       "@type": "PostalAddress",
       "streetAddress": "ARB Farms, Street 1, Fatima Avenue, Opp. Fatima Masjid, Near Prime Mart. MPS Road",
@@ -55,6 +78,8 @@
     }
   }
   </script>
+
+  <link rel="canonical" href="https://arbfarms.com/">
 </head>
 <body>
 
@@ -70,7 +95,7 @@
   <!-- 2. Sticky Header Navbar -->
   <nav class="navbar navbar-expand-lg bg-forest sticky-top shadow-sm py-2">
     <div class="container">
-      <a class="navbar-brand d-flex align-items-center" href="index.html" style="margin-left:-5px;">
+      <a class="navbar-brand d-flex align-items-center" href="/" style="margin-left:-5px;">
         <img src="catalog/arbfarms-logo-v2.svg" alt="ARB Farms Logo" class="me-2">
         <span class="font-primary text-white fs-4 tracking-wide">ARB FARMS</span>
       </a>
@@ -84,22 +109,22 @@
       
       <div class="collapse navbar-collapse" id="mainNavbar">
         <ul class="navbar-nav mx-auto mb-2 mb-lg-0 gap-lg-3">
-          <li class="nav-item"><a class="nav-link active" href="index.html">Home</a></li>
-          <li class="nav-item"><a class="nav-link" href="shop.html">Shop Catalog</a></li>
-          <li class="nav-item"><a class="nav-link" href="about.html">About Us</a></li>
-          <li class="nav-item"><a class="nav-link" href="calculator.html">Sowing Tools</a></li>
-          <li class="nav-item"><a class="nav-link" href="contact.html">Contact Us</a></li>
+          <li class="nav-item"><a class="nav-link active" href="/">Home</a></li>
+          <li class="nav-item"><a class="nav-link" href="shop">Shop Catalog</a></li>
+          <li class="nav-item"><a class="nav-link" href="about">About Us</a></li>
+          <li class="nav-item"><a class="nav-link" href="calculator">Sowing Tools</a></li>
+          <li class="nav-item"><a class="nav-link" href="contact">Contact Us</a></li>
         </ul>
         
         <div class="d-flex align-items-center gap-3">
           <button id="search-trigger" aria-label="Search products" title="Search"><i class="bi bi-search"></i></button>
-          <a href="account.html" class="text-white fs-5" aria-label="My Account" title="My Account"><i class="bi bi-person"></i></a>
-          <a href="compare.html" class="text-white fs-5" aria-label="Compare Seeds" title="Compare Seeds"><i class="bi bi-arrow-left-right"></i></a>
-          <a href="wishlist.html" class="position-relative text-white fs-5" aria-label="View Wishlist">
+          <a href="account" class="text-white fs-5" aria-label="My Account" title="My Account"><i class="bi bi-person"></i></a>
+          <a href="compare" class="text-white fs-5" aria-label="Compare Seeds" title="Compare Seeds"><i class="bi bi-arrow-left-right"></i></a>
+          <a href="wishlist" class="position-relative text-white fs-5" aria-label="View Wishlist">
             <i class="bi bi-heart"></i>
             <span id="wishlist-count" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size: 0.65rem;">0</span>
           </a>
-          <a href="cart.html" class="position-relative text-white fs-5" aria-label="View Cart">
+          <a href="cart" class="position-relative text-white fs-5" aria-label="View Cart">
             <i class="bi bi-cart3"></i>
             <span id="cart-count" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-warning text-dark" style="font-size: 0.65rem;">0</span>
           </a>
@@ -144,11 +169,11 @@
                 <p class="d-lg-none hero-mobile-desc font-accent text-white-50 mb-3">Farm Fresh. Sweet White Chaunsa. Direct from Multan.</p>
                 <p class="lead text-muted mb-4 font-accent d-none d-lg-block">Hand-picked premium export quality White Chaunsa mangoes straight from our farm in Multan. Naturally ripened and incredibly sweet.</p>
                 <div class="d-flex flex-wrap gap-3">
-                  <a href="shop.html" class="btn btn-primary btn-lg px-4">
+                  <a href="shop" class="btn btn-primary btn-lg px-4">
                     <span class="d-none d-lg-inline"><i class="bi bi-shop me-2"></i> Go to Shop</span>
                     <span class="d-lg-none">Shop Now <i class="bi bi-chevron-right ms-1"></i></span>
                   </a>
-                  <a href="product/detail?id=ogn-066-white-chaunsa-5kg" class="btn btn-outline-primary btn-lg px-4"><i class="bi bi-bag-plus-fill me-2"></i> Pre-Order Now</a>
+                  <a href="/product/ogn-066-white-chaunsa-5kg" class="btn btn-outline-primary btn-lg px-4"><i class="bi bi-bag-plus-fill me-2"></i> Pre-Order Now</a>
                 </div>
               </div>
               <div class="col-lg-6 text-center position-relative slide-img">
@@ -176,11 +201,11 @@
                 <p class="d-lg-none hero-mobile-desc font-accent text-white-50 mb-3">Farm Fresh. Sweet Sindhri. Direct from Multan.</p>
                 <p class="lead text-muted mb-4 font-accent d-none d-lg-block">Hand-picked premium export quality Sindhri mangoes straight from our farm in Multan. Naturally ripened and incredibly sweet.</p>
                 <div class="d-flex flex-wrap gap-3">
-                  <a href="shop.html" class="btn btn-primary btn-lg px-4">
+                  <a href="shop" class="btn btn-primary btn-lg px-4">
                     <span class="d-none d-lg-inline"><i class="bi bi-shop me-2"></i> Go to Shop</span>
                     <span class="d-lg-none">Shop Now <i class="bi bi-chevron-right ms-1"></i></span>
                   </a>
-                  <a href="product/detail?id=ogn-067-sindhri-5kg" class="btn btn-outline-primary btn-lg px-4"><i class="bi bi-bag-plus-fill me-2"></i> Pre-Order Now</a>
+                  <a href="/product/ogn-067-sindhri-5kg" class="btn btn-outline-primary btn-lg px-4"><i class="bi bi-bag-plus-fill me-2"></i> Pre-Order Now</a>
                 </div>
               </div>
               <div class="col-lg-6 text-center position-relative slide-img">
@@ -208,11 +233,11 @@
                 <p class="d-lg-none hero-mobile-desc font-accent text-white-50 mb-3">Farm Fresh. Sweet Dusehri. Direct from Multan.</p>
                 <p class="lead text-muted mb-4 font-accent d-none d-lg-block">Hand-picked premium export quality Dusehri mangoes straight from our farm in Multan. Naturally ripened and incredibly sweet.</p>
                 <div class="d-flex flex-wrap gap-3">
-                  <a href="shop.html" class="btn btn-primary btn-lg px-4">
+                  <a href="shop" class="btn btn-primary btn-lg px-4">
                     <span class="d-none d-lg-inline"><i class="bi bi-shop me-2"></i> Go to Shop</span>
                     <span class="d-lg-none">Shop Now <i class="bi bi-chevron-right ms-1"></i></span>
                   </a>
-                  <a href="product/detail?id=ogn-068-dusehri-5kg" class="btn btn-outline-primary btn-lg px-4"><i class="bi bi-bag-plus-fill me-2"></i> Pre-Order Now</a>
+                  <a href="/product/ogn-068-dusehri-5kg" class="btn btn-outline-primary btn-lg px-4"><i class="bi bi-bag-plus-fill me-2"></i> Pre-Order Now</a>
                 </div>
               </div>
               <div class="col-lg-6 text-center position-relative slide-img">
@@ -240,11 +265,11 @@
                 <p class="d-lg-none hero-mobile-desc font-accent text-white-50 mb-3">Farm Fresh. Sweet Anwar Ratol. Direct from Multan.</p>
                 <p class="lead text-muted mb-4 font-accent d-none d-lg-block">Hand-picked premium export quality Anwar Ratol mangoes straight from our farm in Multan. Naturally ripened and incredibly sweet.</p>
                 <div class="d-flex flex-wrap gap-3">
-                  <a href="shop.html" class="btn btn-primary btn-lg px-4">
+                  <a href="shop" class="btn btn-primary btn-lg px-4">
                     <span class="d-none d-lg-inline"><i class="bi bi-shop me-2"></i> Go to Shop</span>
                     <span class="d-lg-none">Shop Now <i class="bi bi-chevron-right ms-1"></i></span>
                   </a>
-                  <a href="product/detail?id=ogn-069-anwar-ratol-5kg" class="btn btn-outline-primary btn-lg px-4"><i class="bi bi-bag-plus-fill me-2"></i> Pre-Order Now</a>
+                  <a href="/product/ogn-069-anwar-ratol-5kg" class="btn btn-outline-primary btn-lg px-4"><i class="bi bi-bag-plus-fill me-2"></i> Pre-Order Now</a>
                 </div>
               </div>
               <div class="col-lg-6 text-center position-relative slide-img">
@@ -276,7 +301,7 @@
                     <span class="d-none d-lg-inline"><i class="bi bi-shop me-2"></i> Go to Shop</span>
                     <span class="d-lg-none">Shop Now <i class="bi bi-chevron-right ms-1"></i></span>
                   </a>
-                  <a href="product/detail?id=ogn-013" class="btn btn-outline-primary btn-lg px-4"><i class="bi bi-bag-plus-fill me-2"></i> Buy Desi Ghee</a>
+                  <a href="/product/ogn-013" class="btn btn-outline-primary btn-lg px-4"><i class="bi bi-bag-plus-fill me-2"></i> Buy Desi Ghee</a>
                 </div>
               </div>
               <div class="col-lg-6 text-center position-relative slide-img">
@@ -308,7 +333,7 @@
                     <span class="d-none d-lg-inline"><i class="bi bi-shop me-2"></i> Go to Shop</span>
                     <span class="d-lg-none">Shop Now <i class="bi bi-chevron-right ms-1"></i></span>
                   </a>
-                  <a href="product/detail?id=ogn-018" class="btn btn-outline-primary btn-lg px-4"><i class="bi bi-bag-plus-fill me-2"></i> Buy Organic Wheat</a>
+                  <a href="/product/ogn-018" class="btn btn-outline-primary btn-lg px-4"><i class="bi bi-bag-plus-fill me-2"></i> Buy Organic Wheat</a>
                 </div>
               </div>
               <div class="col-lg-6 text-center position-relative slide-img">
@@ -340,7 +365,7 @@
                     <span class="d-none d-lg-inline"><i class="bi bi-shop me-2"></i> Go to Shop</span>
                     <span class="d-lg-none">Shop Now <i class="bi bi-chevron-right ms-1"></i></span>
                   </a>
-                  <a href="product/detail?id=ogn-028-edible" class="btn btn-outline-primary btn-lg px-4"><i class="bi bi-bag-plus-fill me-2"></i> Buy Chia Seeds</a>
+                  <a href="/product/ogn-028-edible" class="btn btn-outline-primary btn-lg px-4"><i class="bi bi-bag-plus-fill me-2"></i> Buy Chia Seeds</a>
                 </div>
               </div>
               <div class="col-lg-6 text-center position-relative slide-img">
@@ -372,7 +397,7 @@
                     <span class="d-none d-lg-inline"><i class="bi bi-shop me-2"></i> Go to Shop</span>
                     <span class="d-lg-none">Shop Now <i class="bi bi-chevron-right ms-1"></i></span>
                   </a>
-                  <a href="product/detail?id=ogn-011" class="btn btn-outline-primary btn-lg px-4"><i class="bi bi-bag-plus-fill me-2"></i> Buy Sidr Honey</a>
+                  <a href="/product/ogn-011" class="btn btn-outline-primary btn-lg px-4"><i class="bi bi-bag-plus-fill me-2"></i> Buy Sidr Honey</a>
                 </div>
               </div>
               <div class="col-lg-6 text-center position-relative slide-img">
@@ -404,7 +429,7 @@
                     <span class="d-none d-lg-inline"><i class="bi bi-shop me-2"></i> Go to Shop</span>
                     <span class="d-lg-none">Shop Now <i class="bi bi-chevron-right ms-1"></i></span>
                   </a>
-                  <a href="product/detail?id=ogn-063" class="btn btn-outline-primary btn-lg px-4"><i class="bi bi-bag-plus-fill me-2"></i> Buy Isapghol</a>
+                  <a href="/product/ogn-063" class="btn btn-outline-primary btn-lg px-4"><i class="bi bi-bag-plus-fill me-2"></i> Buy Isapghol</a>
                 </div>
               </div>
               <div class="col-lg-6 text-center position-relative slide-img">
@@ -436,7 +461,7 @@
                     <span class="d-none d-lg-inline"><i class="bi bi-shop me-2"></i> Go to Shop</span>
                     <span class="d-lg-none">Shop Now <i class="bi bi-chevron-right ms-1"></i></span>
                   </a>
-                  <a href="product/detail?id=ogn-027-edible" class="btn btn-outline-primary btn-lg px-4"><i class="bi bi-bag-plus-fill me-2"></i> Buy Kalonji</a>
+                  <a href="/product/ogn-027-edible" class="btn btn-outline-primary btn-lg px-4"><i class="bi bi-bag-plus-fill me-2"></i> Buy Kalonji</a>
                 </div>
               </div>
               <div class="col-lg-6 text-center position-relative slide-img">
@@ -600,7 +625,7 @@
           <span class="text-uppercase text-gold fw-bold letter-spacing-1">🔥 Top Recommendations</span>
           <h2 class="h1 font-primary text-primary">Best Sellers This Week</h2>
         </div>
-        <a href="shop.html" class="btn btn-outline-primary d-none d-sm-inline-block">View All Products <i class="bi bi-arrow-right"></i></a>
+        <a href="shop" class="btn btn-outline-primary d-none d-sm-inline-block">View All Products <i class="bi bi-arrow-right"></i></a>
       </div>
       
       <div class="row g-4 mobile-carousel-scroll" style="scroll-snap-type: x mandatory !important;">
@@ -610,15 +635,15 @@
             <span class="badge position-absolute m-3 bg-secondary text-white z-2 sku-badge">OGN-066</span>
             <button class="wishlist-btn position-absolute top-0 end-0 m-3 border-0 z-2" aria-label="Add to Wishlist" data-id="ogn-066-white-chaunsa-5kg"><i class="bi bi-heart"></i></button>
             <div class="product-image-container">
-              <a href="product/detail?id=ogn-066-white-chaunsa-5kg" class="product-image-link">
+              <a href="/product/ogn-066-white-chaunsa-5kg" class="product-image-link">
                 <img src="catalog/White Chaunsa.svg" class="product-image-base" alt="White Chaunsa Mango">
                 <img src="catalog/White Chaunsa.svg" class="product-image-hover" alt="White Chaunsa Mango">
               </a>
-              <a href="product/detail?id=ogn-066-white-chaunsa-5kg" class="quick-view-btn position-absolute bottom-0 end-0 m-3 z-3 text-decoration-none" title="Quick View" data-id="ogn-066-white-chaunsa-5kg"><i class="bi bi-eye"></i></a>
+              <a href="/product/ogn-066-white-chaunsa-5kg" class="quick-view-btn position-absolute bottom-0 end-0 m-3 z-3 text-decoration-none" title="Quick View" data-id="ogn-066-white-chaunsa-5kg"><i class="bi bi-eye"></i></a>
             </div>
             <div class="card-body d-flex flex-column p-4">
               <span class="text-uppercase text-muted small fw-bold">Seasonal Exclusive</span>
-              <h3 class="h5 my-2 font-primary text-dark"><a href="product/detail?id=ogn-066-white-chaunsa-5kg" class="text-decoration-none text-dark hover-text-primary product-title-link">White Chaunsa (Pre-Order)</a></h3>
+              <h3 class="h5 my-2 font-primary text-dark"><a href="/product/ogn-066-white-chaunsa-5kg" class="text-decoration-none text-dark hover-text-primary product-title-link">White Chaunsa (Pre-Order)</a></h3>
               <p class="small text-muted flex-grow-1">Premium export quality White Chaunsa mangoes straight from our farm in Multan.</p>
               <div class="d-flex align-items-center mb-2">
                 <span class="text-gold small me-1"><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i></span>
@@ -650,15 +675,15 @@
             <span class="badge position-absolute m-3 bg-secondary text-white z-2 sku-badge">OGN-067</span>
             <button class="wishlist-btn position-absolute top-0 end-0 m-3 border-0 z-2" aria-label="Add to Wishlist" data-id="ogn-067-sindhri-5kg"><i class="bi bi-heart"></i></button>
             <div class="product-image-container">
-              <a href="product/detail?id=ogn-067-sindhri-5kg" class="product-image-link">
+              <a href="/product/ogn-067-sindhri-5kg" class="product-image-link">
                 <img src="catalog/Sindhri Mango.svg" class="product-image-base" alt="Sindhri Mango">
                 <img src="catalog/Sindhri Mango.svg" class="product-image-hover" alt="Sindhri Mango">
               </a>
-              <a href="product/detail?id=ogn-067-sindhri-5kg" class="quick-view-btn position-absolute bottom-0 end-0 m-3 z-3 text-decoration-none" title="Quick View" data-id="ogn-067-sindhri-5kg"><i class="bi bi-eye"></i></a>
+              <a href="/product/ogn-067-sindhri-5kg" class="quick-view-btn position-absolute bottom-0 end-0 m-3 z-3 text-decoration-none" title="Quick View" data-id="ogn-067-sindhri-5kg"><i class="bi bi-eye"></i></a>
             </div>
             <div class="card-body d-flex flex-column p-4">
               <span class="text-uppercase text-muted small fw-bold">Seasonal Exclusive</span>
-              <h3 class="h5 my-2 font-primary text-dark"><a href="product/detail?id=ogn-067-sindhri-5kg" class="text-decoration-none text-dark hover-text-primary product-title-link">Sindhri Mango (Pre-Order)</a></h3>
+              <h3 class="h5 my-2 font-primary text-dark"><a href="/product/ogn-067-sindhri-5kg" class="text-decoration-none text-dark hover-text-primary product-title-link">Sindhri Mango (Pre-Order)</a></h3>
               <p class="small text-muted flex-grow-1">Premium export quality Sindhri mangoes straight from our farm in Multan.</p>
               <div class="d-flex align-items-center mb-2">
                 <span class="text-gold small me-1"><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i></span>
@@ -690,15 +715,15 @@
             <span class="badge position-absolute m-3 bg-secondary text-white z-2 sku-badge">OGN-068</span>
             <button class="wishlist-btn position-absolute top-0 end-0 m-3 border-0 z-2" aria-label="Add to Wishlist" data-id="ogn-068-dusehri-5kg"><i class="bi bi-heart"></i></button>
             <div class="product-image-container">
-              <a href="product/detail?id=ogn-068-dusehri-5kg" class="product-image-link">
+              <a href="/product/ogn-068-dusehri-5kg" class="product-image-link">
                 <img src="catalog/Dusehri Mango.svg" class="product-image-base" alt="Dusehri Mango">
                 <img src="catalog/Dusehri Mango.svg" class="product-image-hover" alt="Dusehri Mango">
               </a>
-              <a href="product/detail?id=ogn-068-dusehri-5kg" class="quick-view-btn position-absolute bottom-0 end-0 m-3 z-3 text-decoration-none" title="Quick View" data-id="ogn-068-dusehri-5kg"><i class="bi bi-eye"></i></a>
+              <a href="/product/ogn-068-dusehri-5kg" class="quick-view-btn position-absolute bottom-0 end-0 m-3 z-3 text-decoration-none" title="Quick View" data-id="ogn-068-dusehri-5kg"><i class="bi bi-eye"></i></a>
             </div>
             <div class="card-body d-flex flex-column p-4">
               <span class="text-uppercase text-muted small fw-bold">Seasonal Exclusive</span>
-              <h3 class="h5 my-2 font-primary text-dark"><a href="product/detail?id=ogn-068-dusehri-5kg" class="text-decoration-none text-dark hover-text-primary product-title-link">Dusehri Mango (Pre-Order)</a></h3>
+              <h3 class="h5 my-2 font-primary text-dark"><a href="/product/ogn-068-dusehri-5kg" class="text-decoration-none text-dark hover-text-primary product-title-link">Dusehri Mango (Pre-Order)</a></h3>
               <p class="small text-muted flex-grow-1">Premium export quality Dusehri mangoes straight from our farm in Multan.</p>
               <div class="d-flex align-items-center mb-2">
                 <span class="text-gold small me-1"><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i></span>
@@ -730,15 +755,15 @@
             <span class="badge position-absolute m-3 bg-secondary text-white z-2 sku-badge">OGN-069</span>
             <button class="wishlist-btn position-absolute top-0 end-0 m-3 border-0 z-2" aria-label="Add to Wishlist" data-id="ogn-069-anwar-ratol-5kg"><i class="bi bi-heart"></i></button>
             <div class="product-image-container">
-              <a href="product/detail?id=ogn-069-anwar-ratol-5kg" class="product-image-link">
+              <a href="/product/ogn-069-anwar-ratol-5kg" class="product-image-link">
                 <img src="catalog/Anwar Ratol.svg" class="product-image-base" alt="Anwar Ratol">
                 <img src="catalog/Anwar Ratol.svg" class="product-image-hover" alt="Anwar Ratol">
               </a>
-              <a href="product/detail?id=ogn-069-anwar-ratol-5kg" class="quick-view-btn position-absolute bottom-0 end-0 m-3 z-3 text-decoration-none" title="Quick View" data-id="ogn-069-anwar-ratol-5kg"><i class="bi bi-eye"></i></a>
+              <a href="/product/ogn-069-anwar-ratol-5kg" class="quick-view-btn position-absolute bottom-0 end-0 m-3 z-3 text-decoration-none" title="Quick View" data-id="ogn-069-anwar-ratol-5kg"><i class="bi bi-eye"></i></a>
             </div>
             <div class="card-body d-flex flex-column p-4">
               <span class="text-uppercase text-muted small fw-bold">Seasonal Exclusive</span>
-              <h3 class="h5 my-2 font-primary text-dark"><a href="product/detail?id=ogn-069-anwar-ratol-5kg" class="text-decoration-none text-dark hover-text-primary product-title-link">Anwar Ratol (Pre-Order)</a></h3>
+              <h3 class="h5 my-2 font-primary text-dark"><a href="/product/ogn-069-anwar-ratol-5kg" class="text-decoration-none text-dark hover-text-primary product-title-link">Anwar Ratol (Pre-Order)</a></h3>
               <p class="small text-muted flex-grow-1">Premium export quality Anwar Ratol mangoes straight from our farm in Multan.</p>
               <div class="d-flex align-items-center mb-2">
                 <span class="text-gold small me-1"><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i></span>
@@ -770,15 +795,15 @@
             <span class="badge bg-warning text-dark position-absolute z-2 save-badge-top" style="top:0.75rem;left:50%;transform:translateX(-50%);font-size:0.7rem;">Save Rs. 750</span>
             <button class="wishlist-btn position-absolute top-0 end-0 m-3 border-0 z-2" aria-label="Add to Wishlist" data-id="ogn-013"><i class="bi bi-heart"></i></button>
             <div class="product-image-container">
-              <a href="product/detail?id=ogn-013" class="product-image-link">
+              <a href="/product/ogn-013" class="product-image-link">
                 <img src="catalog/ogn-013-desi-ghee-500gm-v2.svg" class="product-image-base" alt="Desi Ghee 500gm illustration">
                 <img src="catalog/ogn-013-desi-ghee-500gm-hover-v2.svg" class="product-image-hover" alt="Desi Ghee 500gm Benefits">
               </a>
-              <a href="product/detail?id=ogn-013" class="quick-view-btn position-absolute bottom-0 end-0 m-3 z-3 text-decoration-none" title="Quick View" data-id="ogn-013"><i class="bi bi-eye"></i></a>
+              <a href="/product/ogn-013" class="quick-view-btn position-absolute bottom-0 end-0 m-3 z-3 text-decoration-none" title="Quick View" data-id="ogn-013"><i class="bi bi-eye"></i></a>
             </div>
             <div class="card-body d-flex flex-column p-4">
               <span class="text-uppercase text-muted small fw-bold">Dairy &amp; Ghee</span>
-              <h3 class="h5 my-2 font-primary text-dark"><a href="product/detail?id=ogn-013" class="text-decoration-none text-dark hover-text-primary product-title-link">Premium Organic Desi Ghee</a></h3>
+              <h3 class="h5 my-2 font-primary text-dark"><a href="/product/ogn-013" class="text-decoration-none text-dark hover-text-primary product-title-link">Premium Organic Desi Ghee</a></h3>
               <p class="small text-muted flex-grow-1">Traditional slow-cooked ghee from pasture-raised buffaloes.</p>
               <div class="d-flex align-items-center mb-2">
                 <span class="text-gold small me-1"><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i></span>
@@ -815,15 +840,15 @@
             <span class="badge bg-warning text-dark position-absolute z-2 save-badge-top" style="top:0.75rem;left:50%;transform:translateX(-50%);font-size:0.7rem;">Save Rs. 35</span>
             <button class="wishlist-btn position-absolute top-0 end-0 m-3 border-0 z-2" aria-label="Add to Wishlist" data-id="ogn-018"><i class="bi bi-heart"></i></button>
             <div class="product-image-container">
-              <a href="product/detail?id=ogn-018" class="product-image-link">
+              <a href="/product/ogn-018" class="product-image-link">
                 <img src="catalog/ogn-018-gandum-40kg-v2.svg" class="product-image-base" alt="Organic Gandum (Wheat) 40kg">
                 <img src="catalog/ogn-018-gandum-40kg-hover-v2.svg" class="product-image-hover" alt="Organic Gandum Benefits">
               </a>
-              <a href="product/detail?id=ogn-018" class="quick-view-btn position-absolute bottom-0 end-0 m-3 z-3 text-decoration-none" title="Quick View" data-id="ogn-018"><i class="bi bi-eye"></i></a>
+              <a href="/product/ogn-018" class="quick-view-btn position-absolute bottom-0 end-0 m-3 z-3 text-decoration-none" title="Quick View" data-id="ogn-018"><i class="bi bi-eye"></i></a>
             </div>
             <div class="card-body d-flex flex-column p-4">
               <span class="text-uppercase text-muted small fw-bold">Edible Seeds</span>
-              <h3 class="h5 my-2 font-primary text-dark"><a href="product/detail?id=ogn-018" class="text-decoration-none text-dark hover-text-primary product-title-link">Organic Gandum (Wheat)</a></h3>
+              <h3 class="h5 my-2 font-primary text-dark"><a href="/product/ogn-018" class="text-decoration-none text-dark hover-text-primary product-title-link">Organic Gandum (Wheat)</a></h3>
               <p class="small text-muted flex-grow-1">Whole organic wheat grain, clean sorted, harvested from ARB Farms.</p>
               <div class="d-flex align-items-center mb-2">
                 <span class="text-gold small me-1"><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star"></i></span>
@@ -861,15 +886,15 @@
             <span class="badge bg-warning text-dark position-absolute z-2 save-badge-top" style="top:0.75rem;left:50%;transform:translateX(-50%);font-size:0.7rem;">Save Rs. 210</span>
             <button class="wishlist-btn position-absolute top-0 end-0 m-3 border-0 z-2" aria-label="Add to Wishlist" data-id="ogn-028-edible"><i class="bi bi-heart"></i></button>
             <div class="product-image-container">
-              <a href="product/detail?id=ogn-028-edible" class="product-image-link">
+              <a href="/product/ogn-028-edible" class="product-image-link">
                 <img src="catalog/ogn-028-chia-seed-250gm-v2.svg" class="product-image-base" alt="Chia Seed 250gm illustration">
                 <img src="catalog/ogn-028-chia-seed-250gm-hover-v2.svg" class="product-image-hover" alt="Chia Seed Benefits">
               </a>
-              <a href="product/detail?id=ogn-028-edible" class="quick-view-btn position-absolute bottom-0 end-0 m-3 z-3 text-decoration-none" title="Quick View" data-id="ogn-028-edible"><i class="bi bi-eye"></i></a>
+              <a href="/product/ogn-028-edible" class="quick-view-btn position-absolute bottom-0 end-0 m-3 z-3 text-decoration-none" title="Quick View" data-id="ogn-028-edible"><i class="bi bi-eye"></i></a>
             </div>
             <div class="card-body d-flex flex-column p-4">
               <span class="text-uppercase text-muted small fw-bold">Edible Seeds</span>
-              <h3 class="h5 my-2 font-primary text-dark"><a href="product/detail?id=ogn-028-edible" class="text-decoration-none text-dark hover-text-primary product-title-link">Edible Chia Seeds</a></h3>
+              <h3 class="h5 my-2 font-primary text-dark"><a href="/product/ogn-028-edible" class="text-decoration-none text-dark hover-text-primary product-title-link">Edible Chia Seeds</a></h3>
               <p class="small text-muted flex-grow-1">High-fiber dietary superfood seeds rich in Omega-3 lipids.</p>
               <div class="d-flex align-items-center mb-2">
                 <span class="text-gold small me-1"><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-half"></i></span>
@@ -906,15 +931,15 @@
             <span class="badge bg-warning text-dark position-absolute z-2 save-badge-top" style="top:0.75rem;left:50%;transform:translateX(-50%);font-size:0.7rem;">Save Rs. 750</span>
             <button class="wishlist-btn position-absolute top-0 end-0 m-3 border-0 z-2" aria-label="Add to Wishlist" data-id="ogn-011"><i class="bi bi-heart"></i></button>
             <div class="product-image-container">
-              <a href="product/detail?id=ogn-011" class="product-image-link">
+              <a href="/product/ogn-011" class="product-image-link">
                 <img src="catalog/ogn-011-sidr-honey-small-500gm-v2.svg" class="product-image-base" alt="Sidr Honey Small illustration">
                 <img src="catalog/ogn-011-sidr-honey-small-500gm-hover-v2.svg" class="product-image-hover" alt="Sidr Honey Small Benefits">
               </a>
-              <a href="product/detail?id=ogn-011" class="quick-view-btn position-absolute bottom-0 end-0 m-3 z-3 text-decoration-none" title="Quick View" data-id="ogn-011"><i class="bi bi-eye"></i></a>
+              <a href="/product/ogn-011" class="quick-view-btn position-absolute bottom-0 end-0 m-3 z-3 text-decoration-none" title="Quick View" data-id="ogn-011"><i class="bi bi-eye"></i></a>
             </div>
             <div class="card-body d-flex flex-column p-4">
               <span class="text-uppercase text-muted small fw-bold">Premium Honey</span>
-              <h3 class="h5 my-2 font-primary text-dark"><a href="product/detail?id=ogn-011" class="text-decoration-none text-dark hover-text-primary product-title-link">Sidr Honey</a></h3>
+              <h3 class="h5 my-2 font-primary text-dark"><a href="/product/ogn-011" class="text-decoration-none text-dark hover-text-primary product-title-link">Sidr Honey</a></h3>
               <p class="small text-muted flex-grow-1">100% raw wild-collected berry honey with healing benefits.</p>
               <div class="d-flex align-items-center mb-2">
                 <span class="text-gold small me-1"><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i></span>
@@ -951,15 +976,15 @@
             <span class="badge bg-warning text-dark position-absolute z-2 save-badge-top" style="top:0.75rem;left:50%;transform:translateX(-50%);font-size:0.7rem;">Save Rs. 210</span>
             <button class="wishlist-btn position-absolute top-0 end-0 m-3 border-0 z-2" aria-label="Add to Wishlist" data-id="ogn-063"><i class="bi bi-heart"></i></button>
             <div class="product-image-container">
-              <a href="product/detail?id=ogn-063" class="product-image-link">
+              <a href="/product/ogn-063" class="product-image-link">
                 <img src="catalog/ogn-063-isapghol-100gm-v2.svg" class="product-image-base" alt="Isapghol 100gm illustration">
                 <img src="catalog/ogn-063-isapghol-100gm-hover-v2.svg" class="product-image-hover" alt="Isapghol Benefits">
               </a>
-              <a href="product/detail?id=ogn-063" class="quick-view-btn position-absolute bottom-0 end-0 m-3 z-3 text-decoration-none" title="Quick View" data-id="ogn-063"><i class="bi bi-eye"></i></a>
+              <a href="/product/ogn-063" class="quick-view-btn position-absolute bottom-0 end-0 m-3 z-3 text-decoration-none" title="Quick View" data-id="ogn-063"><i class="bi bi-eye"></i></a>
             </div>
             <div class="card-body d-flex flex-column p-4">
               <span class="text-uppercase text-muted small fw-bold">Dietary Fiber</span>
-              <h3 class="h5 my-2 font-primary text-dark"><a href="product/detail?id=ogn-063" class="text-decoration-none text-dark hover-text-primary product-title-link">Isapghol (Psyllium Husk)</a></h3>
+              <h3 class="h5 my-2 font-primary text-dark"><a href="/product/ogn-063" class="text-decoration-none text-dark hover-text-primary product-title-link">Isapghol (Psyllium Husk)</a></h3>
               <p class="small text-muted flex-grow-1">Premium high-fiber psyllium husk for healthy digestion &amp; colon health.</p>
               <div class="d-flex align-items-center mb-2">
                 <span class="text-gold small me-1"><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i></span>
@@ -996,15 +1021,15 @@
             <span class="badge bg-warning text-dark position-absolute z-2 save-badge-top" style="top:0.75rem;left:50%;transform:translateX(-50%);font-size:0.7rem;">Save Rs. 108</span>
             <button class="wishlist-btn position-absolute top-0 end-0 m-3 border-0 z-2" aria-label="Add to Wishlist" data-id="ogn-027-edible"><i class="bi bi-heart"></i></button>
             <div class="product-image-container">
-              <a href="product/detail?id=ogn-027-edible" class="product-image-link">
+              <a href="/product/ogn-027-edible" class="product-image-link">
                 <img src="catalog/ogn-027-kalonji-250gm-v2.svg" class="product-image-base" alt="Kalonji Black Seed 250gm illustration">
                 <img src="catalog/ogn-027-kalonji-250gm-hover-v2.svg" class="product-image-hover" alt="Kalonji Black Seed Benefits">
               </a>
-              <a href="product/detail?id=ogn-027-edible" class="quick-view-btn position-absolute bottom-0 end-0 m-3 z-3 text-decoration-none" title="Quick View" data-id="ogn-027-edible"><i class="bi bi-eye"></i></a>
+              <a href="/product/ogn-027-edible" class="quick-view-btn position-absolute bottom-0 end-0 m-3 z-3 text-decoration-none" title="Quick View" data-id="ogn-027-edible"><i class="bi bi-eye"></i></a>
             </div>
             <div class="card-body d-flex flex-column p-4">
               <span class="text-uppercase text-muted small fw-bold">Superfood / Spice</span>
-              <h3 class="h5 my-2 font-primary text-dark"><a href="product/detail?id=ogn-027-edible" class="text-decoration-none text-dark hover-text-primary product-title-link">Kalonji (Black Seed)</a></h3>
+              <h3 class="h5 my-2 font-primary text-dark"><a href="/product/ogn-027-edible" class="text-decoration-none text-dark hover-text-primary product-title-link">Kalonji (Black Seed)</a></h3>
               <p class="small text-muted flex-grow-1">Pure Nigella Sativa seeds with powerful therapeutic &amp; immune-boosting properties.</p>
               <div class="d-flex align-items-center mb-2">
                 <span class="text-gold small me-1"><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-half"></i></span>
@@ -1037,7 +1062,7 @@
       </div>
       
       <div class="text-center mt-5 d-sm-none">
-        <a href="shop.html" class="btn btn-outline-primary w-100">View All Products</a>
+        <a href="shop" class="btn btn-outline-primary w-100">View All Products</a>
       </div>
     </div>
   </section>
@@ -1363,12 +1388,12 @@
         <div class="col-md-4 col-lg-2">
           <h4 class="h5 text-gold mb-3">Customer Service</h4>
           <ul class="list-unstyled small d-flex flex-column gap-2">
-            <li><a href="about.html" class="text-white-50 text-decoration-none">About Us</a></li>
-            <li><a href="contact.html" class="text-white-50 text-decoration-none">Contact Us</a></li>
-            <li><a href="legal/shipping-policy.html" class="text-white-50 text-decoration-none">Shipping Tiers &amp; Rules</a></li>
-            <li><a href="legal/refund-policy.html" class="text-white-50 text-decoration-none">Return Policy</a></li>
-            <li><a href="legal/terms-conditions.html" class="text-white-50 text-decoration-none">Terms of Service</a></li>
-            <li><a href="legal/privacy-policy.html" class="text-white-50 text-decoration-none">Privacy Policy</a></li>
+            <li><a href="about" class="text-white-50 text-decoration-none">About Us</a></li>
+            <li><a href="contact" class="text-white-50 text-decoration-none">Contact Us</a></li>
+            <li><a href="legal/shipping-policy" class="text-white-50 text-decoration-none">Shipping Tiers &amp; Rules</a></li>
+            <li><a href="legal/refund-policy" class="text-white-50 text-decoration-none">Return Policy</a></li>
+            <li><a href="legal/terms-conditions" class="text-white-50 text-decoration-none">Terms of Service</a></li>
+            <li><a href="legal/privacy-policy" class="text-white-50 text-decoration-none">Privacy Policy</a></li>
           </ul>
         </div>
         

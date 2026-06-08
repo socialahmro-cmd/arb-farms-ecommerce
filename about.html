@@ -12,6 +12,30 @@
   
   <!-- Custom Styles -->
   <link href="css/index.css?v=01e81ce0" rel="stylesheet">
+
+  <link rel="canonical" href="https://arbfarms.com/about">
+
+  <!-- Breadcrumb Schema -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": "https://arbfarms.com/"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "About",
+        "item": "https://arbfarms.com/about"
+      }
+    ]
+  }
+  </script>
 </head>
 <body>
 
@@ -25,7 +49,7 @@
   <!-- Navbar -->
   <nav class="navbar navbar-expand-lg bg-forest sticky-top shadow-sm py-2">
     <div class="container">
-      <a class="navbar-brand d-flex align-items-center" href="index.html">
+      <a class="navbar-brand d-flex align-items-center" href="/">
         <img src="catalog/arbfarms-logo-v2.svg" alt="ARB Farms Logo" class="me-2">
         <span class="font-primary text-white fs-4 tracking-wide">ARB FARMS</span>
       </a>
@@ -39,22 +63,22 @@
       
       <div class="collapse navbar-collapse" id="mainNavbar">
         <ul class="navbar-nav mx-auto mb-2 mb-lg-0 gap-lg-3">
-          <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
-          <li class="nav-item"><a class="nav-link" href="shop.html">Shop Catalog</a></li>
-          <li class="nav-item"><a class="nav-link active" href="about.html">About Us</a></li>
-          <li class="nav-item"><a class="nav-link" href="calculator.html">Sowing Tools</a></li>
-          <li class="nav-item"><a class="nav-link" href="contact.html">Contact Us</a></li>
+          <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
+          <li class="nav-item"><a class="nav-link" href="shop">Shop Catalog</a></li>
+          <li class="nav-item"><a class="nav-link active" href="about">About Us</a></li>
+          <li class="nav-item"><a class="nav-link" href="calculator">Sowing Tools</a></li>
+          <li class="nav-item"><a class="nav-link" href="contact">Contact Us</a></li>
         </ul>
         
         <div class="d-flex align-items-center gap-3">
           <button id="search-trigger" aria-label="Search products" title="Search"><i class="bi bi-search"></i></button>
-          <a href="account.html" class="text-white fs-5" aria-label="My Account" title="My Account"><i class="bi bi-person"></i></a>
-          <a href="compare.html" class="text-white fs-5" aria-label="Compare Seeds" title="Compare Seeds"><i class="bi bi-arrow-left-right"></i></a>
-          <a href="wishlist.html" class="position-relative text-white fs-5" aria-label="View Wishlist">
+          <a href="account" class="text-white fs-5" aria-label="My Account" title="My Account"><i class="bi bi-person"></i></a>
+          <a href="compare" class="text-white fs-5" aria-label="Compare Seeds" title="Compare Seeds"><i class="bi bi-arrow-left-right"></i></a>
+          <a href="wishlist" class="position-relative text-white fs-5" aria-label="View Wishlist">
             <i class="bi bi-heart"></i>
             <span id="wishlist-count" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size: 0.65rem;">0</span>
           </a>
-          <a href="cart.html" class="position-relative text-white fs-5" aria-label="View Cart">
+          <a href="cart" class="position-relative text-white fs-5" aria-label="View Cart">
             <i class="bi bi-cart3"></i>
             <span id="cart-count" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-warning text-dark" style="font-size: 0.65rem;">0</span>
           </a>
@@ -142,8 +166,8 @@
         <h2 class="display-6 font-primary text-white mb-3">Empowering Farmers, Nourishing Families</h2>
         <p class="lead text-white-50 max-width-sm mx-auto mb-4">Check out our interactive agricultural rate calculator or explore our chemical-free kitchen staples.</p>
         <div class="d-flex justify-content-center gap-3 flex-wrap">
-          <a href="shop.html" class="btn btn-secondary text-uppercase py-2 px-4">Browse Shop Catalog</a>
-          <a href="calculator.html" class="btn btn-outline-light text-uppercase py-2 px-4">Try Sowing Tools</a>
+          <a href="shop" class="btn btn-secondary text-uppercase py-2 px-4">Browse Shop Catalog</a>
+          <a href="calculator" class="btn btn-outline-light text-uppercase py-2 px-4">Try Sowing Tools</a>
         </div>
       </div>
     </section>
@@ -172,12 +196,12 @@
         <div class="col-md-4 col-lg-2">
           <h4 class="h5 text-gold mb-3">Customer Service</h4>
           <ul class="list-unstyled small d-flex flex-column gap-2">
-            <li><a href="about.html" class="text-white-50 text-decoration-none">About Us</a></li>
-            <li><a href="contact.html" class="text-white-50 text-decoration-none">Contact Us</a></li>
-            <li><a href="legal/shipping-policy.html" class="text-white-50 text-decoration-none">Shipping Tiers &amp; Rules</a></li>
-            <li><a href="legal/refund-policy.html" class="text-white-50 text-decoration-none">Return Policy</a></li>
-            <li><a href="legal/terms-conditions.html" class="text-white-50 text-decoration-none">Terms of Service</a></li>
-            <li><a href="legal/privacy-policy.html" class="text-white-50 text-decoration-none">Privacy Policy</a></li>
+            <li><a href="about" class="text-white-50 text-decoration-none">About Us</a></li>
+            <li><a href="contact" class="text-white-50 text-decoration-none">Contact Us</a></li>
+            <li><a href="legal/shipping-policy" class="text-white-50 text-decoration-none">Shipping Tiers &amp; Rules</a></li>
+            <li><a href="legal/refund-policy" class="text-white-50 text-decoration-none">Return Policy</a></li>
+            <li><a href="legal/terms-conditions" class="text-white-50 text-decoration-none">Terms of Service</a></li>
+            <li><a href="legal/privacy-policy" class="text-white-50 text-decoration-none">Privacy Policy</a></li>
           </ul>
         </div>
         
