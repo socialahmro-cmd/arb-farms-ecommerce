@@ -1779,49 +1779,55 @@ function addBundleToCart(bundleId) {
 
 function renderBundlesOnHomepage() {
   const container = document.getElementById('bundles-container');
-  if (!container || typeof window.bundlesDb === 'undefined' || typeof window.productsDb === 'undefined') return;
+  if (!container) return;
 
-  let html = '';
-  window.bundlesDb.forEach(bundle => {
-    // Calculate full original price
-    let originalPrice = 0;
-    bundle.items.forEach(itemId => {
-      const product = window.productsDb.find(p => p.id === itemId);
-      if (product) {
-        originalPrice += product.price;
-      }
-    });
-    
-    const discountedPrice = originalPrice * (1 - bundle.discountRate);
-    const badgeColor = bundle.cityRestriction === 'multan' ? 'bg-danger' : 'bg-primary';
+  getProductsDb().then(() => {
+    if (typeof window.bundlesDb === 'undefined' || typeof window.productsDb === 'undefined') return;
 
-    html += `
-      <div class="col-lg-3 col-md-6 col-sm-12">
-        <div class="card h-100 border-0 shadow-sm transition-zoom">
-          <div class="position-relative p-4 text-center bg-light" style="height: 200px; display: flex; align-items: center; justify-content: center;">
-            <span class="position-absolute top-0 start-0 m-3 badge ${badgeColor} rounded-pill">${bundle.badge}</span>
-            <span class="position-absolute top-0 end-0 m-3 badge bg-success rounded-pill">-5% OFF</span>
-            <img src="${bundle.image}" alt="${bundle.name}" class="img-fluid" style="max-height: 120px;">
-          </div>
-          <div class="card-body d-flex flex-column">
-            <h5 class="card-title text-dark fw-bold">${bundle.name}</h5>
-            <p class="card-text text-muted small flex-grow-1">${bundle.description}</p>
-            <div class="d-flex justify-content-between align-items-center mt-3">
-              <div>
-                <span class="text-muted text-decoration-line-through small d-block">Rs. ${originalPrice.toLocaleString()}</span>
-                <span class="text-success fw-bold fs-5">Rs. ${discountedPrice.toLocaleString()}</span>
+    let html = '';
+    window.bundlesDb.forEach(bundle => {
+      // Calculate full original price
+      let originalPrice = 0;
+      bundle.items.forEach(itemId => {
+        const product = window.productsDb.find(p => p.id === itemId);
+        if (product) {
+          originalPrice += product.price;
+        }
+      });
+      
+      const discountedPrice = originalPrice * (1 - bundle.discountRate);
+      const badgeColor = bundle.cityRestriction === 'multan' ? 'bg-danger' : 'bg-primary';
+
+      html += `
+        <div class="col-lg-3 col-md-6 col-sm-12">
+          <div class="card h-100 border-0 shadow-sm transition-zoom">
+            <div class="position-relative p-4 text-center bg-light" style="height: 200px; display: flex; align-items: center; justify-content: center;">
+              <span class="position-absolute top-0 start-0 m-3 badge ${badgeColor} rounded-pill">${bundle.badge}</span>
+              <span class="position-absolute top-0 end-0 m-3 badge bg-success rounded-pill">-5% OFF</span>
+              <img src="${bundle.image}" alt="${bundle.name}" class="img-fluid" style="max-height: 120px;">
+            </div>
+            <div class="card-body d-flex flex-column">
+              <h5 class="card-title text-dark fw-bold">${bundle.name}</h5>
+              <p class="card-text text-muted small flex-grow-1">${bundle.description}</p>
+              <div class="d-flex justify-content-between align-items-center mt-3">
+                <div>
+                  <span class="text-muted text-decoration-line-through small d-block">Rs. ${originalPrice.toLocaleString()}</span>
+                  <span class="text-success fw-bold fs-5">Rs. ${discountedPrice.toLocaleString()}</span>
+                </div>
+                <button class="btn btn-primary btn-sm rounded-circle shadow-sm" onclick="addBundleToCart('${bundle.id}')" style="width: 40px; height: 40px;">
+                  <i class="bi bi-cart-plus"></i>
+                </button>
               </div>
-              <button class="btn btn-primary btn-sm rounded-circle shadow-sm" onclick="addBundleToCart('${bundle.id}')" style="width: 40px; height: 40px;">
-                <i class="bi bi-cart-plus"></i>
-              </button>
             </div>
           </div>
         </div>
-      </div>
-    `;
-  });
+      `;
+    });
 
-  container.innerHTML = html;
+    container.innerHTML = html;
+  }).catch(err => {
+    console.error("Error loading products database for bundles:", err);
+  });
 }
 
 // Call on load
