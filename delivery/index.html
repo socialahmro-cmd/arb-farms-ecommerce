@@ -14,8 +14,8 @@
 
   <style>
     :root {
-      --color-forest: #2b422a; /* Brand forest green */
-      --color-gold: #c29d59; /* Brand gold */
+      --color-forest: #2b422a;
+      --color-gold: #c29d59;
     }
     .bg-forest { background-color: var(--color-forest) !important; }
     .text-forest { color: var(--color-forest) !important; }
@@ -43,29 +43,67 @@
       background: url('data:image/svg+xml;utf8,<svg width="20" height="20" xmlns="http://www.w3.org/2000/svg"><circle cx="2" cy="2" r="1" fill="rgba(255,255,255,0.05)"/></svg>');
       pointer-events: none;
     }
-    
-    /* Cards */
-    .province-card {
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
+
+    /* Search Bar */
+    .search-wrapper {
+      margin-top: -30px;
+      position: relative;
+      z-index: 10;
     }
-    .province-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 15px 35px rgba(0,0,0,0.1) !important;
+    .search-input {
+      border: 2px solid transparent;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+      transition: all 0.3s ease;
+      border-radius: 50rem !important;
+    }
+    .search-input:focus {
+      border-color: var(--color-gold);
+      box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+      outline: none;
+    }
+    
+    /* Tabs */
+    .hide-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .hide-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+    .whitespace-nowrap {
+      white-space: nowrap;
+    }
+    .custom-tabs .nav-link {
+      color: var(--color-forest);
+      background-color: #fff;
+      border: 1px solid #dee2e6;
+      transition: all 0.3s ease;
+    }
+    .custom-tabs .nav-link:hover {
+      background-color: #f8f9fa;
+      border-color: var(--color-forest);
+    }
+    .custom-tabs .nav-link.active {
+      background-color: var(--color-forest);
+      color: var(--color-gold);
+      border-color: var(--color-forest);
+      box-shadow: 0 5px 15px rgba(43, 66, 42, 0.2);
     }
     
     /* City Links */
     .icon-box {
-      width: 32px;
-      height: 32px;
+      width: 36px;
+      height: 36px;
       transition: all 0.3s ease;
     }
     .city-link {
       transition: all 0.3s ease;
-      background: transparent;
     }
     .city-link:hover {
-      background: #f8f9fa; /* light grey on hover */
-      transform: translateX(5px);
+      background: #fff !important;
+      border-color: var(--color-gold) !important;
+      transform: translateY(-3px);
+      box-shadow: 0 5px 15px rgba(0,0,0,0.05);
     }
     .city-link:hover .icon-box {
       background: var(--color-forest) !important;
@@ -82,6 +120,23 @@
     .city-link:hover .transition-arrow {
       transform: translateX(3px);
       color: var(--color-forest) !important;
+    }
+
+    /* Global Search Results state */
+    .global-search-mode .nav-pills {
+      display: none !important;
+    }
+    .global-search-mode .tab-content > .tab-pane {
+      display: block !important;
+      opacity: 1 !important;
+    }
+    .global-search-mode .province-card {
+      box-shadow: none !important;
+      background: transparent !important;
+    }
+    .global-search-mode .card-body {
+      padding: 0 !important;
+      background: transparent !important;
     }
   </style>
 
@@ -128,7 +183,7 @@
   </nav>
 
   <section class="delivery-hero py-5 text-white text-center fade-in-up" style="animation-delay: 0s;">
-    <div class="container py-md-5 position-relative z-1">
+    <div class="container py-md-5 position-relative z-1 mb-4">
       <div class="d-inline-flex align-items-center bg-white bg-opacity-10 rounded-pill px-3 py-1 mb-3">
         <span class="badge bg-gold text-forest rounded-pill me-2">NEW</span>
         <span class="small font-primary tracking-wide">Nationwide Network</span>
@@ -140,584 +195,600 @@
     </div>
   </section>
 
-  <section class="container py-5 my-md-2">
-    <div class="row g-4 justify-content-center" masonry data-masonry='{"percentPosition": true }'>
+  <!-- Search Bar -->
+  <div class="container search-wrapper fade-in-up" style="animation-delay: 0.1s;">
+    <div class="row justify-content-center">
+      <div class="col-md-8 col-lg-6">
+        <div class="position-relative">
+          <i class="bi bi-search position-absolute top-50 start-0 translate-middle-y ms-4 text-muted fs-5"></i>
+          <input type="text" id="citySearchInput" class="form-control form-control-lg search-input ps-5 py-3" placeholder="Search for your city (e.g. Lahore, Karachi)..." autocomplete="off">
+        </div>
+      </div>
+    </div>
+  </div>
 
-    <div class="col-md-6 col-lg-4 mb-4 fade-in-up" style="animation-delay: 0.1s;">
-      <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden province-card">
-        <div class="card-header bg-forest text-gold border-0 py-3">
-          <h3 class="h4 font-primary mb-0 d-flex align-items-center">
-            <i class="bi bi-map-fill me-2 fs-5"></i> Punjab
-          </h3>
-        </div>
-        <div class="card-body bg-white p-4">
-          <ul class="list-unstyled mb-0 city-list">
+  <section class="container py-5 mt-3 fade-in-up" style="animation-delay: 0.2s;" id="directoryContainer">
+<ul class="nav nav-pills custom-tabs flex-nowrap overflow-auto hide-scrollbar mb-4 pb-2" id="provinceTabs" role="tablist">
+
+    <li class="nav-item" role="presentation">
+      <button class="nav-link active rounded-pill px-4 py-2 me-2 font-primary whitespace-nowrap" id="punjab-tab" data-bs-toggle="tab" data-bs-target="#punjab" type="button" role="tab" aria-controls="punjab" aria-selected="true">Punjab</button>
+    </li>
     
-            <li class="mb-2">
-              <a href="/delivery/lahore" class="city-link d-flex align-items-center text-decoration-none p-2 rounded-3">
-                <div class="icon-box bg-light rounded-circle d-flex align-items-center justify-content-center me-3">
+    <li class="nav-item" role="presentation">
+      <button class="nav-link  rounded-pill px-4 py-2 me-2 font-primary whitespace-nowrap" id="sindh-tab" data-bs-toggle="tab" data-bs-target="#sindh" type="button" role="tab" aria-controls="sindh" aria-selected="false">Sindh</button>
+    </li>
+    
+    <li class="nav-item" role="presentation">
+      <button class="nav-link  rounded-pill px-4 py-2 me-2 font-primary whitespace-nowrap" id="khyber-pakhtunkhwa-tab" data-bs-toggle="tab" data-bs-target="#khyber-pakhtunkhwa" type="button" role="tab" aria-controls="khyber-pakhtunkhwa" aria-selected="false">Khyber Pakhtunkhwa</button>
+    </li>
+    
+    <li class="nav-item" role="presentation">
+      <button class="nav-link  rounded-pill px-4 py-2 me-2 font-primary whitespace-nowrap" id="balochistan-tab" data-bs-toggle="tab" data-bs-target="#balochistan" type="button" role="tab" aria-controls="balochistan" aria-selected="false">Balochistan</button>
+    </li>
+    
+    <li class="nav-item" role="presentation">
+      <button class="nav-link  rounded-pill px-4 py-2 me-2 font-primary whitespace-nowrap" id="capital-territory-tab" data-bs-toggle="tab" data-bs-target="#capital-territory" type="button" role="tab" aria-controls="capital-territory" aria-selected="false">Capital Territory</button>
+    </li>
+    </ul>
+<div class="tab-content" id="provinceTabsContent">
+
+    <div class="tab-pane fade show active" id="punjab" role="tabpanel" aria-labelledby="punjab-tab">
+      <div class="card border-0 shadow-sm rounded-4 overflow-hidden province-card">
+        <div class="card-body bg-white p-4">
+          <div class="row g-3" id="city-list-punjab">
+    
+            <div class="col-12 col-sm-6 col-lg-4 city-item" data-name="lahore">
+              <a href="/delivery/lahore" class="city-link d-flex align-items-center text-decoration-none p-3 rounded-3 border bg-light h-100">
+                <div class="icon-box bg-white rounded-circle d-flex align-items-center justify-content-center me-3 shadow-sm">
                   <i class="bi bi-geo-alt-fill text-forest"></i>
                 </div>
-                <span class="fw-medium text-dark">Lahore</span>
+                <span class="fw-medium text-dark flex-grow-1">Lahore</span>
                 <i class="bi bi-chevron-right ms-auto text-muted small transition-arrow"></i>
               </a>
-            </li>
+            </div>
         
-            <li class="mb-2">
-              <a href="/delivery/faisalabad" class="city-link d-flex align-items-center text-decoration-none p-2 rounded-3">
-                <div class="icon-box bg-light rounded-circle d-flex align-items-center justify-content-center me-3">
+            <div class="col-12 col-sm-6 col-lg-4 city-item" data-name="faisalabad">
+              <a href="/delivery/faisalabad" class="city-link d-flex align-items-center text-decoration-none p-3 rounded-3 border bg-light h-100">
+                <div class="icon-box bg-white rounded-circle d-flex align-items-center justify-content-center me-3 shadow-sm">
                   <i class="bi bi-geo-alt-fill text-forest"></i>
                 </div>
-                <span class="fw-medium text-dark">Faisalabad</span>
+                <span class="fw-medium text-dark flex-grow-1">Faisalabad</span>
                 <i class="bi bi-chevron-right ms-auto text-muted small transition-arrow"></i>
               </a>
-            </li>
+            </div>
         
-            <li class="mb-2">
-              <a href="/delivery/rawalpindi" class="city-link d-flex align-items-center text-decoration-none p-2 rounded-3">
-                <div class="icon-box bg-light rounded-circle d-flex align-items-center justify-content-center me-3">
+            <div class="col-12 col-sm-6 col-lg-4 city-item" data-name="rawalpindi">
+              <a href="/delivery/rawalpindi" class="city-link d-flex align-items-center text-decoration-none p-3 rounded-3 border bg-light h-100">
+                <div class="icon-box bg-white rounded-circle d-flex align-items-center justify-content-center me-3 shadow-sm">
                   <i class="bi bi-geo-alt-fill text-forest"></i>
                 </div>
-                <span class="fw-medium text-dark">Rawalpindi</span>
+                <span class="fw-medium text-dark flex-grow-1">Rawalpindi</span>
                 <i class="bi bi-chevron-right ms-auto text-muted small transition-arrow"></i>
               </a>
-            </li>
+            </div>
         
-            <li class="mb-2">
-              <a href="/delivery/gujranwala" class="city-link d-flex align-items-center text-decoration-none p-2 rounded-3">
-                <div class="icon-box bg-light rounded-circle d-flex align-items-center justify-content-center me-3">
+            <div class="col-12 col-sm-6 col-lg-4 city-item" data-name="gujranwala">
+              <a href="/delivery/gujranwala" class="city-link d-flex align-items-center text-decoration-none p-3 rounded-3 border bg-light h-100">
+                <div class="icon-box bg-white rounded-circle d-flex align-items-center justify-content-center me-3 shadow-sm">
                   <i class="bi bi-geo-alt-fill text-forest"></i>
                 </div>
-                <span class="fw-medium text-dark">Gujranwala</span>
+                <span class="fw-medium text-dark flex-grow-1">Gujranwala</span>
                 <i class="bi bi-chevron-right ms-auto text-muted small transition-arrow"></i>
               </a>
-            </li>
+            </div>
         
-            <li class="mb-2">
-              <a href="/delivery/multan" class="city-link d-flex align-items-center text-decoration-none p-2 rounded-3">
-                <div class="icon-box bg-light rounded-circle d-flex align-items-center justify-content-center me-3">
+            <div class="col-12 col-sm-6 col-lg-4 city-item" data-name="multan">
+              <a href="/delivery/multan" class="city-link d-flex align-items-center text-decoration-none p-3 rounded-3 border bg-light h-100">
+                <div class="icon-box bg-white rounded-circle d-flex align-items-center justify-content-center me-3 shadow-sm">
                   <i class="bi bi-geo-alt-fill text-forest"></i>
                 </div>
-                <span class="fw-medium text-dark">Multan</span>
+                <span class="fw-medium text-dark flex-grow-1">Multan</span>
                 <i class="bi bi-chevron-right ms-auto text-muted small transition-arrow"></i>
               </a>
-            </li>
+            </div>
         
-            <li class="mb-2">
-              <a href="/delivery/bahawalpur" class="city-link d-flex align-items-center text-decoration-none p-2 rounded-3">
-                <div class="icon-box bg-light rounded-circle d-flex align-items-center justify-content-center me-3">
+            <div class="col-12 col-sm-6 col-lg-4 city-item" data-name="bahawalpur">
+              <a href="/delivery/bahawalpur" class="city-link d-flex align-items-center text-decoration-none p-3 rounded-3 border bg-light h-100">
+                <div class="icon-box bg-white rounded-circle d-flex align-items-center justify-content-center me-3 shadow-sm">
                   <i class="bi bi-geo-alt-fill text-forest"></i>
                 </div>
-                <span class="fw-medium text-dark">Bahawalpur</span>
+                <span class="fw-medium text-dark flex-grow-1">Bahawalpur</span>
                 <i class="bi bi-chevron-right ms-auto text-muted small transition-arrow"></i>
               </a>
-            </li>
+            </div>
         
-            <li class="mb-2">
-              <a href="/delivery/sargodha" class="city-link d-flex align-items-center text-decoration-none p-2 rounded-3">
-                <div class="icon-box bg-light rounded-circle d-flex align-items-center justify-content-center me-3">
+            <div class="col-12 col-sm-6 col-lg-4 city-item" data-name="sargodha">
+              <a href="/delivery/sargodha" class="city-link d-flex align-items-center text-decoration-none p-3 rounded-3 border bg-light h-100">
+                <div class="icon-box bg-white rounded-circle d-flex align-items-center justify-content-center me-3 shadow-sm">
                   <i class="bi bi-geo-alt-fill text-forest"></i>
                 </div>
-                <span class="fw-medium text-dark">Sargodha</span>
+                <span class="fw-medium text-dark flex-grow-1">Sargodha</span>
                 <i class="bi bi-chevron-right ms-auto text-muted small transition-arrow"></i>
               </a>
-            </li>
+            </div>
         
-            <li class="mb-2">
-              <a href="/delivery/sialkot" class="city-link d-flex align-items-center text-decoration-none p-2 rounded-3">
-                <div class="icon-box bg-light rounded-circle d-flex align-items-center justify-content-center me-3">
+            <div class="col-12 col-sm-6 col-lg-4 city-item" data-name="sialkot">
+              <a href="/delivery/sialkot" class="city-link d-flex align-items-center text-decoration-none p-3 rounded-3 border bg-light h-100">
+                <div class="icon-box bg-white rounded-circle d-flex align-items-center justify-content-center me-3 shadow-sm">
                   <i class="bi bi-geo-alt-fill text-forest"></i>
                 </div>
-                <span class="fw-medium text-dark">Sialkot</span>
+                <span class="fw-medium text-dark flex-grow-1">Sialkot</span>
                 <i class="bi bi-chevron-right ms-auto text-muted small transition-arrow"></i>
               </a>
-            </li>
+            </div>
         
-            <li class="mb-2">
-              <a href="/delivery/sheikhupura" class="city-link d-flex align-items-center text-decoration-none p-2 rounded-3">
-                <div class="icon-box bg-light rounded-circle d-flex align-items-center justify-content-center me-3">
+            <div class="col-12 col-sm-6 col-lg-4 city-item" data-name="sheikhupura">
+              <a href="/delivery/sheikhupura" class="city-link d-flex align-items-center text-decoration-none p-3 rounded-3 border bg-light h-100">
+                <div class="icon-box bg-white rounded-circle d-flex align-items-center justify-content-center me-3 shadow-sm">
                   <i class="bi bi-geo-alt-fill text-forest"></i>
                 </div>
-                <span class="fw-medium text-dark">Sheikhupura</span>
+                <span class="fw-medium text-dark flex-grow-1">Sheikhupura</span>
                 <i class="bi bi-chevron-right ms-auto text-muted small transition-arrow"></i>
               </a>
-            </li>
+            </div>
         
-            <li class="mb-2">
-              <a href="/delivery/rahim-yar-khan" class="city-link d-flex align-items-center text-decoration-none p-2 rounded-3">
-                <div class="icon-box bg-light rounded-circle d-flex align-items-center justify-content-center me-3">
+            <div class="col-12 col-sm-6 col-lg-4 city-item" data-name="rahim yar khan">
+              <a href="/delivery/rahim-yar-khan" class="city-link d-flex align-items-center text-decoration-none p-3 rounded-3 border bg-light h-100">
+                <div class="icon-box bg-white rounded-circle d-flex align-items-center justify-content-center me-3 shadow-sm">
                   <i class="bi bi-geo-alt-fill text-forest"></i>
                 </div>
-                <span class="fw-medium text-dark">Rahim Yar Khan</span>
+                <span class="fw-medium text-dark flex-grow-1">Rahim Yar Khan</span>
                 <i class="bi bi-chevron-right ms-auto text-muted small transition-arrow"></i>
               </a>
-            </li>
+            </div>
         
-            <li class="mb-2">
-              <a href="/delivery/jhang" class="city-link d-flex align-items-center text-decoration-none p-2 rounded-3">
-                <div class="icon-box bg-light rounded-circle d-flex align-items-center justify-content-center me-3">
+            <div class="col-12 col-sm-6 col-lg-4 city-item" data-name="jhang">
+              <a href="/delivery/jhang" class="city-link d-flex align-items-center text-decoration-none p-3 rounded-3 border bg-light h-100">
+                <div class="icon-box bg-white rounded-circle d-flex align-items-center justify-content-center me-3 shadow-sm">
                   <i class="bi bi-geo-alt-fill text-forest"></i>
                 </div>
-                <span class="fw-medium text-dark">Jhang</span>
+                <span class="fw-medium text-dark flex-grow-1">Jhang</span>
                 <i class="bi bi-chevron-right ms-auto text-muted small transition-arrow"></i>
               </a>
-            </li>
+            </div>
         
-            <li class="mb-2">
-              <a href="/delivery/dera-ghazi-khan" class="city-link d-flex align-items-center text-decoration-none p-2 rounded-3">
-                <div class="icon-box bg-light rounded-circle d-flex align-items-center justify-content-center me-3">
+            <div class="col-12 col-sm-6 col-lg-4 city-item" data-name="dera ghazi khan">
+              <a href="/delivery/dera-ghazi-khan" class="city-link d-flex align-items-center text-decoration-none p-3 rounded-3 border bg-light h-100">
+                <div class="icon-box bg-white rounded-circle d-flex align-items-center justify-content-center me-3 shadow-sm">
                   <i class="bi bi-geo-alt-fill text-forest"></i>
                 </div>
-                <span class="fw-medium text-dark">Dera Ghazi Khan</span>
+                <span class="fw-medium text-dark flex-grow-1">Dera Ghazi Khan</span>
                 <i class="bi bi-chevron-right ms-auto text-muted small transition-arrow"></i>
               </a>
-            </li>
+            </div>
         
-            <li class="mb-2">
-              <a href="/delivery/gujrat" class="city-link d-flex align-items-center text-decoration-none p-2 rounded-3">
-                <div class="icon-box bg-light rounded-circle d-flex align-items-center justify-content-center me-3">
+            <div class="col-12 col-sm-6 col-lg-4 city-item" data-name="gujrat">
+              <a href="/delivery/gujrat" class="city-link d-flex align-items-center text-decoration-none p-3 rounded-3 border bg-light h-100">
+                <div class="icon-box bg-white rounded-circle d-flex align-items-center justify-content-center me-3 shadow-sm">
                   <i class="bi bi-geo-alt-fill text-forest"></i>
                 </div>
-                <span class="fw-medium text-dark">Gujrat</span>
+                <span class="fw-medium text-dark flex-grow-1">Gujrat</span>
                 <i class="bi bi-chevron-right ms-auto text-muted small transition-arrow"></i>
               </a>
-            </li>
+            </div>
         
-            <li class="mb-2">
-              <a href="/delivery/sahiwal" class="city-link d-flex align-items-center text-decoration-none p-2 rounded-3">
-                <div class="icon-box bg-light rounded-circle d-flex align-items-center justify-content-center me-3">
+            <div class="col-12 col-sm-6 col-lg-4 city-item" data-name="sahiwal">
+              <a href="/delivery/sahiwal" class="city-link d-flex align-items-center text-decoration-none p-3 rounded-3 border bg-light h-100">
+                <div class="icon-box bg-white rounded-circle d-flex align-items-center justify-content-center me-3 shadow-sm">
                   <i class="bi bi-geo-alt-fill text-forest"></i>
                 </div>
-                <span class="fw-medium text-dark">Sahiwal</span>
+                <span class="fw-medium text-dark flex-grow-1">Sahiwal</span>
                 <i class="bi bi-chevron-right ms-auto text-muted small transition-arrow"></i>
               </a>
-            </li>
+            </div>
         
-            <li class="mb-2">
-              <a href="/delivery/okara" class="city-link d-flex align-items-center text-decoration-none p-2 rounded-3">
-                <div class="icon-box bg-light rounded-circle d-flex align-items-center justify-content-center me-3">
+            <div class="col-12 col-sm-6 col-lg-4 city-item" data-name="okara">
+              <a href="/delivery/okara" class="city-link d-flex align-items-center text-decoration-none p-3 rounded-3 border bg-light h-100">
+                <div class="icon-box bg-white rounded-circle d-flex align-items-center justify-content-center me-3 shadow-sm">
                   <i class="bi bi-geo-alt-fill text-forest"></i>
                 </div>
-                <span class="fw-medium text-dark">Okara</span>
+                <span class="fw-medium text-dark flex-grow-1">Okara</span>
                 <i class="bi bi-chevron-right ms-auto text-muted small transition-arrow"></i>
               </a>
-            </li>
+            </div>
         
-            <li class="mb-2">
-              <a href="/delivery/kasur" class="city-link d-flex align-items-center text-decoration-none p-2 rounded-3">
-                <div class="icon-box bg-light rounded-circle d-flex align-items-center justify-content-center me-3">
+            <div class="col-12 col-sm-6 col-lg-4 city-item" data-name="kasur">
+              <a href="/delivery/kasur" class="city-link d-flex align-items-center text-decoration-none p-3 rounded-3 border bg-light h-100">
+                <div class="icon-box bg-white rounded-circle d-flex align-items-center justify-content-center me-3 shadow-sm">
                   <i class="bi bi-geo-alt-fill text-forest"></i>
                 </div>
-                <span class="fw-medium text-dark">Kasur</span>
+                <span class="fw-medium text-dark flex-grow-1">Kasur</span>
                 <i class="bi bi-chevron-right ms-auto text-muted small transition-arrow"></i>
               </a>
-            </li>
+            </div>
         
-            <li class="mb-2">
-              <a href="/delivery/chiniot" class="city-link d-flex align-items-center text-decoration-none p-2 rounded-3">
-                <div class="icon-box bg-light rounded-circle d-flex align-items-center justify-content-center me-3">
+            <div class="col-12 col-sm-6 col-lg-4 city-item" data-name="chiniot">
+              <a href="/delivery/chiniot" class="city-link d-flex align-items-center text-decoration-none p-3 rounded-3 border bg-light h-100">
+                <div class="icon-box bg-white rounded-circle d-flex align-items-center justify-content-center me-3 shadow-sm">
                   <i class="bi bi-geo-alt-fill text-forest"></i>
                 </div>
-                <span class="fw-medium text-dark">Chiniot</span>
+                <span class="fw-medium text-dark flex-grow-1">Chiniot</span>
                 <i class="bi bi-chevron-right ms-auto text-muted small transition-arrow"></i>
               </a>
-            </li>
+            </div>
         
-            <li class="mb-2">
-              <a href="/delivery/kamoke" class="city-link d-flex align-items-center text-decoration-none p-2 rounded-3">
-                <div class="icon-box bg-light rounded-circle d-flex align-items-center justify-content-center me-3">
+            <div class="col-12 col-sm-6 col-lg-4 city-item" data-name="kamoke">
+              <a href="/delivery/kamoke" class="city-link d-flex align-items-center text-decoration-none p-3 rounded-3 border bg-light h-100">
+                <div class="icon-box bg-white rounded-circle d-flex align-items-center justify-content-center me-3 shadow-sm">
                   <i class="bi bi-geo-alt-fill text-forest"></i>
                 </div>
-                <span class="fw-medium text-dark">Kamoke</span>
+                <span class="fw-medium text-dark flex-grow-1">Kamoke</span>
                 <i class="bi bi-chevron-right ms-auto text-muted small transition-arrow"></i>
               </a>
-            </li>
+            </div>
         
-            <li class="mb-2">
-              <a href="/delivery/hafizabad" class="city-link d-flex align-items-center text-decoration-none p-2 rounded-3">
-                <div class="icon-box bg-light rounded-circle d-flex align-items-center justify-content-center me-3">
+            <div class="col-12 col-sm-6 col-lg-4 city-item" data-name="hafizabad">
+              <a href="/delivery/hafizabad" class="city-link d-flex align-items-center text-decoration-none p-3 rounded-3 border bg-light h-100">
+                <div class="icon-box bg-white rounded-circle d-flex align-items-center justify-content-center me-3 shadow-sm">
                   <i class="bi bi-geo-alt-fill text-forest"></i>
                 </div>
-                <span class="fw-medium text-dark">Hafizabad</span>
+                <span class="fw-medium text-dark flex-grow-1">Hafizabad</span>
                 <i class="bi bi-chevron-right ms-auto text-muted small transition-arrow"></i>
               </a>
-            </li>
+            </div>
         
-            <li class="mb-2">
-              <a href="/delivery/sadeqabad" class="city-link d-flex align-items-center text-decoration-none p-2 rounded-3">
-                <div class="icon-box bg-light rounded-circle d-flex align-items-center justify-content-center me-3">
+            <div class="col-12 col-sm-6 col-lg-4 city-item" data-name="sadeqabad">
+              <a href="/delivery/sadeqabad" class="city-link d-flex align-items-center text-decoration-none p-3 rounded-3 border bg-light h-100">
+                <div class="icon-box bg-white rounded-circle d-flex align-items-center justify-content-center me-3 shadow-sm">
                   <i class="bi bi-geo-alt-fill text-forest"></i>
                 </div>
-                <span class="fw-medium text-dark">Sadeqabad</span>
+                <span class="fw-medium text-dark flex-grow-1">Sadeqabad</span>
                 <i class="bi bi-chevron-right ms-auto text-muted small transition-arrow"></i>
               </a>
-            </li>
+            </div>
         
-            <li class="mb-2">
-              <a href="/delivery/burewala" class="city-link d-flex align-items-center text-decoration-none p-2 rounded-3">
-                <div class="icon-box bg-light rounded-circle d-flex align-items-center justify-content-center me-3">
+            <div class="col-12 col-sm-6 col-lg-4 city-item" data-name="burewala">
+              <a href="/delivery/burewala" class="city-link d-flex align-items-center text-decoration-none p-3 rounded-3 border bg-light h-100">
+                <div class="icon-box bg-white rounded-circle d-flex align-items-center justify-content-center me-3 shadow-sm">
                   <i class="bi bi-geo-alt-fill text-forest"></i>
                 </div>
-                <span class="fw-medium text-dark">Burewala</span>
+                <span class="fw-medium text-dark flex-grow-1">Burewala</span>
                 <i class="bi bi-chevron-right ms-auto text-muted small transition-arrow"></i>
               </a>
-            </li>
+            </div>
         
-            <li class="mb-2">
-              <a href="/delivery/mandi-bahauddin" class="city-link d-flex align-items-center text-decoration-none p-2 rounded-3">
-                <div class="icon-box bg-light rounded-circle d-flex align-items-center justify-content-center me-3">
+            <div class="col-12 col-sm-6 col-lg-4 city-item" data-name="mandi bahauddin">
+              <a href="/delivery/mandi-bahauddin" class="city-link d-flex align-items-center text-decoration-none p-3 rounded-3 border bg-light h-100">
+                <div class="icon-box bg-white rounded-circle d-flex align-items-center justify-content-center me-3 shadow-sm">
                   <i class="bi bi-geo-alt-fill text-forest"></i>
                 </div>
-                <span class="fw-medium text-dark">Mandi Bahauddin</span>
+                <span class="fw-medium text-dark flex-grow-1">Mandi Bahauddin</span>
                 <i class="bi bi-chevron-right ms-auto text-muted small transition-arrow"></i>
               </a>
-            </li>
+            </div>
         
-            <li class="mb-2">
-              <a href="/delivery/vehari" class="city-link d-flex align-items-center text-decoration-none p-2 rounded-3">
-                <div class="icon-box bg-light rounded-circle d-flex align-items-center justify-content-center me-3">
+            <div class="col-12 col-sm-6 col-lg-4 city-item" data-name="vehari">
+              <a href="/delivery/vehari" class="city-link d-flex align-items-center text-decoration-none p-3 rounded-3 border bg-light h-100">
+                <div class="icon-box bg-white rounded-circle d-flex align-items-center justify-content-center me-3 shadow-sm">
                   <i class="bi bi-geo-alt-fill text-forest"></i>
                 </div>
-                <span class="fw-medium text-dark">Vehari</span>
+                <span class="fw-medium text-dark flex-grow-1">Vehari</span>
                 <i class="bi bi-chevron-right ms-auto text-muted small transition-arrow"></i>
               </a>
-            </li>
+            </div>
         
-            <li class="mb-2">
-              <a href="/delivery/daska" class="city-link d-flex align-items-center text-decoration-none p-2 rounded-3">
-                <div class="icon-box bg-light rounded-circle d-flex align-items-center justify-content-center me-3">
+            <div class="col-12 col-sm-6 col-lg-4 city-item" data-name="daska">
+              <a href="/delivery/daska" class="city-link d-flex align-items-center text-decoration-none p-3 rounded-3 border bg-light h-100">
+                <div class="icon-box bg-white rounded-circle d-flex align-items-center justify-content-center me-3 shadow-sm">
                   <i class="bi bi-geo-alt-fill text-forest"></i>
                 </div>
-                <span class="fw-medium text-dark">Daska</span>
+                <span class="fw-medium text-dark flex-grow-1">Daska</span>
                 <i class="bi bi-chevron-right ms-auto text-muted small transition-arrow"></i>
               </a>
-            </li>
+            </div>
         
-            <li class="mb-2">
-              <a href="/delivery/pakpattan" class="city-link d-flex align-items-center text-decoration-none p-2 rounded-3">
-                <div class="icon-box bg-light rounded-circle d-flex align-items-center justify-content-center me-3">
+            <div class="col-12 col-sm-6 col-lg-4 city-item" data-name="pakpattan">
+              <a href="/delivery/pakpattan" class="city-link d-flex align-items-center text-decoration-none p-3 rounded-3 border bg-light h-100">
+                <div class="icon-box bg-white rounded-circle d-flex align-items-center justify-content-center me-3 shadow-sm">
                   <i class="bi bi-geo-alt-fill text-forest"></i>
                 </div>
-                <span class="fw-medium text-dark">Pakpattan</span>
+                <span class="fw-medium text-dark flex-grow-1">Pakpattan</span>
                 <i class="bi bi-chevron-right ms-auto text-muted small transition-arrow"></i>
               </a>
-            </li>
+            </div>
         
-          </ul>
+          </div>
         </div>
       </div>
     </div>
     
-    <div class="col-md-6 col-lg-4 mb-4 fade-in-up" style="animation-delay: 0.2s;">
-      <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden province-card">
-        <div class="card-header bg-forest text-gold border-0 py-3">
-          <h3 class="h4 font-primary mb-0 d-flex align-items-center">
-            <i class="bi bi-map-fill me-2 fs-5"></i> Sindh
-          </h3>
-        </div>
+    <div class="tab-pane fade " id="sindh" role="tabpanel" aria-labelledby="sindh-tab">
+      <div class="card border-0 shadow-sm rounded-4 overflow-hidden province-card">
         <div class="card-body bg-white p-4">
-          <ul class="list-unstyled mb-0 city-list">
+          <div class="row g-3" id="city-list-sindh">
     
-            <li class="mb-2">
-              <a href="/delivery/karachi" class="city-link d-flex align-items-center text-decoration-none p-2 rounded-3">
-                <div class="icon-box bg-light rounded-circle d-flex align-items-center justify-content-center me-3">
+            <div class="col-12 col-sm-6 col-lg-4 city-item" data-name="karachi">
+              <a href="/delivery/karachi" class="city-link d-flex align-items-center text-decoration-none p-3 rounded-3 border bg-light h-100">
+                <div class="icon-box bg-white rounded-circle d-flex align-items-center justify-content-center me-3 shadow-sm">
                   <i class="bi bi-geo-alt-fill text-forest"></i>
                 </div>
-                <span class="fw-medium text-dark">Karachi</span>
+                <span class="fw-medium text-dark flex-grow-1">Karachi</span>
                 <i class="bi bi-chevron-right ms-auto text-muted small transition-arrow"></i>
               </a>
-            </li>
+            </div>
         
-            <li class="mb-2">
-              <a href="/delivery/hyderabad" class="city-link d-flex align-items-center text-decoration-none p-2 rounded-3">
-                <div class="icon-box bg-light rounded-circle d-flex align-items-center justify-content-center me-3">
+            <div class="col-12 col-sm-6 col-lg-4 city-item" data-name="hyderabad">
+              <a href="/delivery/hyderabad" class="city-link d-flex align-items-center text-decoration-none p-3 rounded-3 border bg-light h-100">
+                <div class="icon-box bg-white rounded-circle d-flex align-items-center justify-content-center me-3 shadow-sm">
                   <i class="bi bi-geo-alt-fill text-forest"></i>
                 </div>
-                <span class="fw-medium text-dark">Hyderabad</span>
+                <span class="fw-medium text-dark flex-grow-1">Hyderabad</span>
                 <i class="bi bi-chevron-right ms-auto text-muted small transition-arrow"></i>
               </a>
-            </li>
+            </div>
         
-            <li class="mb-2">
-              <a href="/delivery/sukkur" class="city-link d-flex align-items-center text-decoration-none p-2 rounded-3">
-                <div class="icon-box bg-light rounded-circle d-flex align-items-center justify-content-center me-3">
+            <div class="col-12 col-sm-6 col-lg-4 city-item" data-name="sukkur">
+              <a href="/delivery/sukkur" class="city-link d-flex align-items-center text-decoration-none p-3 rounded-3 border bg-light h-100">
+                <div class="icon-box bg-white rounded-circle d-flex align-items-center justify-content-center me-3 shadow-sm">
                   <i class="bi bi-geo-alt-fill text-forest"></i>
                 </div>
-                <span class="fw-medium text-dark">Sukkur</span>
+                <span class="fw-medium text-dark flex-grow-1">Sukkur</span>
                 <i class="bi bi-chevron-right ms-auto text-muted small transition-arrow"></i>
               </a>
-            </li>
+            </div>
         
-            <li class="mb-2">
-              <a href="/delivery/larkana" class="city-link d-flex align-items-center text-decoration-none p-2 rounded-3">
-                <div class="icon-box bg-light rounded-circle d-flex align-items-center justify-content-center me-3">
+            <div class="col-12 col-sm-6 col-lg-4 city-item" data-name="larkana">
+              <a href="/delivery/larkana" class="city-link d-flex align-items-center text-decoration-none p-3 rounded-3 border bg-light h-100">
+                <div class="icon-box bg-white rounded-circle d-flex align-items-center justify-content-center me-3 shadow-sm">
                   <i class="bi bi-geo-alt-fill text-forest"></i>
                 </div>
-                <span class="fw-medium text-dark">Larkana</span>
+                <span class="fw-medium text-dark flex-grow-1">Larkana</span>
                 <i class="bi bi-chevron-right ms-auto text-muted small transition-arrow"></i>
               </a>
-            </li>
+            </div>
         
-            <li class="mb-2">
-              <a href="/delivery/nawabshah" class="city-link d-flex align-items-center text-decoration-none p-2 rounded-3">
-                <div class="icon-box bg-light rounded-circle d-flex align-items-center justify-content-center me-3">
+            <div class="col-12 col-sm-6 col-lg-4 city-item" data-name="nawabshah">
+              <a href="/delivery/nawabshah" class="city-link d-flex align-items-center text-decoration-none p-3 rounded-3 border bg-light h-100">
+                <div class="icon-box bg-white rounded-circle d-flex align-items-center justify-content-center me-3 shadow-sm">
                   <i class="bi bi-geo-alt-fill text-forest"></i>
                 </div>
-                <span class="fw-medium text-dark">Nawabshah</span>
+                <span class="fw-medium text-dark flex-grow-1">Nawabshah</span>
                 <i class="bi bi-chevron-right ms-auto text-muted small transition-arrow"></i>
               </a>
-            </li>
+            </div>
         
-            <li class="mb-2">
-              <a href="/delivery/mirpur-khas" class="city-link d-flex align-items-center text-decoration-none p-2 rounded-3">
-                <div class="icon-box bg-light rounded-circle d-flex align-items-center justify-content-center me-3">
+            <div class="col-12 col-sm-6 col-lg-4 city-item" data-name="mirpur khas">
+              <a href="/delivery/mirpur-khas" class="city-link d-flex align-items-center text-decoration-none p-3 rounded-3 border bg-light h-100">
+                <div class="icon-box bg-white rounded-circle d-flex align-items-center justify-content-center me-3 shadow-sm">
                   <i class="bi bi-geo-alt-fill text-forest"></i>
                 </div>
-                <span class="fw-medium text-dark">Mirpur Khas</span>
+                <span class="fw-medium text-dark flex-grow-1">Mirpur Khas</span>
                 <i class="bi bi-chevron-right ms-auto text-muted small transition-arrow"></i>
               </a>
-            </li>
+            </div>
         
-            <li class="mb-2">
-              <a href="/delivery/jacobabad" class="city-link d-flex align-items-center text-decoration-none p-2 rounded-3">
-                <div class="icon-box bg-light rounded-circle d-flex align-items-center justify-content-center me-3">
+            <div class="col-12 col-sm-6 col-lg-4 city-item" data-name="jacobabad">
+              <a href="/delivery/jacobabad" class="city-link d-flex align-items-center text-decoration-none p-3 rounded-3 border bg-light h-100">
+                <div class="icon-box bg-white rounded-circle d-flex align-items-center justify-content-center me-3 shadow-sm">
                   <i class="bi bi-geo-alt-fill text-forest"></i>
                 </div>
-                <span class="fw-medium text-dark">Jacobabad</span>
+                <span class="fw-medium text-dark flex-grow-1">Jacobabad</span>
                 <i class="bi bi-chevron-right ms-auto text-muted small transition-arrow"></i>
               </a>
-            </li>
+            </div>
         
-            <li class="mb-2">
-              <a href="/delivery/shikarpur" class="city-link d-flex align-items-center text-decoration-none p-2 rounded-3">
-                <div class="icon-box bg-light rounded-circle d-flex align-items-center justify-content-center me-3">
+            <div class="col-12 col-sm-6 col-lg-4 city-item" data-name="shikarpur">
+              <a href="/delivery/shikarpur" class="city-link d-flex align-items-center text-decoration-none p-3 rounded-3 border bg-light h-100">
+                <div class="icon-box bg-white rounded-circle d-flex align-items-center justify-content-center me-3 shadow-sm">
                   <i class="bi bi-geo-alt-fill text-forest"></i>
                 </div>
-                <span class="fw-medium text-dark">Shikarpur</span>
+                <span class="fw-medium text-dark flex-grow-1">Shikarpur</span>
                 <i class="bi bi-chevron-right ms-auto text-muted small transition-arrow"></i>
               </a>
-            </li>
+            </div>
         
-            <li class="mb-2">
-              <a href="/delivery/khairpur" class="city-link d-flex align-items-center text-decoration-none p-2 rounded-3">
-                <div class="icon-box bg-light rounded-circle d-flex align-items-center justify-content-center me-3">
+            <div class="col-12 col-sm-6 col-lg-4 city-item" data-name="khairpur">
+              <a href="/delivery/khairpur" class="city-link d-flex align-items-center text-decoration-none p-3 rounded-3 border bg-light h-100">
+                <div class="icon-box bg-white rounded-circle d-flex align-items-center justify-content-center me-3 shadow-sm">
                   <i class="bi bi-geo-alt-fill text-forest"></i>
                 </div>
-                <span class="fw-medium text-dark">Khairpur</span>
+                <span class="fw-medium text-dark flex-grow-1">Khairpur</span>
                 <i class="bi bi-chevron-right ms-auto text-muted small transition-arrow"></i>
               </a>
-            </li>
+            </div>
         
-            <li class="mb-2">
-              <a href="/delivery/dadu" class="city-link d-flex align-items-center text-decoration-none p-2 rounded-3">
-                <div class="icon-box bg-light rounded-circle d-flex align-items-center justify-content-center me-3">
+            <div class="col-12 col-sm-6 col-lg-4 city-item" data-name="dadu">
+              <a href="/delivery/dadu" class="city-link d-flex align-items-center text-decoration-none p-3 rounded-3 border bg-light h-100">
+                <div class="icon-box bg-white rounded-circle d-flex align-items-center justify-content-center me-3 shadow-sm">
                   <i class="bi bi-geo-alt-fill text-forest"></i>
                 </div>
-                <span class="fw-medium text-dark">Dadu</span>
+                <span class="fw-medium text-dark flex-grow-1">Dadu</span>
                 <i class="bi bi-chevron-right ms-auto text-muted small transition-arrow"></i>
               </a>
-            </li>
+            </div>
         
-            <li class="mb-2">
-              <a href="/delivery/tando-adam" class="city-link d-flex align-items-center text-decoration-none p-2 rounded-3">
-                <div class="icon-box bg-light rounded-circle d-flex align-items-center justify-content-center me-3">
+            <div class="col-12 col-sm-6 col-lg-4 city-item" data-name="tando adam">
+              <a href="/delivery/tando-adam" class="city-link d-flex align-items-center text-decoration-none p-3 rounded-3 border bg-light h-100">
+                <div class="icon-box bg-white rounded-circle d-flex align-items-center justify-content-center me-3 shadow-sm">
                   <i class="bi bi-geo-alt-fill text-forest"></i>
                 </div>
-                <span class="fw-medium text-dark">Tando Adam</span>
+                <span class="fw-medium text-dark flex-grow-1">Tando Adam</span>
                 <i class="bi bi-chevron-right ms-auto text-muted small transition-arrow"></i>
               </a>
-            </li>
+            </div>
         
-            <li class="mb-2">
-              <a href="/delivery/tando-allahyar" class="city-link d-flex align-items-center text-decoration-none p-2 rounded-3">
-                <div class="icon-box bg-light rounded-circle d-flex align-items-center justify-content-center me-3">
+            <div class="col-12 col-sm-6 col-lg-4 city-item" data-name="tando allahyar">
+              <a href="/delivery/tando-allahyar" class="city-link d-flex align-items-center text-decoration-none p-3 rounded-3 border bg-light h-100">
+                <div class="icon-box bg-white rounded-circle d-flex align-items-center justify-content-center me-3 shadow-sm">
                   <i class="bi bi-geo-alt-fill text-forest"></i>
                 </div>
-                <span class="fw-medium text-dark">Tando Allahyar</span>
+                <span class="fw-medium text-dark flex-grow-1">Tando Allahyar</span>
                 <i class="bi bi-chevron-right ms-auto text-muted small transition-arrow"></i>
               </a>
-            </li>
+            </div>
         
-          </ul>
+          </div>
         </div>
       </div>
     </div>
     
-    <div class="col-md-6 col-lg-4 mb-4 fade-in-up" style="animation-delay: 0.30000000000000004s;">
-      <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden province-card">
-        <div class="card-header bg-forest text-gold border-0 py-3">
-          <h3 class="h4 font-primary mb-0 d-flex align-items-center">
-            <i class="bi bi-map-fill me-2 fs-5"></i> Khyber Pakhtunkhwa
-          </h3>
-        </div>
+    <div class="tab-pane fade " id="khyber-pakhtunkhwa" role="tabpanel" aria-labelledby="khyber-pakhtunkhwa-tab">
+      <div class="card border-0 shadow-sm rounded-4 overflow-hidden province-card">
         <div class="card-body bg-white p-4">
-          <ul class="list-unstyled mb-0 city-list">
+          <div class="row g-3" id="city-list-khyber-pakhtunkhwa">
     
-            <li class="mb-2">
-              <a href="/delivery/peshawar" class="city-link d-flex align-items-center text-decoration-none p-2 rounded-3">
-                <div class="icon-box bg-light rounded-circle d-flex align-items-center justify-content-center me-3">
+            <div class="col-12 col-sm-6 col-lg-4 city-item" data-name="peshawar">
+              <a href="/delivery/peshawar" class="city-link d-flex align-items-center text-decoration-none p-3 rounded-3 border bg-light h-100">
+                <div class="icon-box bg-white rounded-circle d-flex align-items-center justify-content-center me-3 shadow-sm">
                   <i class="bi bi-geo-alt-fill text-forest"></i>
                 </div>
-                <span class="fw-medium text-dark">Peshawar</span>
+                <span class="fw-medium text-dark flex-grow-1">Peshawar</span>
                 <i class="bi bi-chevron-right ms-auto text-muted small transition-arrow"></i>
               </a>
-            </li>
+            </div>
         
-            <li class="mb-2">
-              <a href="/delivery/mardan" class="city-link d-flex align-items-center text-decoration-none p-2 rounded-3">
-                <div class="icon-box bg-light rounded-circle d-flex align-items-center justify-content-center me-3">
+            <div class="col-12 col-sm-6 col-lg-4 city-item" data-name="mardan">
+              <a href="/delivery/mardan" class="city-link d-flex align-items-center text-decoration-none p-3 rounded-3 border bg-light h-100">
+                <div class="icon-box bg-white rounded-circle d-flex align-items-center justify-content-center me-3 shadow-sm">
                   <i class="bi bi-geo-alt-fill text-forest"></i>
                 </div>
-                <span class="fw-medium text-dark">Mardan</span>
+                <span class="fw-medium text-dark flex-grow-1">Mardan</span>
                 <i class="bi bi-chevron-right ms-auto text-muted small transition-arrow"></i>
               </a>
-            </li>
+            </div>
         
-            <li class="mb-2">
-              <a href="/delivery/mingora" class="city-link d-flex align-items-center text-decoration-none p-2 rounded-3">
-                <div class="icon-box bg-light rounded-circle d-flex align-items-center justify-content-center me-3">
+            <div class="col-12 col-sm-6 col-lg-4 city-item" data-name="mingora (swat)">
+              <a href="/delivery/mingora" class="city-link d-flex align-items-center text-decoration-none p-3 rounded-3 border bg-light h-100">
+                <div class="icon-box bg-white rounded-circle d-flex align-items-center justify-content-center me-3 shadow-sm">
                   <i class="bi bi-geo-alt-fill text-forest"></i>
                 </div>
-                <span class="fw-medium text-dark">Mingora (Swat)</span>
+                <span class="fw-medium text-dark flex-grow-1">Mingora (Swat)</span>
                 <i class="bi bi-chevron-right ms-auto text-muted small transition-arrow"></i>
               </a>
-            </li>
+            </div>
         
-            <li class="mb-2">
-              <a href="/delivery/kohat" class="city-link d-flex align-items-center text-decoration-none p-2 rounded-3">
-                <div class="icon-box bg-light rounded-circle d-flex align-items-center justify-content-center me-3">
+            <div class="col-12 col-sm-6 col-lg-4 city-item" data-name="kohat">
+              <a href="/delivery/kohat" class="city-link d-flex align-items-center text-decoration-none p-3 rounded-3 border bg-light h-100">
+                <div class="icon-box bg-white rounded-circle d-flex align-items-center justify-content-center me-3 shadow-sm">
                   <i class="bi bi-geo-alt-fill text-forest"></i>
                 </div>
-                <span class="fw-medium text-dark">Kohat</span>
+                <span class="fw-medium text-dark flex-grow-1">Kohat</span>
                 <i class="bi bi-chevron-right ms-auto text-muted small transition-arrow"></i>
               </a>
-            </li>
+            </div>
         
-            <li class="mb-2">
-              <a href="/delivery/abbottabad" class="city-link d-flex align-items-center text-decoration-none p-2 rounded-3">
-                <div class="icon-box bg-light rounded-circle d-flex align-items-center justify-content-center me-3">
+            <div class="col-12 col-sm-6 col-lg-4 city-item" data-name="abbottabad">
+              <a href="/delivery/abbottabad" class="city-link d-flex align-items-center text-decoration-none p-3 rounded-3 border bg-light h-100">
+                <div class="icon-box bg-white rounded-circle d-flex align-items-center justify-content-center me-3 shadow-sm">
                   <i class="bi bi-geo-alt-fill text-forest"></i>
                 </div>
-                <span class="fw-medium text-dark">Abbottabad</span>
+                <span class="fw-medium text-dark flex-grow-1">Abbottabad</span>
                 <i class="bi bi-chevron-right ms-auto text-muted small transition-arrow"></i>
               </a>
-            </li>
+            </div>
         
-            <li class="mb-2">
-              <a href="/delivery/dera-ismail-khan" class="city-link d-flex align-items-center text-decoration-none p-2 rounded-3">
-                <div class="icon-box bg-light rounded-circle d-flex align-items-center justify-content-center me-3">
+            <div class="col-12 col-sm-6 col-lg-4 city-item" data-name="dera ismail khan">
+              <a href="/delivery/dera-ismail-khan" class="city-link d-flex align-items-center text-decoration-none p-3 rounded-3 border bg-light h-100">
+                <div class="icon-box bg-white rounded-circle d-flex align-items-center justify-content-center me-3 shadow-sm">
                   <i class="bi bi-geo-alt-fill text-forest"></i>
                 </div>
-                <span class="fw-medium text-dark">Dera Ismail Khan</span>
+                <span class="fw-medium text-dark flex-grow-1">Dera Ismail Khan</span>
                 <i class="bi bi-chevron-right ms-auto text-muted small transition-arrow"></i>
               </a>
-            </li>
+            </div>
         
-            <li class="mb-2">
-              <a href="/delivery/nowshera" class="city-link d-flex align-items-center text-decoration-none p-2 rounded-3">
-                <div class="icon-box bg-light rounded-circle d-flex align-items-center justify-content-center me-3">
+            <div class="col-12 col-sm-6 col-lg-4 city-item" data-name="nowshera">
+              <a href="/delivery/nowshera" class="city-link d-flex align-items-center text-decoration-none p-3 rounded-3 border bg-light h-100">
+                <div class="icon-box bg-white rounded-circle d-flex align-items-center justify-content-center me-3 shadow-sm">
                   <i class="bi bi-geo-alt-fill text-forest"></i>
                 </div>
-                <span class="fw-medium text-dark">Nowshera</span>
+                <span class="fw-medium text-dark flex-grow-1">Nowshera</span>
                 <i class="bi bi-chevron-right ms-auto text-muted small transition-arrow"></i>
               </a>
-            </li>
+            </div>
         
-            <li class="mb-2">
-              <a href="/delivery/swabi" class="city-link d-flex align-items-center text-decoration-none p-2 rounded-3">
-                <div class="icon-box bg-light rounded-circle d-flex align-items-center justify-content-center me-3">
+            <div class="col-12 col-sm-6 col-lg-4 city-item" data-name="swabi">
+              <a href="/delivery/swabi" class="city-link d-flex align-items-center text-decoration-none p-3 rounded-3 border bg-light h-100">
+                <div class="icon-box bg-white rounded-circle d-flex align-items-center justify-content-center me-3 shadow-sm">
                   <i class="bi bi-geo-alt-fill text-forest"></i>
                 </div>
-                <span class="fw-medium text-dark">Swabi</span>
+                <span class="fw-medium text-dark flex-grow-1">Swabi</span>
                 <i class="bi bi-chevron-right ms-auto text-muted small transition-arrow"></i>
               </a>
-            </li>
+            </div>
         
-          </ul>
+          </div>
         </div>
       </div>
     </div>
     
-    <div class="col-md-6 col-lg-4 mb-4 fade-in-up" style="animation-delay: 0.4s;">
-      <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden province-card">
-        <div class="card-header bg-forest text-gold border-0 py-3">
-          <h3 class="h4 font-primary mb-0 d-flex align-items-center">
-            <i class="bi bi-map-fill me-2 fs-5"></i> Balochistan
-          </h3>
-        </div>
+    <div class="tab-pane fade " id="balochistan" role="tabpanel" aria-labelledby="balochistan-tab">
+      <div class="card border-0 shadow-sm rounded-4 overflow-hidden province-card">
         <div class="card-body bg-white p-4">
-          <ul class="list-unstyled mb-0 city-list">
+          <div class="row g-3" id="city-list-balochistan">
     
-            <li class="mb-2">
-              <a href="/delivery/quetta" class="city-link d-flex align-items-center text-decoration-none p-2 rounded-3">
-                <div class="icon-box bg-light rounded-circle d-flex align-items-center justify-content-center me-3">
+            <div class="col-12 col-sm-6 col-lg-4 city-item" data-name="quetta">
+              <a href="/delivery/quetta" class="city-link d-flex align-items-center text-decoration-none p-3 rounded-3 border bg-light h-100">
+                <div class="icon-box bg-white rounded-circle d-flex align-items-center justify-content-center me-3 shadow-sm">
                   <i class="bi bi-geo-alt-fill text-forest"></i>
                 </div>
-                <span class="fw-medium text-dark">Quetta</span>
+                <span class="fw-medium text-dark flex-grow-1">Quetta</span>
                 <i class="bi bi-chevron-right ms-auto text-muted small transition-arrow"></i>
               </a>
-            </li>
+            </div>
         
-            <li class="mb-2">
-              <a href="/delivery/turbat" class="city-link d-flex align-items-center text-decoration-none p-2 rounded-3">
-                <div class="icon-box bg-light rounded-circle d-flex align-items-center justify-content-center me-3">
+            <div class="col-12 col-sm-6 col-lg-4 city-item" data-name="turbat">
+              <a href="/delivery/turbat" class="city-link d-flex align-items-center text-decoration-none p-3 rounded-3 border bg-light h-100">
+                <div class="icon-box bg-white rounded-circle d-flex align-items-center justify-content-center me-3 shadow-sm">
                   <i class="bi bi-geo-alt-fill text-forest"></i>
                 </div>
-                <span class="fw-medium text-dark">Turbat</span>
+                <span class="fw-medium text-dark flex-grow-1">Turbat</span>
                 <i class="bi bi-chevron-right ms-auto text-muted small transition-arrow"></i>
               </a>
-            </li>
+            </div>
         
-            <li class="mb-2">
-              <a href="/delivery/khuzdar" class="city-link d-flex align-items-center text-decoration-none p-2 rounded-3">
-                <div class="icon-box bg-light rounded-circle d-flex align-items-center justify-content-center me-3">
+            <div class="col-12 col-sm-6 col-lg-4 city-item" data-name="khuzdar">
+              <a href="/delivery/khuzdar" class="city-link d-flex align-items-center text-decoration-none p-3 rounded-3 border bg-light h-100">
+                <div class="icon-box bg-white rounded-circle d-flex align-items-center justify-content-center me-3 shadow-sm">
                   <i class="bi bi-geo-alt-fill text-forest"></i>
                 </div>
-                <span class="fw-medium text-dark">Khuzdar</span>
+                <span class="fw-medium text-dark flex-grow-1">Khuzdar</span>
                 <i class="bi bi-chevron-right ms-auto text-muted small transition-arrow"></i>
               </a>
-            </li>
+            </div>
         
-            <li class="mb-2">
-              <a href="/delivery/chaman" class="city-link d-flex align-items-center text-decoration-none p-2 rounded-3">
-                <div class="icon-box bg-light rounded-circle d-flex align-items-center justify-content-center me-3">
+            <div class="col-12 col-sm-6 col-lg-4 city-item" data-name="chaman">
+              <a href="/delivery/chaman" class="city-link d-flex align-items-center text-decoration-none p-3 rounded-3 border bg-light h-100">
+                <div class="icon-box bg-white rounded-circle d-flex align-items-center justify-content-center me-3 shadow-sm">
                   <i class="bi bi-geo-alt-fill text-forest"></i>
                 </div>
-                <span class="fw-medium text-dark">Chaman</span>
+                <span class="fw-medium text-dark flex-grow-1">Chaman</span>
                 <i class="bi bi-chevron-right ms-auto text-muted small transition-arrow"></i>
               </a>
-            </li>
+            </div>
         
-          </ul>
+          </div>
         </div>
       </div>
     </div>
     
-    <div class="col-md-6 col-lg-4 mb-4 fade-in-up" style="animation-delay: 0.5s;">
-      <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden province-card">
-        <div class="card-header bg-forest text-gold border-0 py-3">
-          <h3 class="h4 font-primary mb-0 d-flex align-items-center">
-            <i class="bi bi-map-fill me-2 fs-5"></i> Capital Territory
-          </h3>
-        </div>
+    <div class="tab-pane fade " id="capital-territory" role="tabpanel" aria-labelledby="capital-territory-tab">
+      <div class="card border-0 shadow-sm rounded-4 overflow-hidden province-card">
         <div class="card-body bg-white p-4">
-          <ul class="list-unstyled mb-0 city-list">
+          <div class="row g-3" id="city-list-capital-territory">
     
-            <li class="mb-2">
-              <a href="/delivery/islamabad" class="city-link d-flex align-items-center text-decoration-none p-2 rounded-3">
-                <div class="icon-box bg-light rounded-circle d-flex align-items-center justify-content-center me-3">
+            <div class="col-12 col-sm-6 col-lg-4 city-item" data-name="islamabad">
+              <a href="/delivery/islamabad" class="city-link d-flex align-items-center text-decoration-none p-3 rounded-3 border bg-light h-100">
+                <div class="icon-box bg-white rounded-circle d-flex align-items-center justify-content-center me-3 shadow-sm">
                   <i class="bi bi-geo-alt-fill text-forest"></i>
                 </div>
-                <span class="fw-medium text-dark">Islamabad</span>
+                <span class="fw-medium text-dark flex-grow-1">Islamabad</span>
                 <i class="bi bi-chevron-right ms-auto text-muted small transition-arrow"></i>
               </a>
-            </li>
+            </div>
         
-          </ul>
+          </div>
         </div>
       </div>
     </div>
+    </div>
+
     
+    <!-- Empty State for Search -->
+    <div id="noResults" class="text-center py-5 d-none">
+        <i class="bi bi-emoji-frown display-1 text-muted mb-3 d-block"></i>
+        <h3 class="h4 text-dark font-primary">No cities found</h3>
+        <p class="text-muted">We couldn't find a city matching your search. Please try another name.</p>
     </div>
   </section>
 
@@ -784,7 +855,135 @@
   <!-- FOMO Announcement & Popup engine -->
   <script src="/js/fomo.js?v=1249ca25"></script>
 
-  <script src="https://cdn.jsdelivr.net/npm/masonry-layout@4.2.2/dist/masonry.pkgd.min.js" async></script>
+  <script src="/js/products-db.js"></script>
+  <script src="/js/cities-db.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      let cityId = urlParams.get('city');
+
+      // Clean URL Fallback
+      if (!cityId) {
+        const pathParts = window.location.pathname.replace(/\/$/, '').split('/');
+        if (pathParts.includes('delivery')) {
+          cityId = pathParts[pathParts.length - 1];
+        }
+      }
+
+      const city = deliveryCities.find(c => c.id === cityId);
+
+      if (city) {
+        // Update DOM
+        document.getElementById('city-name-header').textContent = city.name + ', ' + city.province;
+        document.getElementById('city-name-section').textContent = city.name;
+        document.getElementById('city-time').textContent = city.deliveryTime;
+        document.getElementById('seo-title').textContent = `Organic Delivery in ${city.name} | ARB Farms`;
+        document.getElementById('seo-desc').setAttribute('content', `Buy premium organic produce and livestock feed. Fast delivery to ${city.name}, ${city.province} within ${city.deliveryTime}.`);
+        
+        // Inject schema
+        const schema = {
+          "@context": "https://schema.org",
+          "@type": "Service",
+          "serviceType": "Farm Delivery",
+          "provider": {
+            "@type": "LocalBusiness",
+            "name": "ARB Farms"
+          },
+          "areaServed": {
+            "@type": "City",
+            "name": city.name
+          }
+        };
+        const script = document.createElement('script');
+        script.type = 'application/ld+json';
+        script.text = JSON.stringify(schema);
+        document.head.appendChild(script);
+      }
+
+      // Render some products
+      if (typeof productsDb !== 'undefined') {
+        const grid = document.getElementById('city-products-grid');
+        
+        // Filter out milk if the city is not Multan
+        const filteredProducts = productsDb.filter(p => {
+          const isMilk = p.tags && p.tags.includes('milk');
+          if (isMilk && cityId !== 'multan') {
+            return false; // hide milk in non-Multan cities
+          }
+          return true;
+        });
+
+        const popular = filteredProducts.slice(0, 6);
+        grid.innerHTML = popular.map((p, index) => {
+          const imgSrc = p.image.startsWith('/') ? p.image : '/' + p.image;
+          return `
+          <div class="col-sm-6 col-lg-4 fade-in-up" style="animation-delay: ${0.2 + (index * 0.1)}s;">
+            <div class="card h-100 product-card border-0 shadow-sm">
+              <div class="product-image-container text-center position-relative">
+                <span class="position-absolute top-0 start-0 m-3 badge bg-gold text-forest rounded-pill">Top Seller</span>
+                <a href="/product/${p.id}" class="product-image-link d-block">
+                  <img src="${imgSrc}" class="product-image-base img-fluid" alt="${p.name}" style="max-height: 200px; object-fit: contain;" onerror="this.src='/catalog/arbfarms-logo-v2.svg';">
+                </a>
+              </div>
+              <div class="card-body p-4 text-center">
+                <p class="text-muted small mb-1 text-uppercase tracking-wide">${p.category.replace('-', ' ')}</p>
+                <h3 class="h5 my-2 font-primary"><a href="/product/${p.id}" class="text-decoration-none text-dark">${p.name}</a></h3>
+                <div class="d-flex justify-content-center align-items-center mt-3">
+                  <span class="text-primary fw-bold fs-5 me-2">Rs. ${p.price.toLocaleString()}</span>
+                  <span class="text-muted small">/ ${p.weight}</span>
+                </div>
+                <a href="/product/${p.id}" class="btn btn-outline-primary w-100 mt-4 rounded-pill">View Details</a>
+              </div>
+            </div>
+          </div>
+        `}).join('');
+      }
+    });
+  </script>
+
+  <!-- Delivery Directory Logic -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const searchInput = document.getElementById('citySearchInput');
+      const directoryContainer = document.getElementById('directoryContainer');
+      const cityItems = document.querySelectorAll('.city-item');
+      const noResults = document.getElementById('noResults');
+      
+      searchInput.addEventListener('input', (e) => {
+        const query = e.target.value.toLowerCase().trim();
+        
+        if (query.length > 0) {
+            // Enter global search mode (hide tabs, show all panes)
+            directoryContainer.classList.add('global-search-mode');
+            let hasResults = false;
+            
+            cityItems.forEach(item => {
+                const name = item.getAttribute('data-name');
+                if (name.includes(query)) {
+                    item.style.display = 'block';
+                    hasResults = true;
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+            
+            if (hasResults) {
+                noResults.classList.add('d-none');
+            } else {
+                noResults.classList.remove('d-none');
+            }
+        } else {
+            // Exit global search mode
+            directoryContainer.classList.remove('global-search-mode');
+            noResults.classList.add('d-none');
+            cityItems.forEach(item => {
+                item.style.display = 'block';
+            });
+        }
+      });
+    });
+  </script>
 </body>
+
 
 </html>
