@@ -11,8 +11,82 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
   <link href="/css/index.css" rel="stylesheet">
+
+  <style>
+    :root {
+      --color-forest: #2b422a; /* Brand forest green */
+      --color-gold: #c29d59; /* Brand gold */
+    }
+    .bg-forest { background-color: var(--color-forest) !important; }
+    .text-forest { color: var(--color-forest) !important; }
+    .text-gold { color: var(--color-gold) !important; }
+    
+    /* Animations */
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .fade-in-up {
+      animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      opacity: 0;
+    }
+    
+    /* Hero Section */
+    .delivery-hero {
+      background: linear-gradient(135deg, var(--color-forest) 0%, #1a2a1a 100%);
+      position: relative;
+    }
+    .delivery-hero::after {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: url('data:image/svg+xml;utf8,<svg width="20" height="20" xmlns="http://www.w3.org/2000/svg"><circle cx="2" cy="2" r="1" fill="rgba(255,255,255,0.05)"/></svg>');
+      pointer-events: none;
+    }
+    
+    /* Cards */
+    .province-card {
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .province-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 15px 35px rgba(0,0,0,0.1) !important;
+    }
+    
+    /* City Links */
+    .icon-box {
+      width: 32px;
+      height: 32px;
+      transition: all 0.3s ease;
+    }
+    .city-link {
+      transition: all 0.3s ease;
+      background: transparent;
+    }
+    .city-link:hover {
+      background: #f8f9fa; /* light grey on hover */
+      transform: translateX(5px);
+    }
+    .city-link:hover .icon-box {
+      background: var(--color-forest) !important;
+    }
+    .city-link:hover .icon-box i {
+      color: var(--color-gold) !important;
+    }
+    .city-link:hover span {
+      color: var(--color-forest) !important;
+    }
+    .transition-arrow {
+      transition: transform 0.3s ease, color 0.3s ease;
+    }
+    .city-link:hover .transition-arrow {
+      transform: translateX(3px);
+      color: var(--color-forest) !important;
+    }
+  </style>
+
 </head>
-<body class="d-flex flex-column min-vh-100">
+<body class="d-flex flex-column min-vh-100 bg-light">
 <nav class="navbar navbar-expand-lg bg-forest sticky-top shadow-sm py-2">
     <div class="container">
       <a class="navbar-brand d-flex align-items-center" href="/" style="margin-left:-5px;">
@@ -53,18 +127,597 @@
     </div>
   </nav>
 
-  <section class="bg-forest py-5 text-white text-center">
-    <div class="container py-md-5">
-      <h1 class="display-4 font-primary mb-3">Delivery Locations Directory</h1>
-      <p class="lead text-white-50 mx-auto" style="max-width: 600px;">
-        We deliver our premium organic produce and livestock feed to 50 cities across Pakistan. Select your city to see delivery times and local specials.
+  <section class="delivery-hero py-5 text-white text-center fade-in-up" style="animation-delay: 0s;">
+    <div class="container py-md-5 position-relative z-1">
+      <div class="d-inline-flex align-items-center bg-white bg-opacity-10 rounded-pill px-3 py-1 mb-3">
+        <span class="badge bg-gold text-forest rounded-pill me-2">NEW</span>
+        <span class="small font-primary tracking-wide">Nationwide Network</span>
+      </div>
+      <h1 class="display-4 font-primary mb-3 text-gold">Delivery Locations Directory</h1>
+      <p class="lead text-white-50 mx-auto" style="max-width: 650px;">
+        We deliver our premium organic produce and livestock feed to 50 cities across Pakistan. Select your city to explore exclusive delivery times and local specials.
       </p>
     </div>
   </section>
 
-  <section class="container py-5 my-md-4">
-    <div class="row">
-<div class="col-md-6 col-lg-4 mb-4"><h3 class="h4 font-primary border-bottom pb-2 mb-3">Punjab</h3><ul class="list-unstyled"><li class="mb-2"><a href="/delivery/lahore" class="text-decoration-none"><i class="bi bi-geo-alt me-2 text-primary"></i>Lahore</a></li><li class="mb-2"><a href="/delivery/faisalabad" class="text-decoration-none"><i class="bi bi-geo-alt me-2 text-primary"></i>Faisalabad</a></li><li class="mb-2"><a href="/delivery/rawalpindi" class="text-decoration-none"><i class="bi bi-geo-alt me-2 text-primary"></i>Rawalpindi</a></li><li class="mb-2"><a href="/delivery/gujranwala" class="text-decoration-none"><i class="bi bi-geo-alt me-2 text-primary"></i>Gujranwala</a></li><li class="mb-2"><a href="/delivery/multan" class="text-decoration-none"><i class="bi bi-geo-alt me-2 text-primary"></i>Multan</a></li><li class="mb-2"><a href="/delivery/bahawalpur" class="text-decoration-none"><i class="bi bi-geo-alt me-2 text-primary"></i>Bahawalpur</a></li><li class="mb-2"><a href="/delivery/sargodha" class="text-decoration-none"><i class="bi bi-geo-alt me-2 text-primary"></i>Sargodha</a></li><li class="mb-2"><a href="/delivery/sialkot" class="text-decoration-none"><i class="bi bi-geo-alt me-2 text-primary"></i>Sialkot</a></li><li class="mb-2"><a href="/delivery/sheikhupura" class="text-decoration-none"><i class="bi bi-geo-alt me-2 text-primary"></i>Sheikhupura</a></li><li class="mb-2"><a href="/delivery/rahim-yar-khan" class="text-decoration-none"><i class="bi bi-geo-alt me-2 text-primary"></i>Rahim Yar Khan</a></li><li class="mb-2"><a href="/delivery/jhang" class="text-decoration-none"><i class="bi bi-geo-alt me-2 text-primary"></i>Jhang</a></li><li class="mb-2"><a href="/delivery/dera-ghazi-khan" class="text-decoration-none"><i class="bi bi-geo-alt me-2 text-primary"></i>Dera Ghazi Khan</a></li><li class="mb-2"><a href="/delivery/gujrat" class="text-decoration-none"><i class="bi bi-geo-alt me-2 text-primary"></i>Gujrat</a></li><li class="mb-2"><a href="/delivery/sahiwal" class="text-decoration-none"><i class="bi bi-geo-alt me-2 text-primary"></i>Sahiwal</a></li><li class="mb-2"><a href="/delivery/okara" class="text-decoration-none"><i class="bi bi-geo-alt me-2 text-primary"></i>Okara</a></li><li class="mb-2"><a href="/delivery/kasur" class="text-decoration-none"><i class="bi bi-geo-alt me-2 text-primary"></i>Kasur</a></li><li class="mb-2"><a href="/delivery/chiniot" class="text-decoration-none"><i class="bi bi-geo-alt me-2 text-primary"></i>Chiniot</a></li><li class="mb-2"><a href="/delivery/kamoke" class="text-decoration-none"><i class="bi bi-geo-alt me-2 text-primary"></i>Kamoke</a></li><li class="mb-2"><a href="/delivery/hafizabad" class="text-decoration-none"><i class="bi bi-geo-alt me-2 text-primary"></i>Hafizabad</a></li><li class="mb-2"><a href="/delivery/sadeqabad" class="text-decoration-none"><i class="bi bi-geo-alt me-2 text-primary"></i>Sadeqabad</a></li><li class="mb-2"><a href="/delivery/burewala" class="text-decoration-none"><i class="bi bi-geo-alt me-2 text-primary"></i>Burewala</a></li><li class="mb-2"><a href="/delivery/mandi-bahauddin" class="text-decoration-none"><i class="bi bi-geo-alt me-2 text-primary"></i>Mandi Bahauddin</a></li><li class="mb-2"><a href="/delivery/vehari" class="text-decoration-none"><i class="bi bi-geo-alt me-2 text-primary"></i>Vehari</a></li><li class="mb-2"><a href="/delivery/daska" class="text-decoration-none"><i class="bi bi-geo-alt me-2 text-primary"></i>Daska</a></li><li class="mb-2"><a href="/delivery/pakpattan" class="text-decoration-none"><i class="bi bi-geo-alt me-2 text-primary"></i>Pakpattan</a></li></ul></div><div class="col-md-6 col-lg-4 mb-4"><h3 class="h4 font-primary border-bottom pb-2 mb-3">Sindh</h3><ul class="list-unstyled"><li class="mb-2"><a href="/delivery/karachi" class="text-decoration-none"><i class="bi bi-geo-alt me-2 text-primary"></i>Karachi</a></li><li class="mb-2"><a href="/delivery/hyderabad" class="text-decoration-none"><i class="bi bi-geo-alt me-2 text-primary"></i>Hyderabad</a></li><li class="mb-2"><a href="/delivery/sukkur" class="text-decoration-none"><i class="bi bi-geo-alt me-2 text-primary"></i>Sukkur</a></li><li class="mb-2"><a href="/delivery/larkana" class="text-decoration-none"><i class="bi bi-geo-alt me-2 text-primary"></i>Larkana</a></li><li class="mb-2"><a href="/delivery/nawabshah" class="text-decoration-none"><i class="bi bi-geo-alt me-2 text-primary"></i>Nawabshah</a></li><li class="mb-2"><a href="/delivery/mirpur-khas" class="text-decoration-none"><i class="bi bi-geo-alt me-2 text-primary"></i>Mirpur Khas</a></li><li class="mb-2"><a href="/delivery/jacobabad" class="text-decoration-none"><i class="bi bi-geo-alt me-2 text-primary"></i>Jacobabad</a></li><li class="mb-2"><a href="/delivery/shikarpur" class="text-decoration-none"><i class="bi bi-geo-alt me-2 text-primary"></i>Shikarpur</a></li><li class="mb-2"><a href="/delivery/khairpur" class="text-decoration-none"><i class="bi bi-geo-alt me-2 text-primary"></i>Khairpur</a></li><li class="mb-2"><a href="/delivery/dadu" class="text-decoration-none"><i class="bi bi-geo-alt me-2 text-primary"></i>Dadu</a></li><li class="mb-2"><a href="/delivery/tando-adam" class="text-decoration-none"><i class="bi bi-geo-alt me-2 text-primary"></i>Tando Adam</a></li><li class="mb-2"><a href="/delivery/tando-allahyar" class="text-decoration-none"><i class="bi bi-geo-alt me-2 text-primary"></i>Tando Allahyar</a></li></ul></div><div class="col-md-6 col-lg-4 mb-4"><h3 class="h4 font-primary border-bottom pb-2 mb-3">Khyber Pakhtunkhwa</h3><ul class="list-unstyled"><li class="mb-2"><a href="/delivery/peshawar" class="text-decoration-none"><i class="bi bi-geo-alt me-2 text-primary"></i>Peshawar</a></li><li class="mb-2"><a href="/delivery/mardan" class="text-decoration-none"><i class="bi bi-geo-alt me-2 text-primary"></i>Mardan</a></li><li class="mb-2"><a href="/delivery/mingora" class="text-decoration-none"><i class="bi bi-geo-alt me-2 text-primary"></i>Mingora (Swat)</a></li><li class="mb-2"><a href="/delivery/kohat" class="text-decoration-none"><i class="bi bi-geo-alt me-2 text-primary"></i>Kohat</a></li><li class="mb-2"><a href="/delivery/abbottabad" class="text-decoration-none"><i class="bi bi-geo-alt me-2 text-primary"></i>Abbottabad</a></li><li class="mb-2"><a href="/delivery/dera-ismail-khan" class="text-decoration-none"><i class="bi bi-geo-alt me-2 text-primary"></i>Dera Ismail Khan</a></li><li class="mb-2"><a href="/delivery/nowshera" class="text-decoration-none"><i class="bi bi-geo-alt me-2 text-primary"></i>Nowshera</a></li><li class="mb-2"><a href="/delivery/swabi" class="text-decoration-none"><i class="bi bi-geo-alt me-2 text-primary"></i>Swabi</a></li></ul></div><div class="col-md-6 col-lg-4 mb-4"><h3 class="h4 font-primary border-bottom pb-2 mb-3">Balochistan</h3><ul class="list-unstyled"><li class="mb-2"><a href="/delivery/quetta" class="text-decoration-none"><i class="bi bi-geo-alt me-2 text-primary"></i>Quetta</a></li><li class="mb-2"><a href="/delivery/turbat" class="text-decoration-none"><i class="bi bi-geo-alt me-2 text-primary"></i>Turbat</a></li><li class="mb-2"><a href="/delivery/khuzdar" class="text-decoration-none"><i class="bi bi-geo-alt me-2 text-primary"></i>Khuzdar</a></li><li class="mb-2"><a href="/delivery/chaman" class="text-decoration-none"><i class="bi bi-geo-alt me-2 text-primary"></i>Chaman</a></li></ul></div><div class="col-md-6 col-lg-4 mb-4"><h3 class="h4 font-primary border-bottom pb-2 mb-3">Capital Territory</h3><ul class="list-unstyled"><li class="mb-2"><a href="/delivery/islamabad" class="text-decoration-none"><i class="bi bi-geo-alt me-2 text-primary"></i>Islamabad</a></li></ul></div>
+  <section class="container py-5 my-md-2">
+    <div class="row g-4 justify-content-center" masonry data-masonry='{"percentPosition": true }'>
+
+    <div class="col-md-6 col-lg-4 mb-4 fade-in-up" style="animation-delay: 0.1s;">
+      <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden province-card">
+        <div class="card-header bg-forest text-gold border-0 py-3">
+          <h3 class="h4 font-primary mb-0 d-flex align-items-center">
+            <i class="bi bi-map-fill me-2 fs-5"></i> Punjab
+          </h3>
+        </div>
+        <div class="card-body bg-white p-4">
+          <ul class="list-unstyled mb-0 city-list">
+    
+            <li class="mb-2">
+              <a href="/delivery/lahore" class="city-link d-flex align-items-center text-decoration-none p-2 rounded-3">
+                <div class="icon-box bg-light rounded-circle d-flex align-items-center justify-content-center me-3">
+                  <i class="bi bi-geo-alt-fill text-forest"></i>
+                </div>
+                <span class="fw-medium text-dark">Lahore</span>
+                <i class="bi bi-chevron-right ms-auto text-muted small transition-arrow"></i>
+              </a>
+            </li>
+        
+            <li class="mb-2">
+              <a href="/delivery/faisalabad" class="city-link d-flex align-items-center text-decoration-none p-2 rounded-3">
+                <div class="icon-box bg-light rounded-circle d-flex align-items-center justify-content-center me-3">
+                  <i class="bi bi-geo-alt-fill text-forest"></i>
+                </div>
+                <span class="fw-medium text-dark">Faisalabad</span>
+                <i class="bi bi-chevron-right ms-auto text-muted small transition-arrow"></i>
+              </a>
+            </li>
+        
+            <li class="mb-2">
+              <a href="/delivery/rawalpindi" class="city-link d-flex align-items-center text-decoration-none p-2 rounded-3">
+                <div class="icon-box bg-light rounded-circle d-flex align-items-center justify-content-center me-3">
+                  <i class="bi bi-geo-alt-fill text-forest"></i>
+                </div>
+                <span class="fw-medium text-dark">Rawalpindi</span>
+                <i class="bi bi-chevron-right ms-auto text-muted small transition-arrow"></i>
+              </a>
+            </li>
+        
+            <li class="mb-2">
+              <a href="/delivery/gujranwala" class="city-link d-flex align-items-center text-decoration-none p-2 rounded-3">
+                <div class="icon-box bg-light rounded-circle d-flex align-items-center justify-content-center me-3">
+                  <i class="bi bi-geo-alt-fill text-forest"></i>
+                </div>
+                <span class="fw-medium text-dark">Gujranwala</span>
+                <i class="bi bi-chevron-right ms-auto text-muted small transition-arrow"></i>
+              </a>
+            </li>
+        
+            <li class="mb-2">
+              <a href="/delivery/multan" class="city-link d-flex align-items-center text-decoration-none p-2 rounded-3">
+                <div class="icon-box bg-light rounded-circle d-flex align-items-center justify-content-center me-3">
+                  <i class="bi bi-geo-alt-fill text-forest"></i>
+                </div>
+                <span class="fw-medium text-dark">Multan</span>
+                <i class="bi bi-chevron-right ms-auto text-muted small transition-arrow"></i>
+              </a>
+            </li>
+        
+            <li class="mb-2">
+              <a href="/delivery/bahawalpur" class="city-link d-flex align-items-center text-decoration-none p-2 rounded-3">
+                <div class="icon-box bg-light rounded-circle d-flex align-items-center justify-content-center me-3">
+                  <i class="bi bi-geo-alt-fill text-forest"></i>
+                </div>
+                <span class="fw-medium text-dark">Bahawalpur</span>
+                <i class="bi bi-chevron-right ms-auto text-muted small transition-arrow"></i>
+              </a>
+            </li>
+        
+            <li class="mb-2">
+              <a href="/delivery/sargodha" class="city-link d-flex align-items-center text-decoration-none p-2 rounded-3">
+                <div class="icon-box bg-light rounded-circle d-flex align-items-center justify-content-center me-3">
+                  <i class="bi bi-geo-alt-fill text-forest"></i>
+                </div>
+                <span class="fw-medium text-dark">Sargodha</span>
+                <i class="bi bi-chevron-right ms-auto text-muted small transition-arrow"></i>
+              </a>
+            </li>
+        
+            <li class="mb-2">
+              <a href="/delivery/sialkot" class="city-link d-flex align-items-center text-decoration-none p-2 rounded-3">
+                <div class="icon-box bg-light rounded-circle d-flex align-items-center justify-content-center me-3">
+                  <i class="bi bi-geo-alt-fill text-forest"></i>
+                </div>
+                <span class="fw-medium text-dark">Sialkot</span>
+                <i class="bi bi-chevron-right ms-auto text-muted small transition-arrow"></i>
+              </a>
+            </li>
+        
+            <li class="mb-2">
+              <a href="/delivery/sheikhupura" class="city-link d-flex align-items-center text-decoration-none p-2 rounded-3">
+                <div class="icon-box bg-light rounded-circle d-flex align-items-center justify-content-center me-3">
+                  <i class="bi bi-geo-alt-fill text-forest"></i>
+                </div>
+                <span class="fw-medium text-dark">Sheikhupura</span>
+                <i class="bi bi-chevron-right ms-auto text-muted small transition-arrow"></i>
+              </a>
+            </li>
+        
+            <li class="mb-2">
+              <a href="/delivery/rahim-yar-khan" class="city-link d-flex align-items-center text-decoration-none p-2 rounded-3">
+                <div class="icon-box bg-light rounded-circle d-flex align-items-center justify-content-center me-3">
+                  <i class="bi bi-geo-alt-fill text-forest"></i>
+                </div>
+                <span class="fw-medium text-dark">Rahim Yar Khan</span>
+                <i class="bi bi-chevron-right ms-auto text-muted small transition-arrow"></i>
+              </a>
+            </li>
+        
+            <li class="mb-2">
+              <a href="/delivery/jhang" class="city-link d-flex align-items-center text-decoration-none p-2 rounded-3">
+                <div class="icon-box bg-light rounded-circle d-flex align-items-center justify-content-center me-3">
+                  <i class="bi bi-geo-alt-fill text-forest"></i>
+                </div>
+                <span class="fw-medium text-dark">Jhang</span>
+                <i class="bi bi-chevron-right ms-auto text-muted small transition-arrow"></i>
+              </a>
+            </li>
+        
+            <li class="mb-2">
+              <a href="/delivery/dera-ghazi-khan" class="city-link d-flex align-items-center text-decoration-none p-2 rounded-3">
+                <div class="icon-box bg-light rounded-circle d-flex align-items-center justify-content-center me-3">
+                  <i class="bi bi-geo-alt-fill text-forest"></i>
+                </div>
+                <span class="fw-medium text-dark">Dera Ghazi Khan</span>
+                <i class="bi bi-chevron-right ms-auto text-muted small transition-arrow"></i>
+              </a>
+            </li>
+        
+            <li class="mb-2">
+              <a href="/delivery/gujrat" class="city-link d-flex align-items-center text-decoration-none p-2 rounded-3">
+                <div class="icon-box bg-light rounded-circle d-flex align-items-center justify-content-center me-3">
+                  <i class="bi bi-geo-alt-fill text-forest"></i>
+                </div>
+                <span class="fw-medium text-dark">Gujrat</span>
+                <i class="bi bi-chevron-right ms-auto text-muted small transition-arrow"></i>
+              </a>
+            </li>
+        
+            <li class="mb-2">
+              <a href="/delivery/sahiwal" class="city-link d-flex align-items-center text-decoration-none p-2 rounded-3">
+                <div class="icon-box bg-light rounded-circle d-flex align-items-center justify-content-center me-3">
+                  <i class="bi bi-geo-alt-fill text-forest"></i>
+                </div>
+                <span class="fw-medium text-dark">Sahiwal</span>
+                <i class="bi bi-chevron-right ms-auto text-muted small transition-arrow"></i>
+              </a>
+            </li>
+        
+            <li class="mb-2">
+              <a href="/delivery/okara" class="city-link d-flex align-items-center text-decoration-none p-2 rounded-3">
+                <div class="icon-box bg-light rounded-circle d-flex align-items-center justify-content-center me-3">
+                  <i class="bi bi-geo-alt-fill text-forest"></i>
+                </div>
+                <span class="fw-medium text-dark">Okara</span>
+                <i class="bi bi-chevron-right ms-auto text-muted small transition-arrow"></i>
+              </a>
+            </li>
+        
+            <li class="mb-2">
+              <a href="/delivery/kasur" class="city-link d-flex align-items-center text-decoration-none p-2 rounded-3">
+                <div class="icon-box bg-light rounded-circle d-flex align-items-center justify-content-center me-3">
+                  <i class="bi bi-geo-alt-fill text-forest"></i>
+                </div>
+                <span class="fw-medium text-dark">Kasur</span>
+                <i class="bi bi-chevron-right ms-auto text-muted small transition-arrow"></i>
+              </a>
+            </li>
+        
+            <li class="mb-2">
+              <a href="/delivery/chiniot" class="city-link d-flex align-items-center text-decoration-none p-2 rounded-3">
+                <div class="icon-box bg-light rounded-circle d-flex align-items-center justify-content-center me-3">
+                  <i class="bi bi-geo-alt-fill text-forest"></i>
+                </div>
+                <span class="fw-medium text-dark">Chiniot</span>
+                <i class="bi bi-chevron-right ms-auto text-muted small transition-arrow"></i>
+              </a>
+            </li>
+        
+            <li class="mb-2">
+              <a href="/delivery/kamoke" class="city-link d-flex align-items-center text-decoration-none p-2 rounded-3">
+                <div class="icon-box bg-light rounded-circle d-flex align-items-center justify-content-center me-3">
+                  <i class="bi bi-geo-alt-fill text-forest"></i>
+                </div>
+                <span class="fw-medium text-dark">Kamoke</span>
+                <i class="bi bi-chevron-right ms-auto text-muted small transition-arrow"></i>
+              </a>
+            </li>
+        
+            <li class="mb-2">
+              <a href="/delivery/hafizabad" class="city-link d-flex align-items-center text-decoration-none p-2 rounded-3">
+                <div class="icon-box bg-light rounded-circle d-flex align-items-center justify-content-center me-3">
+                  <i class="bi bi-geo-alt-fill text-forest"></i>
+                </div>
+                <span class="fw-medium text-dark">Hafizabad</span>
+                <i class="bi bi-chevron-right ms-auto text-muted small transition-arrow"></i>
+              </a>
+            </li>
+        
+            <li class="mb-2">
+              <a href="/delivery/sadeqabad" class="city-link d-flex align-items-center text-decoration-none p-2 rounded-3">
+                <div class="icon-box bg-light rounded-circle d-flex align-items-center justify-content-center me-3">
+                  <i class="bi bi-geo-alt-fill text-forest"></i>
+                </div>
+                <span class="fw-medium text-dark">Sadeqabad</span>
+                <i class="bi bi-chevron-right ms-auto text-muted small transition-arrow"></i>
+              </a>
+            </li>
+        
+            <li class="mb-2">
+              <a href="/delivery/burewala" class="city-link d-flex align-items-center text-decoration-none p-2 rounded-3">
+                <div class="icon-box bg-light rounded-circle d-flex align-items-center justify-content-center me-3">
+                  <i class="bi bi-geo-alt-fill text-forest"></i>
+                </div>
+                <span class="fw-medium text-dark">Burewala</span>
+                <i class="bi bi-chevron-right ms-auto text-muted small transition-arrow"></i>
+              </a>
+            </li>
+        
+            <li class="mb-2">
+              <a href="/delivery/mandi-bahauddin" class="city-link d-flex align-items-center text-decoration-none p-2 rounded-3">
+                <div class="icon-box bg-light rounded-circle d-flex align-items-center justify-content-center me-3">
+                  <i class="bi bi-geo-alt-fill text-forest"></i>
+                </div>
+                <span class="fw-medium text-dark">Mandi Bahauddin</span>
+                <i class="bi bi-chevron-right ms-auto text-muted small transition-arrow"></i>
+              </a>
+            </li>
+        
+            <li class="mb-2">
+              <a href="/delivery/vehari" class="city-link d-flex align-items-center text-decoration-none p-2 rounded-3">
+                <div class="icon-box bg-light rounded-circle d-flex align-items-center justify-content-center me-3">
+                  <i class="bi bi-geo-alt-fill text-forest"></i>
+                </div>
+                <span class="fw-medium text-dark">Vehari</span>
+                <i class="bi bi-chevron-right ms-auto text-muted small transition-arrow"></i>
+              </a>
+            </li>
+        
+            <li class="mb-2">
+              <a href="/delivery/daska" class="city-link d-flex align-items-center text-decoration-none p-2 rounded-3">
+                <div class="icon-box bg-light rounded-circle d-flex align-items-center justify-content-center me-3">
+                  <i class="bi bi-geo-alt-fill text-forest"></i>
+                </div>
+                <span class="fw-medium text-dark">Daska</span>
+                <i class="bi bi-chevron-right ms-auto text-muted small transition-arrow"></i>
+              </a>
+            </li>
+        
+            <li class="mb-2">
+              <a href="/delivery/pakpattan" class="city-link d-flex align-items-center text-decoration-none p-2 rounded-3">
+                <div class="icon-box bg-light rounded-circle d-flex align-items-center justify-content-center me-3">
+                  <i class="bi bi-geo-alt-fill text-forest"></i>
+                </div>
+                <span class="fw-medium text-dark">Pakpattan</span>
+                <i class="bi bi-chevron-right ms-auto text-muted small transition-arrow"></i>
+              </a>
+            </li>
+        
+          </ul>
+        </div>
+      </div>
+    </div>
+    
+    <div class="col-md-6 col-lg-4 mb-4 fade-in-up" style="animation-delay: 0.2s;">
+      <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden province-card">
+        <div class="card-header bg-forest text-gold border-0 py-3">
+          <h3 class="h4 font-primary mb-0 d-flex align-items-center">
+            <i class="bi bi-map-fill me-2 fs-5"></i> Sindh
+          </h3>
+        </div>
+        <div class="card-body bg-white p-4">
+          <ul class="list-unstyled mb-0 city-list">
+    
+            <li class="mb-2">
+              <a href="/delivery/karachi" class="city-link d-flex align-items-center text-decoration-none p-2 rounded-3">
+                <div class="icon-box bg-light rounded-circle d-flex align-items-center justify-content-center me-3">
+                  <i class="bi bi-geo-alt-fill text-forest"></i>
+                </div>
+                <span class="fw-medium text-dark">Karachi</span>
+                <i class="bi bi-chevron-right ms-auto text-muted small transition-arrow"></i>
+              </a>
+            </li>
+        
+            <li class="mb-2">
+              <a href="/delivery/hyderabad" class="city-link d-flex align-items-center text-decoration-none p-2 rounded-3">
+                <div class="icon-box bg-light rounded-circle d-flex align-items-center justify-content-center me-3">
+                  <i class="bi bi-geo-alt-fill text-forest"></i>
+                </div>
+                <span class="fw-medium text-dark">Hyderabad</span>
+                <i class="bi bi-chevron-right ms-auto text-muted small transition-arrow"></i>
+              </a>
+            </li>
+        
+            <li class="mb-2">
+              <a href="/delivery/sukkur" class="city-link d-flex align-items-center text-decoration-none p-2 rounded-3">
+                <div class="icon-box bg-light rounded-circle d-flex align-items-center justify-content-center me-3">
+                  <i class="bi bi-geo-alt-fill text-forest"></i>
+                </div>
+                <span class="fw-medium text-dark">Sukkur</span>
+                <i class="bi bi-chevron-right ms-auto text-muted small transition-arrow"></i>
+              </a>
+            </li>
+        
+            <li class="mb-2">
+              <a href="/delivery/larkana" class="city-link d-flex align-items-center text-decoration-none p-2 rounded-3">
+                <div class="icon-box bg-light rounded-circle d-flex align-items-center justify-content-center me-3">
+                  <i class="bi bi-geo-alt-fill text-forest"></i>
+                </div>
+                <span class="fw-medium text-dark">Larkana</span>
+                <i class="bi bi-chevron-right ms-auto text-muted small transition-arrow"></i>
+              </a>
+            </li>
+        
+            <li class="mb-2">
+              <a href="/delivery/nawabshah" class="city-link d-flex align-items-center text-decoration-none p-2 rounded-3">
+                <div class="icon-box bg-light rounded-circle d-flex align-items-center justify-content-center me-3">
+                  <i class="bi bi-geo-alt-fill text-forest"></i>
+                </div>
+                <span class="fw-medium text-dark">Nawabshah</span>
+                <i class="bi bi-chevron-right ms-auto text-muted small transition-arrow"></i>
+              </a>
+            </li>
+        
+            <li class="mb-2">
+              <a href="/delivery/mirpur-khas" class="city-link d-flex align-items-center text-decoration-none p-2 rounded-3">
+                <div class="icon-box bg-light rounded-circle d-flex align-items-center justify-content-center me-3">
+                  <i class="bi bi-geo-alt-fill text-forest"></i>
+                </div>
+                <span class="fw-medium text-dark">Mirpur Khas</span>
+                <i class="bi bi-chevron-right ms-auto text-muted small transition-arrow"></i>
+              </a>
+            </li>
+        
+            <li class="mb-2">
+              <a href="/delivery/jacobabad" class="city-link d-flex align-items-center text-decoration-none p-2 rounded-3">
+                <div class="icon-box bg-light rounded-circle d-flex align-items-center justify-content-center me-3">
+                  <i class="bi bi-geo-alt-fill text-forest"></i>
+                </div>
+                <span class="fw-medium text-dark">Jacobabad</span>
+                <i class="bi bi-chevron-right ms-auto text-muted small transition-arrow"></i>
+              </a>
+            </li>
+        
+            <li class="mb-2">
+              <a href="/delivery/shikarpur" class="city-link d-flex align-items-center text-decoration-none p-2 rounded-3">
+                <div class="icon-box bg-light rounded-circle d-flex align-items-center justify-content-center me-3">
+                  <i class="bi bi-geo-alt-fill text-forest"></i>
+                </div>
+                <span class="fw-medium text-dark">Shikarpur</span>
+                <i class="bi bi-chevron-right ms-auto text-muted small transition-arrow"></i>
+              </a>
+            </li>
+        
+            <li class="mb-2">
+              <a href="/delivery/khairpur" class="city-link d-flex align-items-center text-decoration-none p-2 rounded-3">
+                <div class="icon-box bg-light rounded-circle d-flex align-items-center justify-content-center me-3">
+                  <i class="bi bi-geo-alt-fill text-forest"></i>
+                </div>
+                <span class="fw-medium text-dark">Khairpur</span>
+                <i class="bi bi-chevron-right ms-auto text-muted small transition-arrow"></i>
+              </a>
+            </li>
+        
+            <li class="mb-2">
+              <a href="/delivery/dadu" class="city-link d-flex align-items-center text-decoration-none p-2 rounded-3">
+                <div class="icon-box bg-light rounded-circle d-flex align-items-center justify-content-center me-3">
+                  <i class="bi bi-geo-alt-fill text-forest"></i>
+                </div>
+                <span class="fw-medium text-dark">Dadu</span>
+                <i class="bi bi-chevron-right ms-auto text-muted small transition-arrow"></i>
+              </a>
+            </li>
+        
+            <li class="mb-2">
+              <a href="/delivery/tando-adam" class="city-link d-flex align-items-center text-decoration-none p-2 rounded-3">
+                <div class="icon-box bg-light rounded-circle d-flex align-items-center justify-content-center me-3">
+                  <i class="bi bi-geo-alt-fill text-forest"></i>
+                </div>
+                <span class="fw-medium text-dark">Tando Adam</span>
+                <i class="bi bi-chevron-right ms-auto text-muted small transition-arrow"></i>
+              </a>
+            </li>
+        
+            <li class="mb-2">
+              <a href="/delivery/tando-allahyar" class="city-link d-flex align-items-center text-decoration-none p-2 rounded-3">
+                <div class="icon-box bg-light rounded-circle d-flex align-items-center justify-content-center me-3">
+                  <i class="bi bi-geo-alt-fill text-forest"></i>
+                </div>
+                <span class="fw-medium text-dark">Tando Allahyar</span>
+                <i class="bi bi-chevron-right ms-auto text-muted small transition-arrow"></i>
+              </a>
+            </li>
+        
+          </ul>
+        </div>
+      </div>
+    </div>
+    
+    <div class="col-md-6 col-lg-4 mb-4 fade-in-up" style="animation-delay: 0.30000000000000004s;">
+      <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden province-card">
+        <div class="card-header bg-forest text-gold border-0 py-3">
+          <h3 class="h4 font-primary mb-0 d-flex align-items-center">
+            <i class="bi bi-map-fill me-2 fs-5"></i> Khyber Pakhtunkhwa
+          </h3>
+        </div>
+        <div class="card-body bg-white p-4">
+          <ul class="list-unstyled mb-0 city-list">
+    
+            <li class="mb-2">
+              <a href="/delivery/peshawar" class="city-link d-flex align-items-center text-decoration-none p-2 rounded-3">
+                <div class="icon-box bg-light rounded-circle d-flex align-items-center justify-content-center me-3">
+                  <i class="bi bi-geo-alt-fill text-forest"></i>
+                </div>
+                <span class="fw-medium text-dark">Peshawar</span>
+                <i class="bi bi-chevron-right ms-auto text-muted small transition-arrow"></i>
+              </a>
+            </li>
+        
+            <li class="mb-2">
+              <a href="/delivery/mardan" class="city-link d-flex align-items-center text-decoration-none p-2 rounded-3">
+                <div class="icon-box bg-light rounded-circle d-flex align-items-center justify-content-center me-3">
+                  <i class="bi bi-geo-alt-fill text-forest"></i>
+                </div>
+                <span class="fw-medium text-dark">Mardan</span>
+                <i class="bi bi-chevron-right ms-auto text-muted small transition-arrow"></i>
+              </a>
+            </li>
+        
+            <li class="mb-2">
+              <a href="/delivery/mingora" class="city-link d-flex align-items-center text-decoration-none p-2 rounded-3">
+                <div class="icon-box bg-light rounded-circle d-flex align-items-center justify-content-center me-3">
+                  <i class="bi bi-geo-alt-fill text-forest"></i>
+                </div>
+                <span class="fw-medium text-dark">Mingora (Swat)</span>
+                <i class="bi bi-chevron-right ms-auto text-muted small transition-arrow"></i>
+              </a>
+            </li>
+        
+            <li class="mb-2">
+              <a href="/delivery/kohat" class="city-link d-flex align-items-center text-decoration-none p-2 rounded-3">
+                <div class="icon-box bg-light rounded-circle d-flex align-items-center justify-content-center me-3">
+                  <i class="bi bi-geo-alt-fill text-forest"></i>
+                </div>
+                <span class="fw-medium text-dark">Kohat</span>
+                <i class="bi bi-chevron-right ms-auto text-muted small transition-arrow"></i>
+              </a>
+            </li>
+        
+            <li class="mb-2">
+              <a href="/delivery/abbottabad" class="city-link d-flex align-items-center text-decoration-none p-2 rounded-3">
+                <div class="icon-box bg-light rounded-circle d-flex align-items-center justify-content-center me-3">
+                  <i class="bi bi-geo-alt-fill text-forest"></i>
+                </div>
+                <span class="fw-medium text-dark">Abbottabad</span>
+                <i class="bi bi-chevron-right ms-auto text-muted small transition-arrow"></i>
+              </a>
+            </li>
+        
+            <li class="mb-2">
+              <a href="/delivery/dera-ismail-khan" class="city-link d-flex align-items-center text-decoration-none p-2 rounded-3">
+                <div class="icon-box bg-light rounded-circle d-flex align-items-center justify-content-center me-3">
+                  <i class="bi bi-geo-alt-fill text-forest"></i>
+                </div>
+                <span class="fw-medium text-dark">Dera Ismail Khan</span>
+                <i class="bi bi-chevron-right ms-auto text-muted small transition-arrow"></i>
+              </a>
+            </li>
+        
+            <li class="mb-2">
+              <a href="/delivery/nowshera" class="city-link d-flex align-items-center text-decoration-none p-2 rounded-3">
+                <div class="icon-box bg-light rounded-circle d-flex align-items-center justify-content-center me-3">
+                  <i class="bi bi-geo-alt-fill text-forest"></i>
+                </div>
+                <span class="fw-medium text-dark">Nowshera</span>
+                <i class="bi bi-chevron-right ms-auto text-muted small transition-arrow"></i>
+              </a>
+            </li>
+        
+            <li class="mb-2">
+              <a href="/delivery/swabi" class="city-link d-flex align-items-center text-decoration-none p-2 rounded-3">
+                <div class="icon-box bg-light rounded-circle d-flex align-items-center justify-content-center me-3">
+                  <i class="bi bi-geo-alt-fill text-forest"></i>
+                </div>
+                <span class="fw-medium text-dark">Swabi</span>
+                <i class="bi bi-chevron-right ms-auto text-muted small transition-arrow"></i>
+              </a>
+            </li>
+        
+          </ul>
+        </div>
+      </div>
+    </div>
+    
+    <div class="col-md-6 col-lg-4 mb-4 fade-in-up" style="animation-delay: 0.4s;">
+      <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden province-card">
+        <div class="card-header bg-forest text-gold border-0 py-3">
+          <h3 class="h4 font-primary mb-0 d-flex align-items-center">
+            <i class="bi bi-map-fill me-2 fs-5"></i> Balochistan
+          </h3>
+        </div>
+        <div class="card-body bg-white p-4">
+          <ul class="list-unstyled mb-0 city-list">
+    
+            <li class="mb-2">
+              <a href="/delivery/quetta" class="city-link d-flex align-items-center text-decoration-none p-2 rounded-3">
+                <div class="icon-box bg-light rounded-circle d-flex align-items-center justify-content-center me-3">
+                  <i class="bi bi-geo-alt-fill text-forest"></i>
+                </div>
+                <span class="fw-medium text-dark">Quetta</span>
+                <i class="bi bi-chevron-right ms-auto text-muted small transition-arrow"></i>
+              </a>
+            </li>
+        
+            <li class="mb-2">
+              <a href="/delivery/turbat" class="city-link d-flex align-items-center text-decoration-none p-2 rounded-3">
+                <div class="icon-box bg-light rounded-circle d-flex align-items-center justify-content-center me-3">
+                  <i class="bi bi-geo-alt-fill text-forest"></i>
+                </div>
+                <span class="fw-medium text-dark">Turbat</span>
+                <i class="bi bi-chevron-right ms-auto text-muted small transition-arrow"></i>
+              </a>
+            </li>
+        
+            <li class="mb-2">
+              <a href="/delivery/khuzdar" class="city-link d-flex align-items-center text-decoration-none p-2 rounded-3">
+                <div class="icon-box bg-light rounded-circle d-flex align-items-center justify-content-center me-3">
+                  <i class="bi bi-geo-alt-fill text-forest"></i>
+                </div>
+                <span class="fw-medium text-dark">Khuzdar</span>
+                <i class="bi bi-chevron-right ms-auto text-muted small transition-arrow"></i>
+              </a>
+            </li>
+        
+            <li class="mb-2">
+              <a href="/delivery/chaman" class="city-link d-flex align-items-center text-decoration-none p-2 rounded-3">
+                <div class="icon-box bg-light rounded-circle d-flex align-items-center justify-content-center me-3">
+                  <i class="bi bi-geo-alt-fill text-forest"></i>
+                </div>
+                <span class="fw-medium text-dark">Chaman</span>
+                <i class="bi bi-chevron-right ms-auto text-muted small transition-arrow"></i>
+              </a>
+            </li>
+        
+          </ul>
+        </div>
+      </div>
+    </div>
+    
+    <div class="col-md-6 col-lg-4 mb-4 fade-in-up" style="animation-delay: 0.5s;">
+      <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden province-card">
+        <div class="card-header bg-forest text-gold border-0 py-3">
+          <h3 class="h4 font-primary mb-0 d-flex align-items-center">
+            <i class="bi bi-map-fill me-2 fs-5"></i> Capital Territory
+          </h3>
+        </div>
+        <div class="card-body bg-white p-4">
+          <ul class="list-unstyled mb-0 city-list">
+    
+            <li class="mb-2">
+              <a href="/delivery/islamabad" class="city-link d-flex align-items-center text-decoration-none p-2 rounded-3">
+                <div class="icon-box bg-light rounded-circle d-flex align-items-center justify-content-center me-3">
+                  <i class="bi bi-geo-alt-fill text-forest"></i>
+                </div>
+                <span class="fw-medium text-dark">Islamabad</span>
+                <i class="bi bi-chevron-right ms-auto text-muted small transition-arrow"></i>
+              </a>
+            </li>
+        
+          </ul>
+        </div>
+      </div>
+    </div>
+    
     </div>
   </section>
 
@@ -130,72 +783,7 @@
   <!-- FOMO Announcement & Popup engine -->
   <script src="/js/fomo.js?v=1249ca25"></script>
 
-  <script src="/js/cities-db.js"></script>
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      const urlParams = new URLSearchParams(window.location.search);
-      let cityId = urlParams.get('city');
-
-      // Clean URL Fallback
-      if (!cityId) {
-        const pathParts = window.location.pathname.replace(/\/$/, '').split('/');
-        if (pathParts.includes('delivery')) {
-          cityId = pathParts[pathParts.length - 1];
-        }
-      }
-
-      const city = deliveryCities.find(c => c.id === cityId);
-
-      if (city) {
-        // Update DOM
-        document.getElementById('city-name-header').textContent = city.name + ', ' + city.province;
-        document.getElementById('city-name-section').textContent = city.name;
-        document.getElementById('city-time').textContent = city.deliveryTime;
-        document.getElementById('seo-title').textContent = `Organic Delivery in ${city.name} | ARB Farms`;
-        document.getElementById('seo-desc').setAttribute('content', `Buy premium organic produce and livestock feed. Fast delivery to ${city.name}, ${city.province} within ${city.deliveryTime}.`);
-        
-        // Inject schema
-        const schema = {
-          "@context": "https://schema.org",
-          "@type": "Service",
-          "serviceType": "Farm Delivery",
-          "provider": {
-            "@type": "LocalBusiness",
-            "name": "ARB Farms"
-          },
-          "areaServed": {
-            "@type": "City",
-            "name": city.name
-          }
-        };
-        const script = document.createElement('script');
-        script.type = 'application/ld+json';
-        script.text = JSON.stringify(schema);
-        document.head.appendChild(script);
-      }
-
-      // Render some products
-      if (typeof productsDb !== 'undefined') {
-        const grid = document.getElementById('city-products-grid');
-        const popular = productsDb.slice(0, 6);
-        grid.innerHTML = popular.map(p => `
-          <div class="col-sm-6 col-lg-4">
-            <div class="card h-100 product-card border-0 shadow-sm">
-              <div class="product-image-container">
-                <a href="/product/${p.id}" class="product-image-link">
-                  <img src="/${p.image}" class="product-image-base" alt="${p.name}">
-                </a>
-              </div>
-              <div class="card-body p-3 text-center">
-                <h3 class="h6 my-2 font-primary"><a href="/product/${p.id}" class="text-decoration-none text-dark">${p.name}</a></h3>
-                <div class="text-primary fw-bold">Rs. ${p.price.toLocaleString()}</div>
-              </div>
-            </div>
-          </div>
-        `).join('');
-      }
-    });
-  </script>
+  <script src="https://cdn.jsdelivr.net/npm/masonry-layout@4.2.2/dist/masonry.pkgd.min.js" async></script>
 </body>
 
 </html>
