@@ -29,8 +29,8 @@
   ],
   "rewrites": [
     {
-      "source": "/product/(?!detail$)(.*)",
-      "destination": "/product/detail?id=$1"
+      "source": "/product/:slug",
+      "destination": "/product/detail?id=:slug"
     }
   ]
 }
