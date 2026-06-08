@@ -594,7 +594,7 @@ const bundlesDb = [
     items: ["ogn-069-anwar-ratol-5kg", "ogn-068-dusehri-5kg", "ogn-004-milk"],
     discountRate: 0.05,
     cityRestriction: "multan",
-    image: "catalog/Anwar ratol Mango.svg",
+    image: "catalog/Anwar Ratol.svg",
     badge: "Multan Exclusive"
   },
   {
