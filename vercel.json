@@ -31,6 +31,10 @@
     {
       "source": "/product/:slug",
       "destination": "/product/detail?id=:slug"
+    },
+    {
+      "source": "/delivery/:city",
+      "destination": "/city-landing?city=:city"
     }
   ]
 }
