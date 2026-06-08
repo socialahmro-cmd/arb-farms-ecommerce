@@ -245,14 +245,26 @@
       // Render some products
       if (typeof productsDb !== 'undefined') {
         const grid = document.getElementById('city-products-grid');
-        const popular = productsDb.slice(0, 6);
-        grid.innerHTML = popular.map((p, index) => `
+        
+        // Filter out milk if the city is not Multan
+        const filteredProducts = productsDb.filter(p => {
+          const isMilk = p.tags && p.tags.includes('milk');
+          if (isMilk && cityId !== 'multan') {
+            return false; // hide milk in non-Multan cities
+          }
+          return true;
+        });
+
+        const popular = filteredProducts.slice(0, 6);
+        grid.innerHTML = popular.map((p, index) => {
+          const imgSrc = p.image.startsWith('/') ? p.image : '/' + p.image;
+          return `
           <div class="col-sm-6 col-lg-4 fade-in-up" style="animation-delay: ${0.2 + (index * 0.1)}s;">
             <div class="card h-100 product-card border-0 shadow-sm">
               <div class="product-image-container text-center position-relative">
                 <span class="position-absolute top-0 start-0 m-3 badge bg-gold text-forest rounded-pill">Top Seller</span>
                 <a href="/product/${p.id}" class="product-image-link d-block">
-                  <img src="/${p.image}" class="product-image-base img-fluid" alt="${p.name}" style="max-height: 200px; object-fit: contain;">
+                  <img src="${imgSrc}" class="product-image-base img-fluid" alt="${p.name}" style="max-height: 200px; object-fit: contain;" onerror="this.src='/catalog/arbfarms-logo-v2.svg';">
                 </a>
               </div>
               <div class="card-body p-4 text-center">
@@ -266,7 +278,7 @@
               </div>
             </div>
           </div>
-        `).join('');
+        `}).join('');
       }
     });
   </script>
