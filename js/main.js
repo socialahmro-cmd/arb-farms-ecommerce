@@ -1762,19 +1762,60 @@ function addBundleToCart(bundleId) {
   
   productsToAdd.forEach(product => {
     const existing = currentCart.find(i => i.id === product.id);
+    
+    // Parse and normalize weight to kg
+    let parsedWeight = 0;
+    if (product.weight) {
+      let wStr = String(product.weight).toLowerCase().trim();
+      let val = parseFloat(wStr);
+      if (!isNaN(val)) {
+        if (wStr.includes('gm') || wStr.includes('gram') || (val >= 100 && !wStr.includes('kg') && !product.id.toLowerCase().includes('seeds') && !product.id.toLowerCase().includes('wheat') && !product.id.toLowerCase().includes('bales'))) {
+          parsedWeight = val / 1000;
+        } else {
+          parsedWeight = val;
+        }
+      }
+    }
+
     if (existing) {
       existing.qty += 1;
+      existing.weight = parsedWeight; // Keep it normalized
+      existing.price = typeof calculateTieredPrice === 'function' ? calculateTieredPrice(existing.id, existing.qty, existing.basePrice || product.price) : product.price;
     } else {
-      currentCart.push({ ...product, qty: 1 });
+      const price = typeof calculateTieredPrice === 'function' ? calculateTieredPrice(product.id, 1, product.price) : product.price;
+      currentCart.push({
+        id: product.id,
+        name: product.name.replace(/ (Small|Large|Medium|Bulk)$/i, ''),
+        price: price,
+        basePrice: parseFloat(product.price),
+        weight: parsedWeight,
+        category: product.category || '',
+        image: product.image || 'catalog/sowing-seeds-v2.svg',
+        qty: 1
+      });
     }
   });
   
   localStorage.setItem('arb_cart', JSON.stringify(currentCart));
-  updateCartBadge();
-  updateSidebarCart();
+  
+  if (typeof updateBadges === 'function') updateBadges();
+  else if (typeof updateCartBadge === 'function') updateCartBadge();
+  
+  if (document.getElementById('sidebar-cart-items')) {
+    updateSidebarCart();
+  }
   
   // Show toast notification
-  showToast(`Added ${bundle.name} to cart!`, 'success');
+  if (typeof showToast === 'function') {
+    showToast(`Added ${bundle.name} to cart!`, 'success');
+  }
+
+  // Open the sidebar offcanvas automatically
+  const offcanvasEl = document.getElementById('cartOffcanvas');
+  if (offcanvasEl && typeof bootstrap !== 'undefined') {
+    const offcanvas = bootstrap.Offcanvas.getOrCreateInstance(offcanvasEl);
+    offcanvas.show();
+  }
 }
 
 function renderBundlesOnHomepage() {
