@@ -15,8 +15,16 @@ User-agent: Baiduspider
 Allow: /
 User-agent: YandexBot
 Allow: /
+User-agent: Sogou
+Allow: /
+User-agent: Exabot
+Allow: /
+User-agent: ia_archiver
+Allow: /
+User-agent: Applebot
+Allow: /
 
-# 2. Allow All AI Crawlers & Large Language Models
+# 2. Allow All AI Crawlers & Large Language Models (Answer Engine Optimization)
 User-agent: GPTBot
 Allow: /
 User-agent: ChatGPT-User
@@ -27,11 +35,21 @@ User-agent: Anthropic-ai
 Allow: /
 User-agent: Claude-Web
 Allow: /
+User-agent: ClaudeBot
+Allow: /
+User-agent: PerplexityBot
+Allow: /
+User-agent: Cohere-ai
+Allow: /
 User-agent: CCBot
 Allow: /
 User-agent: OmgiliBot
 Allow: /
 User-agent: Omgili
+Allow: /
+User-agent: FacebookBot
+Allow: /
+User-agent: Applebot-Extended
 Allow: /
 
 # 3. Allow All SEO Tools & Web Crawlers
@@ -46,6 +64,14 @@ Allow: /
 User-agent: Rogerbot
 Allow: /
 User-agent: Screaming Frog SEO Spider
+Allow: /
+User-agent: BLEXBot
+Allow: /
+User-agent: PetalBot
+Allow: /
+User-agent: DataForSeoBot
+Allow: /
+User-agent: SeznamBot
 Allow: /
 
 # 4. Catch-all for any other bots
