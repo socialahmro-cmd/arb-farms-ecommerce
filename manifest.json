@@ -1,0 +1,17 @@
+{
+  "name": "ARB Farms",
+  "short_name": "ARB Farms",
+  "description": "Premium organic produce and livestock feed delivered across Pakistan.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#2b422a",
+  "icons": [
+    {
+      "src": "/catalog/arbfarms-logo-v2.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
