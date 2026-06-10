@@ -311,8 +311,9 @@
 
   <!-- Checkout Logic -->
   <script type="module">
-    import { db } from "/js/firebase-init.js";
-    import { doc, setDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { auth, db } from "/js/firebase-init.js";
+    import { doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
       const summaryItems = document.getElementById("checkout-summary-items");
       const subtotalEl = document.getElementById("summary-subtotal");
@@ -332,6 +333,8 @@
       let cart = [];
       let uploadedUrl = "";
       let receiptUploaded = false;
+      let userTier = "Guest";
+      let userStatus = "pending";
 
       function parseItemWeight(item) {
         let rawWeight = item.weight;
@@ -421,43 +424,9 @@
         };
       }
 
-      function loadCheckoutSummary() {
+      async function loadCheckoutSummary() {
         cart = JSON.parse(localStorage.getItem('arb_cart')) || [];
         
-        // Instant load from draft to prevent Rs. 0 visual flashes
-        const draftJson = sessionStorage.getItem("arb_checkout_draft");
-        if (draftJson) {
-          try {
-            const draft = JSON.parse(draftJson);
-            if (draft.items && draft.items.length === cart.length) {
-              subtotal = draft.subtotal;
-              totalWeight = draft.weight;
-              shippingFee = draft.shipping;
-              grandTotal = draft.total;
-              const discount = draft.discount || 0;
-
-              subtotalEl.textContent = `Rs. ${subtotal.toLocaleString()}`;
-              const displayTotalWeight = totalWeight >= 1 ? `${totalWeight.toFixed(2)} kg` : `${(totalWeight * 1000).toFixed(0)} gm`;
-              weightEl.textContent = displayTotalWeight;
-              shippingEl.textContent = `Rs. ${shippingFee.toLocaleString()}`;
-              totalEl.textContent = `Rs. ${grandTotal.toLocaleString()}`;
-              
-              const discountRow = document.getElementById('summary-discount-row');
-              const discountEl = document.getElementById('summary-discount');
-              if (discountRow && discountEl) {
-                if (discount > 0) {
-                  discountEl.textContent = `- Rs. ${discount.toLocaleString()}`;
-                  discountRow.classList.remove('d-none');
-                } else {
-                  discountRow.classList.add('d-none');
-                }
-              }
-            }
-          } catch(e) {
-            console.warn("Error parsing checkout draft:", e);
-          }
-        }
-
         if (cart.length === 0) {
           window.location.href = "shop.html";
           return;
@@ -482,37 +451,34 @@
           `;
         }).join("");
 
-        // Calculate aggregates
-        const totals = typeof window.calculateCartTotals === 'function' ? window.calculateCartTotals(cart) : {
-          subtotal: cart.reduce((sum, item) => sum + (item.price * item.qty), 0),
-          totalWeight: cart.reduce((sum, item) => sum + (parseItemWeight(item) * item.qty), 0),
-          discount: 0,
-          total: cart.reduce((sum, item) => sum + (item.price * item.qty), 0)
-        };
+        // Calculate base aggregates
+        subtotal = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+        totalWeight = cart.reduce((sum, item) => sum + (parseItemWeight(item) * item.qty), 0);
         
-        subtotal = totals.subtotal;
-        totalWeight = totals.totalWeight;
+        // Removed auth tier check
+        let discountAmount = 0; // Removed tier discounts
         const shipping = calculateShipping(cart);
         shippingFee = shipping.fee;
-
-        grandTotal = totals.total + shippingFee;
-
-        subtotalEl.textContent = `Rs. ${subtotal.toLocaleString()}`;
-        const displayTotalWeight = totalWeight >= 1 ? `${totalWeight.toFixed(2)} kg` : `${(totalWeight * 1000).toFixed(0)} gm`;
-        weightEl.textContent = displayTotalWeight;
-        shippingEl.textContent = `Rs. ${shippingFee.toLocaleString()}`;
-        totalEl.textContent = `Rs. ${grandTotal.toLocaleString()}`;
         
-        const discountRow = document.getElementById('summary-discount-row');
-        const discountEl = document.getElementById('summary-discount');
-        if (discountRow && discountEl) {
-          if (totals.discount > 0) {
-            discountEl.textContent = `- Rs. ${totals.discount.toLocaleString()}`;
-            discountRow.classList.remove('d-none');
-          } else {
-            discountRow.classList.add('d-none');
+        grandTotal = subtotal - discountAmount + shippingFee;
+
+          subtotalEl.textContent = `Rs. ${subtotal.toLocaleString()}`;
+          const displayTotalWeight = totalWeight >= 1 ? `${totalWeight.toFixed(2)} kg` : `${(totalWeight * 1000).toFixed(0)} gm`;
+          weightEl.textContent = displayTotalWeight;
+          shippingEl.textContent = shippingFee === 0 ? "FREE" : `Rs. ${shippingFee.toLocaleString()}`;
+          totalEl.textContent = `Rs. ${grandTotal.toLocaleString()}`;
+          
+          const discountRow = document.getElementById('summary-discount-row');
+          const discountEl = document.getElementById('summary-discount');
+          if (discountRow && discountEl) {
+            if (discountAmount > 0) {
+              discountEl.textContent = `- Rs. ${discountAmount.toLocaleString()}`;
+              discountRow.classList.remove('d-none');
+            } else {
+              discountRow.classList.add('d-none');
+            }
           }
-        }
+        // Removed closing bracket of onAuthStateChanged
       }
 
       // Check dairy restriction on city change

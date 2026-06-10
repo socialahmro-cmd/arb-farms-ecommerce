@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>My Account | ARB Farms &amp; Organics Pakistan</title>
-  <meta name="description" content="Discover the story of ARB Farms. Learn about our off-grid solar-powered agriculture, non-GMO sowing seeds, and pasture grass-fed dairy production in Multan.">
+  <title>Admin Portal Login | ARB Farms Pakistan</title>
+  <meta name="description" content="Secure portal login for ARB Farms administrators.">
   
   <!-- Bootstrap & Icons -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -13,29 +13,7 @@
   <!-- Custom Styles -->
   <link href="css/index.css?v=c0cb305a" rel="stylesheet">
 
-  <link rel="canonical" href="https://arbfarms.com/about">
-
-  <!-- Breadcrumb Schema -->
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
-    "itemListElement": [
-      {
-        "@type": "ListItem",
-        "position": 1,
-        "name": "Home",
-        "item": "https://arbfarms.com/"
-      },
-      {
-        "@type": "ListItem",
-        "position": 2,
-        "name": "About",
-        "item": "https://arbfarms.com/about"
-      }
-    ]
-  }
-  </script>
+  <link rel="canonical" href="https://arbfarms.com/account">
 
   <!-- PWA Meta Tags -->
   <link rel="manifest" href="/manifest.json">
@@ -73,14 +51,14 @@
         <ul class="navbar-nav mx-auto mb-2 mb-lg-0 gap-lg-3">
           <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
           <li class="nav-item"><a class="nav-link" href="shop">Shop Catalog</a></li>
-          <li class="nav-item"><a class="nav-link active" href="about">About Us</a></li>
+          <li class="nav-item"><a class="nav-link" href="about">About Us</a></li>
           <li class="nav-item"><a class="nav-link" href="calculator">Sowing Tools</a></li>
           <li class="nav-item"><a class="nav-link" href="contact">Contact Us</a></li>
         </ul>
         
         <div class="d-flex align-items-center gap-3">
           <button id="search-trigger" aria-label="Search products" title="Search"><i class="bi bi-search"></i></button>
-          <a href="account" class="text-white fs-5" aria-label="My Account" title="My Account"><i class="bi bi-person"></i></a>
+          <a href="account" class="text-white fs-5 active" aria-label="My Account" title="My Account"><i class="bi bi-person"></i></a>
           <a href="compare" class="text-white fs-5" aria-label="Compare Seeds" title="Compare Seeds"><i class="bi bi-arrow-left-right"></i></a>
           <a href="wishlist" class="position-relative text-white fs-5" aria-label="View Wishlist">
             <i class="bi bi-heart"></i>
@@ -95,96 +73,39 @@
     </div>
   </nav>
 
-  <!-- Hero Header -->
-  <header class="py-5 text-center" style="background-color: #ede1ca;">
-    <div class="container py-3">
-      <h1 class="display-5 font-primary text-primary mb-3">My Dashboard</h1>
-      <p class="lead text-muted max-width-md mx-auto font-accent">Welcome back! Manage your loyalty tier, farm size, and referral rewards.</p>
-    </div>
-  </header>
-
-  <main class="container py-5" id="dashboard-content" style="display: none;">
-    <div class="row g-4">
-      <!-- Sidebar / User Info -->
-      <div class="col-lg-4">
-        <div class="card border-0 shadow-sm p-4 text-center">
-          <div class="mb-3">
-            <i class="bi bi-person-circle text-primary" style="font-size: 4rem;"></i>
+  <!-- Main Container -->
+  <main class="container py-5">
+    <div class="row justify-content-center py-5">
+      <div class="col-md-5">
+        <div class="card border-0 shadow-sm p-4 p-sm-5 bg-white rounded-3">
+          <div class="text-center mb-4">
+            <i class="bi bi-shield-lock text-primary" style="font-size: 3rem;"></i>
+            <h1 class="h4 font-primary text-dark mt-2 mb-1">Admin Portal Login</h1>
+            <p class="text-muted small">Sign in with an authorized account to manage farm orders.</p>
           </div>
-          <h2 class="h4 font-primary text-dark" id="user-name">Loading...</h2>
-          <p class="text-muted mb-1" id="user-email">loading@example.com</p>
-          <p class="text-muted small mb-3" id="user-phone">+92 000 0000000</p>
-          <button class="btn btn-outline-danger w-100" id="logout-btn">Log Out</button>
-        </div>
 
-        <!-- Referral Link -->
-        <div class="card border-0 shadow-sm p-4 mt-4">
-          <h3 class="h5 font-primary text-primary mb-3">Refer a Neighbor</h3>
-          <p class="small text-muted mb-3">Share this link to give your neighbor a head start. You'll earn a <strong>1000 PKR</strong> coupon when they get approved!</p>
-          <div class="input-group">
-            <input type="text" class="form-control bg-light" id="referral-link" readonly value="https://arbfarms.com/register.html?ref=...">
-            <button class="btn btn-outline-primary" type="button" id="copy-ref-btn" onclick="navigator.clipboard.writeText(document.getElementById('referral-link').value); alert('Copied!')"><i class="bi bi-copy"></i></button>
-          </div>
-        </div>
-      </div>
-
-      <!-- Main Content / Farm Tracker -->
-      <div class="col-lg-8">
-        <!-- Tier & Marla Status -->
-        <div class="card border-0 shadow-sm p-4 mb-4" style="background: linear-gradient(135deg, #2b422a 0%, #1e2e1d 100%); color: white;">
-          <div class="d-flex justify-content-between align-items-center mb-4">
-            <div>
-              <span class="text-gold fw-bold text-uppercase letter-spacing-1">Current Tier</span>
-              <h2 class="display-4 font-primary mb-0" id="user-tier">Basic</h2>
-            </div>
-            <div id="tier-badge-container">
-              <!-- Animated SVG Badge will go here -->
-              <svg width="80" height="80" viewBox="0 0 100 100" class="tier-badge">
-                <circle cx="50" cy="50" r="45" fill="none" stroke="#d4af37" stroke-width="5" />
-                <path d="M50 20 L60 40 L80 40 L65 55 L70 75 L50 65 L30 75 L35 55 L20 40 L40 40 Z" fill="#d4af37">
-                  <animate attributeName="opacity" values="0.7;1;0.7" dur="2s" repeatCount="indefinite" />
-                </path>
-              </svg>
-            </div>
-          </div>
-          <hr class="border-secondary opacity-50">
-          <div class="row text-center mt-3">
-            <div class="col-6 border-end border-secondary">
-              <span class="d-block text-white-50 small text-uppercase">Approved Farm Size</span>
-              <span class="fs-4 fw-bold" id="approved-marla">0 Marlas</span>
-            </div>
-            <div class="col-6">
-              <span class="d-block text-white-50 small text-uppercase">Status</span>
-              <span class="fs-4 fw-bold text-warning" id="marla-status">Pending</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Gamified Farm Growth -->
-        <div class="card border-0 shadow-sm p-4 text-center">
-          <h3 class="h5 font-primary text-primary mb-3">Your Farm Growth</h3>
-          <p class="small text-muted mb-4">As your approved Marlas increase, your farm grows! Upgrade to Elite (81+ Marlas) to unlock the Wholesale Portal.</p>
-          
-          <div class="farm-growth-container position-relative d-flex justify-content-center align-items-end" style="height: 150px; border-bottom: 4px solid #8b5a2b; margin-bottom: 2rem;">
-            <!-- Advanced SVG Animation depending on tier -->
-            <svg viewBox="0 0 200 150" width="200" height="150" id="farm-svg">
-              <!-- Soil -->
-              <!-- The plant will be dynamically drawn by JS -->
-            </svg>
+          <div class="alert alert-danger d-none" id="login-error-alert">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i> <span id="error-message"></span>
           </div>
           
-          <div class="progress" style="height: 10px;">
-            <div class="progress-bar bg-success progress-bar-striped progress-bar-animated" id="tier-progress" role="progressbar" style="width: 0%"></div>
-          </div>
-          <div class="d-flex justify-content-between mt-2 small text-muted fw-bold">
-            <span>Basic (0)</span>
-            <span>Standard (21)</span>
-            <span>Elite (81+)</span>
-          </div>
+          <form id="login-form" novalidate>
+            <div class="mb-3">
+              <label for="email" class="form-label fw-bold text-dark">Email Address</label>
+              <input type="email" class="form-control" id="email" placeholder="name@example.com" required>
+            </div>
+
+            <div class="mb-4">
+              <label for="password" class="form-label fw-bold text-dark">Password</label>
+              <input type="password" class="form-control" id="password" placeholder="••••••••" required>
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100 py-3 text-uppercase font-primary" id="login-btn">Sign In</button>
+          </form>
         </div>
       </div>
     </div>
   </main>
+
   <!-- Footer -->
   <footer class="py-5 bg-forest text-white" style="border-top: 5px solid var(--color-secondary);">
     <div class="container">
@@ -243,7 +164,57 @@
   <!-- Scripts -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   <script src="js/main.js?v=96661f0d"></script>
-  <script src="js/fomo.js?v=492e122c"></script>
+
+  <script type="module">
+    import { auth } from "./js/firebase-init.js";
+    import { signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+    const form = document.getElementById("login-form");
+    const errorAlert = document.getElementById("login-error-alert");
+    const errorMessage = document.getElementById("error-message");
+    const submitBtn = document.getElementById("login-btn");
+
+    function showError(msg) {
+      errorMessage.textContent = msg;
+      errorAlert.classList.remove("d-none");
+    }
+
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+      errorAlert.classList.add("d-none");
+
+      if (!form.checkValidity()) {
+        form.classList.add("was-validated");
+        return;
+      }
+
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value;
+
+      submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Signing In...';
+      submitBtn.disabled = true;
+
+      signInWithEmailAndPassword(auth, email, password)
+        .then(async (userCredential) => {
+          const user = userCredential.user;
+          // Validate authorization check
+          if (user.email === "social.ahmro@gmail.com" || user.email.endsWith("@arbfarms.com")) {
+            window.location.href = "admin/dashboard.html";
+          } else {
+            await auth.signOut();
+            showError("Access Denied: This account is not authorized.");
+            submitBtn.innerHTML = "Sign In";
+            submitBtn.disabled = false;
+          }
+        })
+        .catch((error) => {
+          console.error("Login failed:", error);
+          showError("Invalid email or password. Please try again.");
+          submitBtn.innerHTML = "Sign In";
+          submitBtn.disabled = false;
+        });
+    });
+  </script>
 
   <!-- PWA Service Worker Registration -->
   <script>
@@ -257,6 +228,5 @@
       });
     }
   </script>
-  <script type="module" src="js/dashboard.js"></script>
 </body>
 </html>

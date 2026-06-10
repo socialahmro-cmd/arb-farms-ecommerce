@@ -58,6 +58,19 @@
   <!-- Main Content -->
   <main class="container py-4">
     
+    <!-- Tabs Navigation -->
+    <ul class="nav nav-tabs mb-4" id="adminTabs" role="tablist">
+      <li class="nav-item" role="presentation">
+        <button class="nav-link active font-primary" id="orders-tab" data-bs-toggle="tab" data-bs-target="#orders-pane" type="button" role="tab">Order Management</button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link font-primary" id="users-tab" data-bs-toggle="tab" data-bs-target="#users-pane" type="button" role="tab">User Management</button>
+      </li>
+    </ul>
+
+    <div class="tab-content" id="adminTabsContent">
+      <!-- Orders Tab -->
+      <div class="tab-pane fade show active" id="orders-pane" role="tabpanel">
     <!-- Analytics Header Cards -->
     <div class="row g-3 mb-4">
       <div class="col-6 col-md-4 col-lg-2">
@@ -166,15 +179,59 @@
       </div>
     </div>
 
-  </main>
+      <!-- Users Tab -->
+      <div class="tab-pane fade" id="users-pane" role="tabpanel">
+        
+        <div class="admin-card p-4">
+          <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-3">
+            <h2 class="h5 font-primary mb-0 text-dark d-flex align-items-center gap-2">
+              Customer Loyalty Management
+              <span class="badge bg-primary py-1 px-2 small" id="users-count-badge">0</span>
+            </h2>
+            
+            <div class="d-flex align-items-center gap-2">
+              <input type="text" id="users-search-input" class="form-control form-control-sm border-0 shadow-sm" placeholder="Search users by name, email or phone..." style="width: 250px;">
+            </div>
+          </div>
+
+          <div class="mb-3 d-flex gap-2">
+            <input type="file" id="csv-upload" accept=".csv" class="form-control form-control-sm" style="max-width: 300px;">
+            <button class="btn btn-sm btn-primary" id="upload-csv-btn"><i class="bi bi-upload me-1"></i> Bulk Upload CSV</button>
+            <a href="../admin_sample_users_import.csv" class="btn btn-sm btn-outline-secondary" download><i class="bi bi-download me-1"></i> Sample CSV</a>
+          </div>
+
+          <div class="table-responsive">
+            <table class="table align-middle table-hover text-dark">
+              <thead class="table-light">
+                <tr>
+                  <th scope="col" style="font-size:0.8rem; text-transform:uppercase;">Name</th>
+                  <th scope="col" style="font-size:0.8rem; text-transform:uppercase;">Email</th>
+                  <th scope="col" style="font-size:0.8rem; text-transform:uppercase;">Phone</th>
+                  <th scope="col" style="font-size:0.8rem; text-transform:uppercase;">Role</th>
+                  <th scope="col" style="font-size:0.8rem; text-transform:uppercase;">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="users-table-body">
+                <tr>
+                  <td colspan="5" class="text-center py-5 text-muted">
+                    <div class="spinner-border spinner-border-sm me-2 text-primary" role="status"></div> Loading live users feed...
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </div>
+    </div>
 
   <!-- Scripts -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
-  <script type="module">
+    <script type="module">
     import { auth, db } from "../js/firebase-init.js";
-    import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-    import { collection, query, orderBy, onSnapshot, doc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { onAuthStateChanged, signOut, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    import { collection, query, orderBy, onSnapshot, doc, updateDoc, deleteDoc, setDoc, getDocs, where } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
     const userDisplay = document.getElementById("user-email-display");
     const tableBody = document.getElementById("orders-table-body");
@@ -205,18 +262,19 @@
         if (user.email === "social.ahmro@gmail.com" || user.email.endsWith("@arbfarms.com")) {
           userDisplay.textContent = user.email;
           initializeDashboardFeed();
+          initializeUsersFeed();
         } else {
           signOut(auth).then(() => {
-            window.location.href = "../account.html";
+            window.location.href = "../admin/login.html";
           });
         }
       } else {
-        window.location.href = "../account.html";
+        window.location.href = "../admin/login.html";
       }
     });
 
     logoutBtn.addEventListener("click", () => {
-      signOut(auth).then(() => window.location.href = "../account.html");
+      signOut(auth).then(() => window.location.href = "../admin/login.html");
     });
 
     // Realtime Database Feed
@@ -443,7 +501,147 @@
         .catch(err => alert("Error deleting order: " + err.message));
       }
     };
-  </script>
+
+    // --- USER MANAGEMENT LOGIC ---
+
+    const usersTableBody = document.getElementById("users-table-body");
+    const usersCountBadge = document.getElementById("users-count-badge");
+    const usersSearchInput = document.getElementById("users-search-input");
+    const usersFilterTier = document.getElementById("users-filter-tier");
+    let allUsers = [];
+
+    function initializeUsersFeed() {
+      const usersRef = collection(db, "users");
+      const q = query(usersRef, orderBy("createdAt", "desc"));
+
+      onSnapshot(q, (snapshot) => {
+        allUsers = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        renderUsersTable();
+      }, (err) => {
+        console.warn("Firestore users query failed:", err);
+        const fallbackQ = query(usersRef);
+        onSnapshot(fallbackQ, (snapshot) => {
+          allUsers = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+          renderUsersTable();
+        });
+      });
+    }
+
+    function renderUsersTable() {
+      const searchTerm = usersSearchInput.value.toLowerCase().trim();
+      let filteredUsers = allUsers.filter(user => {
+        let match = true;
+        if (match && searchTerm) {
+          const text = `${user.name} ${user.email} ${user.phone}`.toLowerCase();
+          match = text.includes(searchTerm);
+        }
+        return match;
+      });
+
+      usersCountBadge.textContent = filteredUsers.length;
+
+      if (filteredUsers.length === 0) {
+        usersTableBody.innerHTML = `<tr><td colspan="5" class="text-center py-5 text-muted">No users found.</td></tr>`;
+        return;
+      }
+
+      usersTableBody.innerHTML = filteredUsers.map(user => {
+        return `
+          <tr>
+            <td class="fw-bold">${user.name || 'N/A'}</td>
+            <td>${user.email}</td>
+            <td>${user.phone || 'N/A'}</td>
+            <td>
+              <select class="form-select form-select-sm shadow-sm border-0 fw-bold ${user.role === 'admin' ? 'bg-primary text-white' : 'bg-light'}" style="width:90px;" onchange="window.updateUserRole('${user.id}', this.value)">
+                <option value="client" ${user.role === 'client' || !user.role ? 'selected' : ''}>Client</option>
+                <option value="admin" ${user.role === 'admin' ? 'selected' : ''}>Admin</option>
+              </select>
+            </td>
+            <td>
+              <div class="dropdown">
+                <button class="btn btn-sm btn-light" type="button" data-bs-toggle="dropdown"><i class="bi bi-three-dots-vertical"></i></button>
+                <ul class="dropdown-menu shadow-sm dropdown-menu-end">
+                  <li><a class="dropdown-item small text-danger" href="#" onclick="window.deleteUser('${user.id}')"><i class="bi bi-trash me-2"></i>Delete</a></li>
+                </ul>
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join("");
+    }
+
+    usersSearchInput.addEventListener("input", renderUsersTable);
+
+    window.updateUserRole = async function(userId, newRole) {
+      const userRef = doc(db, "users", userId);
+      try {
+        await updateDoc(userRef, { role: newRole });
+        console.log("User role updated.");
+      } catch (err) {
+        alert("Error updating user role: " + err.message);
+      }
+    };
+
+    window.deleteUser = async function(userId) {
+      if(confirm("Are you sure you want to permanently delete this user from Firestore? (Auth deletion requires admin SDK)")) {
+        try {
+          await deleteDoc(doc(db, "users", userId));
+          console.log("User deleted.");
+        } catch (err) {
+          alert("Error deleting user: " + err.message);
+        }
+      }
+    };
+
+    // CSV Bulk Upload Logic
+    document.getElementById("upload-csv-btn").addEventListener("click", () => {
+      const fileInput = document.getElementById("csv-upload");
+      if (!fileInput.files.length) {
+        alert("Please select a CSV file.");
+        return;
+      }
+      const file = fileInput.files[0];
+      const reader = new FileReader();
+      
+      reader.onload = async function(e) {
+        const text = e.target.result;
+        const rows = text.split("\\n").map(r => r.split(","));
+        
+        // Assume first row is header: Name,Email,Phone,LandSizeMarla
+        let successCount = 0;
+        let failCount = 0;
+        
+        for (let i = 1; i < rows.length; i++) {
+          const row = rows[i];
+          if (row.length < 4) continue;
+          
+          const name = row[0].trim();
+          const email = row[1].trim();
+          const phone = row[2].trim();
+          const marlas = parseInt(row[3].trim(), 10) || 0;
+          
+          if (!email) continue;
+          
+          try {
+            // Check if user exists in Firestore
+            const q = query(collection(db, "users"), where("email", "==", email));
+            const snapshot = await getDocs(q);
+            
+            if (snapshot.empty) {
+              // Create user in Auth using a temporary Firebase app or backend.
+              // Note: createUserWithEmailAndPassword signs in the user!
+              // In client-side, we shouldn't use it for bulk creation, but for this demo:
+              alert("Client-side bulk upload not fully supported for Auth creation. In production, use a Cloud Function.");
+              break;
+            }
+          } catch (err) {
+            console.error(err);
+            failCount++;
+          }
+        }
+      };
+      reader.readAsText(file);
+    });
 
   <!-- PWA Service Worker Registration -->
   <script>
