@@ -166,8 +166,8 @@ const productsDb = [
     weight: "5 Kg Box",
     price: 2500,
     category: "dairy-organic",
-    image: "catalog/White Chaunsa.svg",
-    hoverImage: "catalog/White Chaunsa.svg",
+    image: "catalog/White-Chaunsa.svg",
+    hoverImage: "catalog/White-Chaunsa.svg",
     tags: ["mango", "chaunsa", "white chaunsa", "fruit", "fresh", "organic", "pre-booking"]
   },
   {
@@ -177,8 +177,8 @@ const productsDb = [
     weight: "9 Kg Box",
     price: 3800,
     category: "dairy-organic",
-    image: "catalog/White Chaunsa.svg",
-    hoverImage: "catalog/White Chaunsa.svg",
+    image: "catalog/White-Chaunsa.svg",
+    hoverImage: "catalog/White-Chaunsa.svg",
     tags: ["mango", "chaunsa", "white chaunsa", "fruit", "fresh", "organic", "pre-booking"]
   },
   {
@@ -188,8 +188,8 @@ const productsDb = [
     weight: "5 Kg Box",
     price: 1900,
     category: "dairy-organic",
-    image: "catalog/Sindhri Mango.svg",
-    hoverImage: "catalog/Sindhri Mango.svg",
+    image: "catalog/Sindhri-Mango.svg",
+    hoverImage: "catalog/Sindhri-Mango.svg",
     tags: ["mango", "sindhri", "fruit", "fresh", "organic", "pre-booking"]
   },
   {
@@ -199,8 +199,8 @@ const productsDb = [
     weight: "9 Kg Box",
     price: 3100,
     category: "dairy-organic",
-    image: "catalog/Sindhri Mango.svg",
-    hoverImage: "catalog/Sindhri Mango.svg",
+    image: "catalog/Sindhri-Mango.svg",
+    hoverImage: "catalog/Sindhri-Mango.svg",
     tags: ["mango", "sindhri", "fruit", "fresh", "organic", "pre-booking"]
   },
   {
@@ -210,8 +210,8 @@ const productsDb = [
     weight: "5 Kg Box",
     price: 2200,
     category: "dairy-organic",
-    image: "catalog/Dusehri Mango.svg",
-    hoverImage: "catalog/Dusehri Mango.svg",
+    image: "catalog/Dusehri-Mango.svg",
+    hoverImage: "catalog/Dusehri-Mango.svg",
     tags: ["mango", "dusehri", "fruit", "fresh", "organic", "pre-booking"]
   },
   {
@@ -221,8 +221,8 @@ const productsDb = [
     weight: "9 Kg Box",
     price: 3400,
     category: "dairy-organic",
-    image: "catalog/Dusehri Mango.svg",
-    hoverImage: "catalog/Dusehri Mango.svg",
+    image: "catalog/Dusehri-Mango.svg",
+    hoverImage: "catalog/Dusehri-Mango.svg",
     tags: ["mango", "dusehri", "fruit", "fresh", "organic", "pre-booking"]
   },
   {
@@ -232,8 +232,8 @@ const productsDb = [
     weight: "5 Kg Box",
     price: 2700,
     category: "dairy-organic",
-    image: "catalog/Anwar Ratol.svg",
-    hoverImage: "catalog/Anwar Ratol.svg",
+    image: "catalog/Anwar-Ratol.svg",
+    hoverImage: "catalog/Anwar-Ratol.svg",
     tags: ["mango", "anwar ratol", "fruit", "fresh", "organic", "pre-booking"]
   },
   {
@@ -243,8 +243,8 @@ const productsDb = [
     weight: "9 Kg Box",
     price: 4100,
     category: "dairy-organic",
-    image: "catalog/Anwar Ratol.svg",
-    hoverImage: "catalog/Anwar Ratol.svg",
+    image: "catalog/Anwar-Ratol.svg",
+    hoverImage: "catalog/Anwar-Ratol.svg",
     tags: ["mango", "anwar ratol", "fruit", "fresh", "organic", "pre-booking"]
   },
 
@@ -594,7 +594,7 @@ const bundlesDb = [
     items: ["ogn-069-anwar-ratol-5kg", "ogn-068-dusehri-5kg", "ogn-004-milk"],
     discountRate: 0.05,
     cityRestriction: "multan",
-    image: "catalog/Anwar Ratol.svg",
+    image: "catalog/Anwar-Ratol.svg",
     badge: "Multan Exclusive"
   },
   {
