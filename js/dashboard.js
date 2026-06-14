@@ -2,14 +2,6 @@ import { auth, db } from "./firebase-init.js";
 import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 import { doc, getDoc, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-// Wraps a Firestore promise with a timeout so it can never hang forever
-function withTimeout(promise, ms = 8000) {
-  return Promise.race([
-    promise,
-    new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), ms))
-  ]);
-}
-
 document.addEventListener('DOMContentLoaded', () => {
   const logoutBtn = document.getElementById('logout-btn');
   if (logoutBtn) {
@@ -26,7 +18,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // ── Load user profile ──────────────────────────────────────────────────
     let userData = {};
     try {
-      const snap = await withTimeout(getDoc(doc(db, "users", user.uid)));
+      const snap = await getDoc(doc(db, "users", user.uid));
       if (snap.exists()) userData = snap.data();
     } catch (e) {
       console.warn("User doc fetch failed:", e.message);
@@ -58,19 +50,10 @@ document.addEventListener('DOMContentLoaded', () => {
     renderPlantSVG(effectiveMarla);
 
     // ── Load orders ────────────────────────────────────────────────────────
+    // Pass Firebase Auth user so we have email, uid, and stored phone all available
     await loadOrders(user, userData.phone || '');
   });
 });
-
-async function safeQuery(q) {
-  try {
-    const snap = await withTimeout(getDocs(q));
-    return snap.docs.map(d => ({ ...d.data(), id: d.id }));
-  } catch (e) {
-    console.warn("Query failed:", e.code || e.message);
-    return [];
-  }
-}
 
 async function loadOrders(user, storedPhone) {
   const container = document.getElementById('orders-container');
@@ -93,107 +76,106 @@ async function loadOrders(user, storedPhone) {
     });
   }
 
-  try {
-    // ── 1. Query by EMAIL (works for logged-in checkouts) ──────────────────
-    if (user.email) {
-      addOrders(await safeQuery(query(collection(db, 'orders'), where('email', '==', user.email))));
-      console.log(`After email query: ${merged.length} orders`);
-    }
-
-    // ── 2. Query by UID (works for logged-in checkouts) ───────────────────
-    addOrders(await safeQuery(query(collection(db, 'orders'), where('uid', '==', user.uid))));
-    console.log(`After uid query: ${merged.length} orders`);
-
-    // ── 3. Query by ALL phone variants from user profile ──────────────────
-    // storedPhone from Firestore users doc (e.g. "03001234567" or "3001234567")
-    const phones = phoneVariants(storedPhone);
-    console.log("Trying phone variants:", phones);
-
-    for (const field of ['phone', 'phoneAlt', 'phonePlus92']) {
-      for (const v of phones) {
-        addOrders(await safeQuery(query(collection(db, 'orders'), where(field, '==', v))));
-      }
-    }
-    console.log(`After phone queries: ${merged.length} orders`);
-
-    // ── 4. localStorage fallback (same device/browser guest orders) ────────
-    const localOrders = JSON.parse(localStorage.getItem('arb_all_orders') || '[]');
-    for (const lo of localOrders) {
-      if (!lo.orderNumber || seen.has(lo.orderNumber)) continue;
-      try {
-        const snap = await withTimeout(getDoc(doc(db, 'orders', lo.orderNumber)));
-        addOrders([snap.exists() ? { ...lo, ...snap.data(), id: snap.id } : lo]);
-      } catch (e) {
-        addOrders([lo]);
-      }
-    }
-    console.log(`Final order count: ${merged.length}`);
-
-  } finally {
-    // ── Always runs — spinner is always replaced ───────────────────────────
-    merged.sort((a, b) => new Date(b.orderDate || 0) - new Date(a.orderDate || 0));
-
-    if (badge) badge.textContent = `${merged.length} order${merged.length !== 1 ? 's' : ''}`;
-
-    if (merged.length === 0) {
-      container.innerHTML = `
-        <div class="text-center py-5 text-muted">
-          <i class="bi bi-bag-x" style="font-size:3rem;opacity:0.3;"></i>
-          <p class="mt-3 mb-2">No orders found.</p>
-          <a href="shop.html" class="btn btn-sm btn-primary mt-1">Start Shopping</a>
-        </div>`;
-      return;
-    }
-
-    const statusColors = {
-      'Awaiting Verification': ['warning',   'dark'],
-      'Awaiting Receipt':      ['secondary', 'white'],
-      'Processing':            ['info',      'dark'],
-      'Dispatched':            ['primary',   'white'],
-      'Delivered':             ['success',   'white'],
-      'Cancelled':             ['danger',    'white'],
-    };
-
-    container.innerHTML = merged.map(order => {
-      const [bg, txt] = statusColors[order.status] || ['secondary', 'white'];
-      const items = order.items || [];
-      const itemsHtml = items.length
-        ? items.map(i => `<span class="badge bg-light text-dark border me-1 mb-1">${i.name} ×${i.qty}</span>`).join('')
-        : '<span class="text-muted small">—</span>';
-      const receiptBadge = order.receiptUploaded
-        ? `<span class="badge bg-success-subtle text-success border border-success-subtle ms-2">Receipt ✓</span>`
-        : `<span class="badge bg-warning-subtle text-warning border border-warning-subtle ms-2">Receipt Pending</span>`;
-
-      return `
-        <div class="border rounded-3 p-3 mb-3 bg-white shadow-sm">
-          <div class="d-flex flex-wrap justify-content-between align-items-start gap-2 mb-2">
-            <div>
-              <span class="fw-bold text-dark" style="font-family:monospace">${order.orderNumber || '—'}</span>
-              ${receiptBadge}
-              <span class="text-muted small ms-2">${order.orderDate || ''}</span>
-            </div>
-            <span class="badge bg-${bg} text-${txt}">${order.status || 'Pending'}</span>
-          </div>
-          <div class="mb-2">${itemsHtml}</div>
-          <div class="d-flex flex-wrap gap-3 small text-muted border-top pt-2">
-            <span><i class="bi bi-geo-alt me-1"></i>${order.city || '—'}</span>
-            <span><i class="bi bi-credit-card me-1"></i>${order.paymentMethod || '—'}</span>
-            <span class="fw-bold text-dark ms-auto">Rs. ${(order.total || 0).toLocaleString()}</span>
-          </div>
-        </div>`;
-    }).join('');
+  // ── 1. Query Firestore by EMAIL (most reliable — Firebase Auth always has it) ──
+  if (user.email) {
+    try {
+      const snap = await getDocs(query(collection(db, 'orders'), where('email', '==', user.email)));
+      addOrders(snap.docs.map(d => ({ ...d.data(), id: d.id })));
+    } catch (e) { console.warn("Email query failed:", e.message); }
   }
+
+  // ── 2. Query Firestore by UID ──────────────────────────────────────────
+  try {
+    const snap = await getDocs(query(collection(db, 'orders'), where('userId', '==', user.uid)));
+    addOrders(snap.docs.map(d => ({ ...d.data(), id: d.id })));
+  } catch (e) { console.warn("UID query failed:", e.message); }
+
+  // ── 3. Query Firestore by phone variants ──────────────────────────────
+  const phones = phoneVariants(storedPhone);
+  for (const v of phones) {
+    try {
+      const snap = await getDocs(query(collection(db, 'orders'), where('phone', '==', v)));
+      addOrders(snap.docs.map(d => ({ ...d.data(), id: d.id })));
+    } catch (e) { /* silent */ }
+    try {
+      const snap = await getDocs(query(collection(db, 'orders'), where('phoneAlt', '==', v)));
+      addOrders(snap.docs.map(d => ({ ...d.data(), id: d.id })));
+    } catch (e) { /* phoneAlt may not exist on old orders */ }
+  }
+
+  // ── 4. localStorage orders — fetch live status from Firestore for each ──
+  const localOrders = JSON.parse(localStorage.getItem('arb_all_orders') || '[]');
+  for (const lo of localOrders) {
+    if (!lo.orderNumber) continue;
+    if (seen.has(lo.orderNumber)) continue; // already got it from Firestore
+    try {
+      const snap = await getDoc(doc(db, 'orders', lo.orderNumber));
+      addOrders([snap.exists() ? { ...lo, ...snap.data(), id: snap.id } : lo]);
+    } catch (e) {
+      addOrders([lo]); // use local copy if Firestore unreachable
+    }
+  }
+
+  // ── Sort newest first ──────────────────────────────────────────────────
+  merged.sort((a, b) => new Date(b.orderDate || 0) - new Date(a.orderDate || 0));
+
+  if (badge) badge.textContent = `${merged.length} order${merged.length !== 1 ? 's' : ''}`;
+
+  if (merged.length === 0) {
+    container.innerHTML = `
+      <div class="text-center py-5 text-muted">
+        <i class="bi bi-bag-x" style="font-size:3rem;opacity:0.3;"></i>
+        <p class="mt-3 mb-2">No orders found.</p>
+        <a href="shop.html" class="btn btn-sm btn-primary mt-1">Start Shopping</a>
+      </div>`;
+    return;
+  }
+
+  const statusColors = {
+    'Awaiting Verification': ['warning',   'dark'],
+    'Awaiting Receipt':      ['secondary', 'white'],
+    'Processing':            ['info',      'dark'],
+    'Dispatched':            ['primary',   'white'],
+    'Delivered':             ['success',   'white'],
+    'Cancelled':             ['danger',    'white'],
+  };
+
+  container.innerHTML = merged.map(order => {
+    const [bg, txt] = statusColors[order.status] || ['secondary', 'white'];
+    const items = order.items || [];
+    const itemsHtml = items.length
+      ? items.map(i => `<span class="badge bg-light text-dark border me-1 mb-1">${i.name} ×${i.qty}</span>`).join('')
+      : '<span class="text-muted small">—</span>';
+    const receiptBadge = order.receiptUploaded
+      ? `<span class="badge bg-success-subtle text-success border border-success-subtle ms-2">Receipt ✓</span>`
+      : `<span class="badge bg-warning-subtle text-warning border border-warning-subtle ms-2">Receipt Pending</span>`;
+
+    return `
+      <div class="border rounded-3 p-3 mb-3 bg-white shadow-sm">
+        <div class="d-flex flex-wrap justify-content-between align-items-start gap-2 mb-2">
+          <div>
+            <span class="fw-bold text-dark" style="font-family:monospace">${order.orderNumber || '—'}</span>
+            ${receiptBadge}
+            <span class="text-muted small ms-2">${order.orderDate || ''}</span>
+          </div>
+          <span class="badge bg-${bg} text-${txt}">${order.status || 'Pending'}</span>
+        </div>
+        <div class="mb-2">${itemsHtml}</div>
+        <div class="d-flex flex-wrap gap-3 small text-muted border-top pt-2">
+          <span><i class="bi bi-geo-alt me-1"></i>${order.city || '—'}</span>
+          <span><i class="bi bi-credit-card me-1"></i>${order.paymentMethod || '—'}</span>
+          <span class="fw-bold text-dark ms-auto">Rs. ${(order.total || 0).toLocaleString()}</span>
+        </div>
+      </div>`;
+  }).join('');
 }
 
 function phoneVariants(phone) {
   if (!phone) return [];
-  // Normalize: strip spaces, strip +92 prefix
-  const cleaned = phone.replace(/\s+/g, '').replace(/^\+92/, '0');
-  // Ensure leading zero
-  const withZero    = cleaned.startsWith('0') ? cleaned : '0' + cleaned;  // 03001234567
-  const withoutZero = withZero.slice(1);                                    // 3001234567
-  const withPlus92  = '+92' + withoutZero;                                  // +923001234567
-  return [...new Set([withZero, withoutZero, withPlus92])];
+  const raw = phone.replace(/\s+/g, '').replace(/^\+92/, '0');
+  const w  = raw.startsWith('0') ? raw : '0' + raw;
+  const wo = w.slice(1);
+  return [...new Set([w, wo, '+92' + wo])];
 }
 
 function renderPlantSVG(marla) {
