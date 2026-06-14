@@ -213,41 +213,129 @@ async function loadOrders(user, userData) {
   }
 
   const STATUS = {
-    'Awaiting Verification': ['warning',   'dark'],
-    'Awaiting Receipt':      ['secondary', 'white'],
-    'Processing':            ['info',      'dark'],
-    'Dispatched':            ['primary',   'white'],
-    'Delivered':             ['success',   'white'],
-    'Cancelled':             ['danger',    'white'],
+    'Awaiting Verification': { bg: 'warning',   txt: 'dark',  icon: 'bi-clock-history',    step: 1 },
+    'Awaiting Receipt':      { bg: 'secondary', txt: 'white', icon: 'bi-receipt',           step: 0 },
+    'Processing':            { bg: 'info',      txt: 'dark',  icon: 'bi-gear-fill',         step: 2 },
+    'Dispatched':            { bg: 'primary',   txt: 'white', icon: 'bi-truck',             step: 3 },
+    'Delivered':             { bg: 'success',   txt: 'white', icon: 'bi-check-circle-fill', step: 4 },
+    'Cancelled':             { bg: 'danger',    txt: 'white', icon: 'bi-x-circle-fill',     step: -1 },
   };
 
+  const STEPS = ['Awaiting Verification', 'Processing', 'Dispatched', 'Delivered'];
+
+  function renderTimeline(status) {
+    if (status === 'Cancelled') {
+      return `<div class="alert alert-danger py-2 px-3 small mb-1"><i class="bi bi-x-circle-fill me-1"></i>This order was cancelled.</div>`;
+    }
+    const current = (STATUS[status] || {}).step ?? 1;
+    return `<div class="d-flex align-items-start mt-2 mb-1">${
+      STEPS.map((s, i) => {
+        const stepNum = i + 1;
+        const done    = current >= stepNum;
+        const active  = current === stepNum;
+        const cfg     = STATUS[s] || {};
+        return `<div class="d-flex flex-column align-items-center flex-fill">
+          <div class="d-flex align-items-center w-100">
+            ${i > 0 ? `<div style="height:2px;flex:1;background:${done?'#4caf50':'#dee2e6'};"></div>` : ''}
+            <div style="width:26px;height:26px;flex-shrink:0;border-radius:50%;
+                        background:${done?'#4caf50':'#f1f1f1'};
+                        border:2px solid ${done?'#4caf50':'#ccc'};
+                        ${active?'box-shadow:0 0 0 3px rgba(76,175,80,0.2);':''}
+                        display:flex;align-items:center;justify-content:center;">
+              <i class="bi ${done?'bi-check-lg':cfg.icon||'bi-circle'}" style="font-size:0.6rem;color:${done?'#fff':'#aaa'};"></i>
+            </div>
+            ${i < STEPS.length-1 ? `<div style="height:2px;flex:1;background:${current>stepNum?'#4caf50':'#dee2e6'};"></div>` : ''}
+          </div>
+          <span style="font-size:0.58rem;color:${done?'#2e7d32':'#999'};font-weight:${active?'700':'500'};text-align:center;margin-top:3px;line-height:1.2;">${s.replace('Awaiting ','')}</span>
+        </div>`;
+      }).join('')
+    }</div>`;
+  }
+
   container.innerHTML = merged.map(order => {
-    const [bg, txt] = STATUS[order.status] || ['secondary', 'white'];
+    const st  = STATUS[order.status] || { bg: 'secondary', txt: 'white', icon: 'bi-bag', step: 0 };
     const items = order.items || [];
-    const itemsHtml = items.length
-      ? items.map(i => `<span class="badge bg-light text-dark border me-1 mb-1">${i.name} ×${i.qty}</span>`).join('')
-      : '<span class="text-muted small">—</span>';
-    const receiptBadge = order.receiptUploaded
-      ? `<span class="badge bg-success-subtle text-success border border-success-subtle ms-2">Receipt ✓</span>`
-      : `<span class="badge bg-warning-subtle text-warning border border-warning-subtle ms-2">Receipt Pending</span>`;
+    const payMethod = (order.paymentMethod || '').replace('100% Advance ', '');
+    const cardId = `ord-${(order.orderNumber||'x').replace(/\W/g,'')}`;
+
+    const itemsHtml = items.length ? items.map(i => `
+      <div class="d-flex align-items-center gap-2 py-2 border-bottom">
+        <img src="${i.image||''}" alt="${i.name||''}"
+             style="width:42px;height:42px;object-fit:contain;background:#f8f9fa;border-radius:6px;padding:3px;flex-shrink:0;"
+             onerror="this.style.display='none'">
+        <div class="flex-grow-1 min-w-0">
+          <div class="fw-semibold text-truncate" style="font-size:0.83rem;">${i.name||'—'}</div>
+          <div class="text-muted" style="font-size:0.73rem;">Qty: ${i.qty||1}${i.weight?' · '+i.weight+' kg':''}</div>
+        </div>
+        <div class="fw-bold text-primary text-nowrap" style="font-size:0.83rem;">Rs. ${((i.price||0)*(i.qty||1)).toLocaleString()}</div>
+      </div>`).join('')
+    : `<p class="text-muted small py-2 mb-0">No item details.</p>`;
+
+    const receiptHtml = order.receiptUploaded
+      ? `<span class="badge bg-success-subtle text-success border border-success-subtle" style="font-size:0.68rem;"><i class="bi bi-check-circle me-1"></i>Receipt ✓</span>`
+      : `<span class="badge bg-warning-subtle text-warning border border-warning-subtle" style="font-size:0.68rem;"><i class="bi bi-exclamation-circle me-1"></i>Receipt Pending</span>`;
 
     return `
-      <div class="border rounded-3 p-3 mb-3 bg-white shadow-sm">
-        <div class="d-flex flex-wrap justify-content-between align-items-start gap-2 mb-2">
-          <div>
-            <span class="fw-bold text-dark" style="font-family:monospace">${order.orderNumber || '—'}</span>
-            ${receiptBadge}
-            <span class="text-muted small ms-2">${order.orderDate || ''}</span>
+    <div class="border rounded-3 mb-3 bg-white shadow-sm overflow-hidden">
+
+      <!-- Header -->
+      <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 px-3 py-2" style="background:#f8f9fa;border-bottom:1px solid #eee;">
+        <div class="d-flex align-items-center gap-2 flex-wrap">
+          <span class="fw-bold" style="font-family:monospace;font-size:0.88rem;">${order.orderNumber||'—'}</span>
+          ${receiptHtml}
+        </div>
+        <div class="d-flex align-items-center gap-2">
+          <span class="text-muted" style="font-size:0.75rem;"><i class="bi bi-calendar3 me-1"></i>${order.orderDate||''}</span>
+          <span class="badge bg-${st.bg} text-${st.txt}" style="font-size:0.72rem;"><i class="bi ${st.icon} me-1"></i>${order.status||'Pending'}</span>
+        </div>
+      </div>
+
+      <!-- Timeline -->
+      <div class="px-3 pt-2 pb-0">${renderTimeline(order.status)}</div>
+
+      <!-- Items -->
+      <div class="px-3 pt-3">
+        <div class="text-uppercase text-muted fw-bold mb-1" style="font-size:0.65rem;letter-spacing:.06em;"><i class="bi bi-bag me-1"></i>Items</div>
+        ${itemsHtml}
+      </div>
+
+      <!-- Details toggle -->
+      <div class="px-3 py-2">
+        <button class="btn btn-link btn-sm p-0 text-muted text-decoration-none"
+                style="font-size:0.76rem;"
+                onclick="const d=document.getElementById('${cardId}');const i=this.querySelector('i');d.classList.toggle('d-none');i.className=d.classList.contains('d-none')?'bi bi-chevron-down ms-1':'bi bi-chevron-up ms-1';">
+          Show order details <i class="bi bi-chevron-down ms-1"></i>
+        </button>
+        <div id="${cardId}" class="d-none mt-2 row g-2">
+          <div class="col-sm-6">
+            <div class="rounded p-2 h-100" style="background:#f8f9fa;font-size:0.78rem;">
+              <div class="fw-bold text-muted mb-1"><i class="bi bi-geo-alt me-1"></i>Delivery</div>
+              <div class="text-dark fw-semibold">${order.customerName||''}</div>
+              <div class="text-muted">${order.address||'—'}</div>
+              <div class="text-muted text-capitalize">${order.city||''}</div>
+              ${order.phone?`<div class="text-muted mt-1"><i class="bi bi-telephone me-1"></i>${order.phone}</div>`:''}
+            </div>
           </div>
-          <span class="badge bg-${bg} text-${txt}">${order.status || 'Pending'}</span>
+          <div class="col-sm-6">
+            <div class="rounded p-2 h-100" style="background:#f8f9fa;font-size:0.78rem;">
+              <div class="fw-bold text-muted mb-1"><i class="bi bi-receipt me-1"></i>Payment</div>
+              <div class="d-flex justify-content-between"><span class="text-muted">Subtotal</span><span>Rs. ${(order.subtotal||0).toLocaleString()}</span></div>
+              <div class="d-flex justify-content-between"><span class="text-muted">Shipping</span><span>${order.shipping===0?'<span class="text-success fw-bold">FREE</span>':'Rs. '+(order.shipping||0).toLocaleString()}</span></div>
+              <div class="d-flex justify-content-between fw-bold border-top mt-1 pt-1"><span>Total</span><span class="text-primary">Rs. ${(order.total||0).toLocaleString()}</span></div>
+              <div class="text-muted mt-1"><i class="bi bi-credit-card me-1"></i>${payMethod}</div>
+            </div>
+          </div>
+          ${order.receiptUrl && order.receiptUrl !== 'manual-whatsapp' ? `
+          <div class="col-12">
+            <a href="${order.receiptUrl}" target="_blank" rel="noopener"
+               class="btn btn-sm btn-outline-success w-100" style="font-size:0.78rem;">
+              <i class="bi bi-image me-1"></i>View Payment Receipt
+            </a>
+          </div>` : ''}
         </div>
-        <div class="mb-2">${itemsHtml}</div>
-        <div class="d-flex flex-wrap gap-3 small text-muted border-top pt-2">
-          <span><i class="bi bi-geo-alt me-1"></i>${order.city || '—'}</span>
-          <span><i class="bi bi-credit-card me-1"></i>${order.paymentMethod || '—'}</span>
-          <span class="fw-bold text-dark ms-auto">Rs. ${(order.total || 0).toLocaleString()}</span>
-        </div>
-      </div>`;
+      </div>
+
+    </div>`;
   }).join('');
 }
 
