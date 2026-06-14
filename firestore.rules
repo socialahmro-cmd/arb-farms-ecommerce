@@ -12,11 +12,12 @@ service cloud.firestore {
         );
     }
 
-    // Orders: anyone can create (guest checkout), users read their own, admins read all
+    // Orders: anyone can create (guest checkout), users can list/read their own, admins read all
     match /orders/{orderId} {
       allow create: if true;
-      allow read: if request.auth != null && 
-                     resource.data.userId == request.auth.uid;
+      allow list: if request.auth != null;
+      allow get: if request.auth != null &&
+                    resource.data.userId == request.auth.uid;
       allow read, update, delete: if isAdmin();
     }
 
