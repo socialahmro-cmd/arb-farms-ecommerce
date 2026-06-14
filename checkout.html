@@ -354,17 +354,34 @@
         
         let wheatWeight = 0;
         let nonWheatWeight = 0;
+        let mangoWeight = 0;
 
         cart.forEach(item => {
           const itemWeight = parseItemWeight(item) * item.qty;
           const itemId = (item.id || '').toLowerCase();
           const itemName = (item.name || '').toLowerCase();
-          const isWheat = itemId.includes('wheat') || 
+
+          const isMango = itemId.includes('ogn-066') ||
+                          itemId.includes('ogn-067') ||
+                          itemId.includes('ogn-068') ||
+                          itemId.includes('ogn-069') ||
+                          itemId.includes('ogn-065') ||
+                          itemName.includes('mango') ||
+                          itemName.includes('chaunsa') ||
+                          itemName.includes('sindhri') ||
+                          itemName.includes('dusehri') ||
+                          itemName.includes('anwar ratol');
+
+          const isWheat = !isMango && (
+                          itemId.includes('wheat') || 
                           itemId.includes('ogn-018') ||
                           itemName.includes('wheat') || 
                           itemName.includes('gandum') ||
-                          (item.category && item.category === 'agri-sowing-seed');
-          if (isWheat) {
+                          (item.category && item.category === 'agri-sowing-seed'));
+
+          if (isMango) {
+            mangoWeight += itemWeight;
+          } else if (isWheat) {
             wheatWeight += itemWeight;
           } else {
             nonWheatWeight += itemWeight;
@@ -373,6 +390,11 @@
 
         let fee = 0;
         let tiers = [];
+
+        // 0. Mangoes: FREE shipping
+        if (mangoWeight > 0) {
+          tiers.push(`Mangoes (${mangoWeight.toFixed(1)} kg) — FREE Delivery`);
+        }
 
         // 1. Calculate Wheat Shipping
         if (wheatWeight > 0) {
