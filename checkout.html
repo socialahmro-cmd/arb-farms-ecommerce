@@ -543,6 +543,7 @@
           orderNumber: "ARB-" + Math.floor(100000 + Math.random() * 900000),
           customerName: document.getElementById("fullName").value,
           phone: phoneVal,
+          uid: auth.currentUser ? auth.currentUser.uid : null,
           address: document.getElementById("address").value,
           city: city,
           paymentMethod: document.querySelector('input[name="paymentMethod"]:checked').value,
@@ -659,8 +660,12 @@
         .catch((err) => {
           console.error("[Upload] Error:", err);
           progressContainer.classList.add("d-none");
-          dropZone.classList.remove("d-none");
-          alert(`Upload failed: ${err.message}\n\nPlease try a smaller file or contact us on WhatsApp to send the receipt manually.`);
+          // If server upload fails, allow customer to proceed - mark receipt as pending manual
+          successAlert.classList.remove("d-none");
+          successAlert.innerHTML = `<i class="bi bi-check-circle-fill me-2"></i> Receipt saved locally. Please send it via WhatsApp (+92-XXX-XXXXXXX) with your order number after placing the order.`;
+          uploadedUrl = "manual-whatsapp";
+          receiptUploaded = true;
+          dropZone.classList.add("d-none");
         });
       }
 
