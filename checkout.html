@@ -614,8 +614,17 @@
         const wantsAccount = createAccCb && createAccCb.checked;
         let firebaseUserId = null;
 
-        // Check if already logged in
-        const currentUser = auth.currentUser;
+        // Attach userId to order if available
+        // auth.currentUser can be null on page load due to async Firebase init
+        // so we resolve the current user properly before saving
+        const resolveCurrentUser = () => new Promise((resolve) => {
+          const unsubscribe = auth.onAuthStateChanged((user) => {
+            unsubscribe();
+            resolve(user);
+          });
+        });
+
+        const currentUser = await resolveCurrentUser();
         if (currentUser) {
           firebaseUserId = currentUser.uid;
         }
@@ -780,7 +789,7 @@
         });
       }
 
-      // Pre-fill email if already logged in
+      // Pre-check auth on load — hide create-account if already logged in
       onAuthStateChanged(auth, (user) => {
         if (user) {
           const section = document.getElementById('create-account-section');
