@@ -58,6 +58,11 @@
   <!-- Main Content -->
   <main class="container py-4">
     
+    <!-- Debug Message (remove after working) -->
+    <div id="debug-status" class="alert alert-info mb-3" style="font-size: 12px;">
+      <i class="bi bi-info-circle"></i> <span id="debug-text">Initializing...</span>
+    </div>
+    
     <!-- Tabs Navigation -->
     <ul class="nav nav-tabs mb-4" id="adminTabs" role="tablist">
       <li class="nav-item" role="presentation">
@@ -172,7 +177,7 @@
             <tr>
               <td colspan="9" class="text-center py-5 text-muted">
                 <div class="spinner-border spinner-border-sm me-2 text-primary" role="status"></div> Loading live order feed...
-              </td>
+               </td>
             </tr>
           </tbody>
         </table>
@@ -215,7 +220,7 @@
                 <tr>
                   <td colspan="5" class="text-center py-5 text-muted">
                     <div class="spinner-border spinner-border-sm me-2 text-primary" role="status"></div> Loading live users feed...
-                  </td>
+                   </td>
                 </tr>
               </tbody>
             </table>
@@ -224,15 +229,16 @@
 
       </div>
     </div>
+  </main>
 
-  <!-- Scripts -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
-    <script type="module">
+  <script type="module">
     import { auth, db } from "../js/firebase-init.js";
-    import { onAuthStateChanged, signOut, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
     import { collection, query, orderBy, onSnapshot, doc, updateDoc, deleteDoc, setDoc, getDocs, where } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
+    const debugText = document.getElementById("debug-text");
     const userDisplay = document.getElementById("user-email-display");
     const tableBody = document.getElementById("orders-table-body");
     const logoutBtn = document.getElementById("logout-btn");
@@ -256,33 +262,48 @@
 
     let allOrders = [];
 
+    function updateDebug(msg, isError = false) {
+      debugText.textContent = msg;
+      console.log(msg);
+      if (isError) {
+        document.getElementById("debug-status").className = "alert alert-danger mb-3";
+      }
+    }
+
     // Auth State Route Guard
-    onAuthStateChanged(auth, (user) => {
+    onAuthStateChanged(auth, async (user) => {
+      updateDebug(`Auth: ${user ? user.email : 'No user'}`);
+      
       if (user) {
         if (user.email === "social.ahmro@gmail.com" || user.email.endsWith("@arbfarms.com")) {
           userDisplay.textContent = user.email;
+          updateDebug(`Admin verified: ${user.email}. Loading Firestore data...`);
           initializeDashboardFeed();
           initializeUsersFeed();
         } else {
-          signOut(auth).then(() => {
-            window.location.href = "../admin/login.html";
-          });
+          updateDebug(`Not admin: ${user.email}. Redirecting...`, true);
+          await signOut(auth);
+          window.location.href = "login.html";
         }
       } else {
-        window.location.href = "../admin/login.html";
+        updateDebug("No user, redirecting to login...", true);
+        window.location.href = "login.html";
       }
     });
 
     logoutBtn.addEventListener("click", () => {
-      signOut(auth).then(() => window.location.href = "../admin/login.html");
+      signOut(auth).then(() => window.location.href = "login.html");
     });
 
     // Realtime Database Feed
     function initializeDashboardFeed() {
+      updateDebug("Connecting to 'orders' collection...");
       const ordersRef = collection(db, "orders");
       const q = query(ordersRef, orderBy("orderDate", "desc"));
 
       onSnapshot(q, (snapshot) => {
+        updateDebug(`✅ Orders loaded: ${snapshot.size} orders found`);
+        
         if (snapshot.empty) {
           allOrders = [];
           renderTable();
@@ -291,21 +312,9 @@
         allOrders = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
         renderTable();
       }, (err) => {
-        console.warn("Firestore ordered snapshot query failed. Trying fallback query without orderBy. Error details:", err);
-        const fallbackQ = query(ordersRef);
-        onSnapshot(fallbackQ, (snapshot) => {
-          allOrders = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-          allOrders.sort((a, b) => {
-            const dateA = Date.parse(a.orderDate || 0) || 0;
-            const dateB = Date.parse(b.orderDate || 0) || 0;
-            if (dateA !== dateB) return dateB - dateA;
-            return (b.orderNumber || '').localeCompare(a.orderNumber || '');
-          });
-          renderTable();
-        }, (fallbackErr) => {
-          console.error("Firestore fallback snapshot query also failed:", fallbackErr);
-          tableBody.innerHTML = `<tr><td colspan="9" class="text-center py-5 text-danger">Database connection failed.</td></tr>`;
-        });
+        updateDebug(`❌ Firestore error: ${err.message}`, true);
+        console.error("Firestore error:", err);
+        tableBody.innerHTML = `<tr><td colspan="9" class="text-center py-5 text-danger">Database error: ${err.message}<br><small>Make sure 'orders' collection exists in Firestore</small></td></tr>`;
       });
     }
 
@@ -316,10 +325,7 @@
       let filteredOrders = allOrders.filter(order => {
         let match = true;
         if (statusFilter) {
-          // Map short status back to full if needed, or exact match
-          match = (order.status === statusFilter) || 
-                  (statusFilter === "Awaiting Verification" && order.status === "Awaiting Verification") ||
-                  (statusFilter === "Verified & Processing" && order.status === "Verified & Processing");
+          match = (order.status === statusFilter);
         }
         if (match && searchTerm) {
           const textToSearch = `${order.orderNumber} ${order.customerName} ${order.phone} ${order.city}`.toLowerCase();
@@ -331,13 +337,7 @@
       let totalSalesVal = 0, pendingVal = 0, dispatchedVal = 0, totalWeightVal = 0, todayOrdersVal = 0;
       const todayString = new Date().toISOString().split('T')[0];
 
-      if (filteredOrders.length === 0) {
-        tableBody.innerHTML = `<tr><td colspan="9" class="text-center py-5 text-muted">No orders found.</td></tr>`;
-        updateStats(0, 0, 0, 0, 0, 0);
-        return;
-      }
-
-      // Compute stats on allOrders to keep KPIs stable globally
+      // Compute stats
       allOrders.forEach(order => {
         totalSalesVal += order.total || 0;
         if (order.status === "Awaiting Verification") pendingVal++;
@@ -345,7 +345,18 @@
         totalWeightVal += order.weight || 0;
         if (order.orderDate && order.orderDate.startsWith(todayString)) todayOrdersVal++;
       });
-      updateStats(totalSalesVal, pendingVal, dispatchedVal, totalWeightVal, allOrders.length, todayOrdersVal);
+      
+      statSales.textContent = `Rs. ${totalSalesVal.toLocaleString()}`;
+      statPending.textContent = pendingVal;
+      statDispatched.textContent = dispatchedVal;
+      statWeight.textContent = `${totalWeightVal.toFixed(2)} kg`;
+      if(statToday) statToday.textContent = todayOrdersVal;
+      ordersCountBadge.textContent = `${allOrders.length} orders`;
+
+      if (filteredOrders.length === 0) {
+        tableBody.innerHTML = `<tr><td colspan="9" class="text-center py-5 text-muted">No orders found.</td></tr>`;
+        return;
+      }
 
       tableBody.innerHTML = filteredOrders.map(order => {
         let badgeClass = "bg-secondary";
@@ -403,132 +414,129 @@
       updateBulkActionsUI();
     }
 
-    function updateStats(sales, pending, dispatched, weight, count, todayCount) {
-      statSales.textContent = `Rs. ${sales.toLocaleString()}`;
-      statPending.textContent = pending;
-      statDispatched.textContent = dispatched;
-      statWeight.textContent = `${weight.toFixed(2)} kg`;
-      if(statToday) statToday.textContent = todayCount;
-      ordersCountBadge.textContent = `${count} orders`;
-    }
-
-    // Export to CSV
-    exportBtn.addEventListener("click", () => {
-      if (allOrders.length === 0) return alert("No orders to export.");
-      
-      const csvRows = [];
-      // Headers
-      csvRows.push(["Order #", "Date", "Customer", "Phone", "City", "Amount", "Status", "Items"].join(","));
-      
-      allOrders.forEach(order => {
-        const items = order.items ? order.items.map(i => `${i.qty}x ${i.name}`).join(" | ") : "";
-        const row = [
-          `"${order.orderNumber}"`,
-          `"${order.orderDate || ''}"`,
-          `"${order.customerName}"`,
-          `"${order.phone}"`,
-          `"${order.city}"`,
-          order.total || 0,
-          `"${order.status}"`,
-          `"${items}"`
-        ];
-        csvRows.push(row.join(","));
-      });
-      
-      const csvString = csvRows.join("\\n");
-      const blob = new Blob([csvString], { type: "text/csv" });
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.setAttribute("href", url);
-      a.setAttribute("download", `orders_export_${new Date().toISOString().split('T')[0]}.csv`);
-      a.click();
-    });
-
-    // Event Listeners for Filters
-    searchInput.addEventListener("input", renderTable);
-    filterStatus.addEventListener("change", renderTable);
-
-    // Bulk Actions
-    selectAllCb.addEventListener("change", (e) => {
-      document.querySelectorAll(".row-cb").forEach(cb => cb.checked = e.target.checked);
-      updateBulkActionsUI();
-    });
-
-    tableBody.addEventListener("change", (e) => {
-      if (e.target.classList.contains("row-cb")) {
-        updateBulkActionsUI();
-      }
-    });
-
     function updateBulkActionsUI() {
       const anyChecked = document.querySelectorAll(".row-cb:checked").length > 0;
       if (anyChecked) {
         bulkActionsContainer.classList.remove("d-none");
       } else {
         bulkActionsContainer.classList.add("d-none");
-        selectAllCb.checked = false;
+        if (selectAllCb) selectAllCb.checked = false;
       }
     }
 
-    applyBulkBtn.addEventListener("click", async () => {
-      const selectedIds = Array.from(document.querySelectorAll(".row-cb:checked")).map(cb => cb.value);
-      const action = bulkActionSelect.value;
-      if (!action || selectedIds.length === 0) return;
-      
-      if (confirm(`Are you sure you want to change status to "${action}" for ${selectedIds.length} orders?`)) {
-        for (const id of selectedIds) {
-          const ref = doc(db, "orders", id);
-          await updateDoc(ref, { status: action });
+    // Event Listeners
+    if (searchInput) searchInput.addEventListener("input", renderTable);
+    if (filterStatus) filterStatus.addEventListener("change", renderTable);
+    
+    if (selectAllCb) {
+      selectAllCb.addEventListener("change", (e) => {
+        document.querySelectorAll(".row-cb").forEach(cb => cb.checked = e.target.checked);
+        updateBulkActionsUI();
+      });
+    }
+
+    if (tableBody) {
+      tableBody.addEventListener("change", (e) => {
+        if (e.target.classList.contains("row-cb")) {
+          updateBulkActionsUI();
         }
-        alert("Bulk action applied successfully.");
-        selectAllCb.checked = false;
-        bulkActionsContainer.classList.add("d-none");
-      }
-    });
+      });
+    }
+
+    if (applyBulkBtn) {
+      applyBulkBtn.addEventListener("click", async () => {
+        const selectedIds = Array.from(document.querySelectorAll(".row-cb:checked")).map(cb => cb.value);
+        const action = bulkActionSelect.value;
+        if (!action || selectedIds.length === 0) return;
+        
+        if (confirm(`Are you sure you want to change status to "${action}" for ${selectedIds.length} orders?`)) {
+          for (const id of selectedIds) {
+            const ref = doc(db, "orders", id);
+            await updateDoc(ref, { status: action });
+          }
+          alert("Bulk action applied successfully.");
+          if (selectAllCb) selectAllCb.checked = false;
+          bulkActionsContainer.classList.add("d-none");
+        }
+      });
+    }
+
+    if (exportBtn) {
+      exportBtn.addEventListener("click", () => {
+        if (allOrders.length === 0) return alert("No orders to export.");
+        
+        const csvRows = [];
+        csvRows.push(["Order #", "Date", "Customer", "Phone", "City", "Amount", "Status", "Items"].join(","));
+        
+        allOrders.forEach(order => {
+          const items = order.items ? order.items.map(i => `${i.qty}x ${i.name}`).join(" | ") : "";
+          const row = [
+            `"${order.orderNumber}"`,
+            `"${order.orderDate || ''}"`,
+            `"${order.customerName}"`,
+            `"${order.phone}"`,
+            `"${order.city}"`,
+            order.total || 0,
+            `"${order.status}"`,
+            `"${items}"`
+          ];
+          csvRows.push(row.join(","));
+        });
+        
+        const csvString = csvRows.join("\n");
+        const blob = new Blob([csvString], { type: "text/csv" });
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.setAttribute("href", url);
+        a.setAttribute("download", `orders_export_${new Date().toISOString().split('T')[0]}.csv`);
+        a.click();
+      });
+    }
 
     // Global hooks
     window.updateOrderStatus = function(orderId, newStatus) {
       const orderDocRef = doc(db, "orders", orderId);
       updateDoc(orderDocRef, { status: newStatus })
-      .then(() => console.log("Order status updated."))
+      .then(() => updateDebug(`Order ${orderId} status updated to ${newStatus}`))
       .catch(err => alert("Error updating order status: " + err.message));
     };
 
     window.deleteOrder = function(orderId) {
       if(confirm("Are you sure you want to permanently delete this order?")) {
         deleteDoc(doc(db, "orders", orderId))
-        .then(() => console.log("Order deleted."))
+        .then(() => updateDebug(`Order ${orderId} deleted`))
         .catch(err => alert("Error deleting order: " + err.message));
       }
     };
 
     // --- USER MANAGEMENT LOGIC ---
-
     const usersTableBody = document.getElementById("users-table-body");
     const usersCountBadge = document.getElementById("users-count-badge");
     const usersSearchInput = document.getElementById("users-search-input");
-    const usersFilterTier = document.getElementById("users-filter-tier");
     let allUsers = [];
 
     function initializeUsersFeed() {
+      updateDebug("Connecting to 'users' collection...");
       const usersRef = collection(db, "users");
       const q = query(usersRef, orderBy("createdAt", "desc"));
 
       onSnapshot(q, (snapshot) => {
+        updateDebug(`✅ Users loaded: ${snapshot.size} users found`);
         allUsers = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
         renderUsersTable();
       }, (err) => {
-        console.warn("Firestore users query failed:", err);
-        const fallbackQ = query(usersRef);
-        onSnapshot(fallbackQ, (snapshot) => {
-          allUsers = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-          renderUsersTable();
-        });
+        updateDebug(`❌ Users error: ${err.message}`, true);
+        console.error("Users error:", err);
+        if (usersTableBody) {
+          usersTableBody.innerHTML = `<tr><td colspan="5" class="text-center py-5 text-danger">Error loading users: ${err.message}</td></tr>`;
+        }
       });
     }
 
     function renderUsersTable() {
-      const searchTerm = usersSearchInput.value.toLowerCase().trim();
+      if (!usersTableBody) return;
+      
+      const searchTerm = usersSearchInput ? usersSearchInput.value.toLowerCase().trim() : "";
       let filteredUsers = allUsers.filter(user => {
         let match = true;
         if (match && searchTerm) {
@@ -538,7 +546,7 @@
         return match;
       });
 
-      usersCountBadge.textContent = filteredUsers.length;
+      if (usersCountBadge) usersCountBadge.textContent = filteredUsers.length;
 
       if (filteredUsers.length === 0) {
         usersTableBody.innerHTML = `<tr><td colspan="5" class="text-center py-5 text-muted">No users found.</td></tr>`;
@@ -570,86 +578,49 @@
       }).join("");
     }
 
-    usersSearchInput.addEventListener("input", renderUsersTable);
+    if (usersSearchInput) {
+      usersSearchInput.addEventListener("input", renderUsersTable);
+    }
 
     window.updateUserRole = async function(userId, newRole) {
       const userRef = doc(db, "users", userId);
       try {
         await updateDoc(userRef, { role: newRole });
-        console.log("User role updated.");
+        updateDebug(`User ${userId} role updated to ${newRole}`);
       } catch (err) {
         alert("Error updating user role: " + err.message);
       }
     };
 
     window.deleteUser = async function(userId) {
-      if(confirm("Are you sure you want to permanently delete this user from Firestore? (Auth deletion requires admin SDK)")) {
+      if(confirm("Are you sure you want to permanently delete this user from Firestore?")) {
         try {
           await deleteDoc(doc(db, "users", userId));
-          console.log("User deleted.");
+          updateDebug(`User ${userId} deleted`);
         } catch (err) {
           alert("Error deleting user: " + err.message);
         }
       }
     };
 
-    // CSV Bulk Upload Logic
-    document.getElementById("upload-csv-btn").addEventListener("click", () => {
-      const fileInput = document.getElementById("csv-upload");
-      if (!fileInput.files.length) {
-        alert("Please select a CSV file.");
-        return;
-      }
-      const file = fileInput.files[0];
-      const reader = new FileReader();
-      
-      reader.onload = async function(e) {
-        const text = e.target.result;
-        const rows = text.split("\\n").map(r => r.split(","));
-        
-        // Assume first row is header: Name,Email,Phone,LandSizeMarla
-        let successCount = 0;
-        let failCount = 0;
-        
-        for (let i = 1; i < rows.length; i++) {
-          const row = rows[i];
-          if (row.length < 4) continue;
-          
-          const name = row[0].trim();
-          const email = row[1].trim();
-          const phone = row[2].trim();
-          const marlas = parseInt(row[3].trim(), 10) || 0;
-          
-          if (!email) continue;
-          
-          try {
-            // Check if user exists in Firestore
-            const q = query(collection(db, "users"), where("email", "==", email));
-            const snapshot = await getDocs(q);
-            
-            if (snapshot.empty) {
-              // Create user in Auth using a temporary Firebase app or backend.
-              // Note: createUserWithEmailAndPassword signs in the user!
-              // In client-side, we shouldn't use it for bulk creation, but for this demo:
-              alert("Client-side bulk upload not fully supported for Auth creation. In production, use a Cloud Function.");
-              break;
-            }
-          } catch (err) {
-            console.error(err);
-            failCount++;
-          }
+    // CSV Bulk Upload
+    const uploadBtn = document.getElementById("upload-csv-btn");
+    if (uploadBtn) {
+      uploadBtn.addEventListener("click", () => {
+        const fileInput = document.getElementById("csv-upload");
+        if (!fileInput.files.length) {
+          alert("Please select a CSV file.");
+          return;
         }
-      };
-      reader.readAsText(file);
-    });
+        alert("CSV upload feature - implement as needed");
+      });
+    }
+  </script>
 
-  <!-- PWA Service Worker Registration -->
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/sw.js').then(registration => {
-          console.log('ServiceWorker registration successful');
-        }).catch(err => {
+        navigator.serviceWorker.register('/sw.js').catch(err => {
           console.log('ServiceWorker registration failed: ', err);
         });
       });
