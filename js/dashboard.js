@@ -1,6 +1,6 @@
 import { auth, db } from "./firebase-init.js";
 import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-import { doc, getDoc, collection, query, where, orderBy, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+import { doc, getDoc, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
 document.addEventListener('DOMContentLoaded', () => {
   const logoutBtn = document.getElementById('logout-btn');
@@ -56,7 +56,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         // ── 2. Load orders ────────────────────────────────────────────────
-        await loadOrders(user.uid);
+        const userPhone = docSnap.exists() ? docSnap.data().phone : null;
+        await loadOrders(user.uid, userPhone);
 
       } catch (error) {
         console.error("Error fetching user data:", error);
@@ -68,7 +69,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // ── Load and render orders from Firestore ─────────────────────────────────────
-async function loadOrders(userId) {
+async function loadOrders(userId, userPhone) {
   const container = document.getElementById('orders-section');
   if (!container) return;
 
@@ -82,17 +83,35 @@ async function loadOrders(userId) {
     </div>`;
 
   try {
-    const q = query(
-      collection(db, "orders"),
-      where("userId", "==", userId),
-      orderBy("orderDate", "desc")
-    );
-    const snap = await getDocs(q);
+    // Query 1: orders linked to Firebase userId
+    const q1 = query(collection(db, "orders"), where("userId", "==", userId));
+    const snap1 = await getDocs(q1);
+
+    // Query 2: orders placed by same phone (guest orders before account existed)
+    let snap2Docs = [];
+    if (userPhone) {
+      const phone = userPhone.replace(/^0/, ''); // normalize — remove leading 0
+      const q2 = query(collection(db, "orders"), where("phone", "==", phone));
+      const snap2 = await getDocs(q2);
+      snap2Docs = snap2.docs;
+    }
+
+    // Merge, deduplicate by orderNumber
+    const seen = new Set();
+    const allOrders = [...snap1.docs, ...snap2Docs]
+      .filter(d => {
+        const num = d.data().orderNumber;
+        if (seen.has(num)) return false;
+        seen.add(num);
+        return true;
+      })
+      .map(d => d.data())
+      .sort((a, b) => new Date(b.orderDate || 0) - new Date(a.orderDate || 0));
 
     const listEl = document.getElementById('orders-list');
     document.getElementById('orders-loading').remove();
 
-    if (snap.empty) {
+    if (allOrders.length === 0) {
       listEl.innerHTML = `
         <div class="text-center py-4">
           <i class="bi bi-bag-x text-muted" style="font-size:2.5rem;"></i>
@@ -102,8 +121,7 @@ async function loadOrders(userId) {
       return;
     }
 
-    snap.forEach(docSnap => {
-      const o = docSnap.data();
+    allOrders.forEach(o => {
       const statusColor = {
         'Awaiting Verification': 'warning',
         'Confirmed': 'success',
@@ -117,12 +135,14 @@ async function loadOrders(userId) {
         `<li class="small text-muted">${item.name} × ${item.qty} — <strong>Rs. ${(item.price * item.qty).toLocaleString()}</strong></li>`
       ).join('');
 
+      const displayDate = o.orderDateDisplay || (o.orderDate ? new Date(o.orderDate).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) : '');
+
       listEl.innerHTML += `
         <div class="border rounded-3 p-3 mb-3">
           <div class="d-flex justify-content-between align-items-start flex-wrap gap-2">
             <div>
               <span class="fw-bold font-primary text-dark">${o.orderNumber}</span>
-              <span class="text-muted small ms-2">${o.orderDate || ''}</span>
+              <span class="text-muted small ms-2">${displayDate}</span>
             </div>
             <span class="badge bg-${statusColor} text-${statusColor === 'warning' ? 'dark' : 'white'}">${o.status || 'Pending'}</span>
           </div>
