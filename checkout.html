@@ -564,7 +564,7 @@
           phoneVal = phoneVal.substring(1);
         }
 
-        // Resolve auth user — wait for Firebase to finish initialising (fixes uid/email being null)
+        // Wait for Firebase Auth to fully load before reading user
         const currentUser = await new Promise(resolve => {
           const unsub = onAuthStateChanged(auth, u => { unsub(); resolve(u); });
         });
