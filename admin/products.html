@@ -1,0 +1,924 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Product Management | ARB Farms Admin</title>
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+  <link href="../css/index.css?v=c0cb305a" rel="stylesheet">
+
+  <style>
+    body { background-color: #f0ede6; }
+
+    .admin-card {
+      border-radius: var(--radius-md);
+      border: 1px solid var(--color-border);
+      background-color: var(--color-white);
+      box-shadow: var(--shadow-sm);
+    }
+
+    /* Stat cards */
+    .stat-card {
+      border-radius: var(--radius-md);
+      border: 1px solid var(--color-border);
+      background: var(--color-white);
+      box-shadow: var(--shadow-sm);
+      padding: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .stat-icon {
+      width: 42px; height: 42px;
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.2rem; flex-shrink: 0;
+    }
+    .stat-label { font-size: 0.75rem; color: #5a6459; display: block; }
+    .stat-value { font-size: 1.1rem; font-weight: 700; font-family: 'Outfit', sans-serif; color: #121912; }
+
+    /* Table */
+    .products-table th {
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: #5a6459;
+      background: #f8f6f0;
+      border-bottom: 1px solid var(--color-border);
+      padding: 10px 12px;
+      white-space: nowrap;
+    }
+    .products-table td {
+      padding: 10px 12px;
+      vertical-align: middle;
+      border-bottom: 1px solid #f0ede6;
+      font-size: 0.875rem;
+    }
+    .products-table tr:last-child td { border-bottom: none; }
+    .products-table tr:hover td { background: #fdfaf4; }
+
+    /* Inline editable inputs */
+    .price-field {
+      border: 1px solid transparent;
+      background: transparent;
+      border-radius: 6px;
+      padding: 4px 8px;
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: #121912;
+      width: 100px;
+      transition: all 0.15s;
+    }
+    .price-field:hover { border-color: var(--color-border); background: #f8f6f0; }
+    .price-field:focus { outline: none; border-color: var(--color-primary); background: #fff; box-shadow: 0 0 0 3px rgba(54,87,51,0.1); }
+    .price-field.is-sale { color: #c0392b; }
+    .price-field.is-orig { color: #5a6459; text-decoration: line-through; font-weight: 400; }
+
+    /* Badges */
+    .cat-badge {
+      font-size: 0.67rem; font-weight: 700; text-transform: uppercase;
+      padding: 3px 8px; border-radius: 20px;
+    }
+    .cat-dairy    { background: #e8f4fd; color: #1a6fa8; }
+    .cat-mango    { background: #fff3cd; color: #856404; }
+    .cat-seeds    { background: #d4edda; color: #155724; }
+    .cat-feed     { background: #f8d7da; color: #721c24; }
+    .cat-sowing   { background: #e2d9f3; color: #4a2080; }
+
+    .sale-pill {
+      font-size: 0.65rem; font-weight: 700; text-transform: uppercase;
+      padding: 2px 7px; border-radius: 20px;
+      background: #fdecea; color: #a32d2d;
+      border: 1px solid #f5c6cb;
+    }
+    .free-ship-pill {
+      font-size: 0.65rem; font-weight: 700; text-transform: uppercase;
+      padding: 2px 7px; border-radius: 20px;
+      background: #d4edda; color: #155724;
+      border: 1px solid #c3e6cb;
+    }
+
+    /* Changed row highlight */
+    tr.row-changed td { background: #f0faf0 !important; }
+
+    /* Modal */
+    .modal-header { background: var(--color-primary); color: #fff; border-radius: var(--radius-md) var(--radius-md) 0 0; }
+    .modal-header .btn-close { filter: invert(1); }
+    .modal-title { font-family: 'Outfit', sans-serif; }
+    .form-label { font-size: 0.8rem; font-weight: 600; color: #5a6459; text-transform: uppercase; letter-spacing: 0.03em; }
+
+    /* Toolbar */
+    .toolbar { display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; }
+
+    /* Notification toast */
+    .save-toast {
+      position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 9999;
+      background: var(--color-primary); color: #fff;
+      padding: 0.75rem 1.25rem; border-radius: var(--radius-md);
+      font-size: 0.875rem; font-weight: 600;
+      box-shadow: var(--shadow-md);
+      display: flex; align-items: center; gap: 0.5rem;
+      opacity: 0; transform: translateY(10px);
+      transition: all 0.25s;
+      pointer-events: none;
+    }
+    .save-toast.show { opacity: 1; transform: translateY(0); }
+
+    .pending-bar {
+      background: #fff3cd; border: 1px solid #ffc107;
+      border-radius: var(--radius-md); padding: 0.6rem 1rem;
+      font-size: 0.85rem; color: #856404;
+      display: none; align-items: center; gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+    .pending-bar.show { display: flex; }
+
+    .product-img-thumb {
+      width: 40px; height: 40px; object-fit: contain;
+      border-radius: 6px; background: #f8f6f0;
+      border: 1px solid var(--color-border);
+    }
+
+    @media (max-width: 768px) {
+      .price-field { width: 80px; }
+      .d-none-sm { display: none !important; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navbar (matches dashboard.html) -->
+  <nav class="navbar navbar-expand-lg bg-forest sticky-top shadow-sm py-2">
+    <div class="container-fluid px-4">
+      <a class="navbar-brand d-flex align-items-center text-decoration-none" href="dashboard.html">
+        <img src="../catalog/arbfarms-logo-v2.svg" alt="ARB Farms Logo" class="me-2" style="height:35px;">
+        <span class="font-primary text-white fs-5 tracking-wide">ARB ADMIN PORTAL</span>
+      </a>
+      <div class="d-flex align-items-center gap-3">
+        <span class="text-white-50 small d-none d-sm-inline" id="user-email-display">admin@arbfarms.com</span>
+        <a href="dashboard.html" class="btn btn-sm btn-outline-light py-1 px-3">
+          <i class="bi bi-grid me-1"></i> Dashboard
+        </a>
+        <button class="btn btn-sm btn-outline-light py-1 px-3" id="logout-btn">
+          <i class="bi bi-box-arrow-right me-1"></i> Logout
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <main class="container-fluid px-4 py-4">
+
+    <!-- Page Header -->
+    <div class="d-flex align-items-center justify-content-between mb-4 flex-wrap gap-3">
+      <div>
+        <h1 class="h4 font-primary mb-0 text-dark">Product Management</h1>
+        <p class="text-muted small mb-0 mt-1">Edit prices, sale tags, and shipping for all catalog products.</p>
+      </div>
+      <div class="d-flex gap-2">
+        <button class="btn btn-sm btn-outline-secondary" id="export-js-btn">
+          <i class="bi bi-code-slash me-1"></i> Export JS
+        </button>
+        <button class="btn btn-sm btn-outline-success" id="export-csv-btn">
+          <i class="bi bi-file-earmark-spreadsheet me-1"></i> Export CSV
+        </button>
+        <button class="btn btn-sm btn-primary" id="add-product-btn" data-bs-toggle="modal" data-bs-target="#productModal">
+          <i class="bi bi-plus-lg me-1"></i> Add Product
+        </button>
+      </div>
+    </div>
+
+    <!-- Stat Cards -->
+    <div class="row g-3 mb-4">
+      <div class="col-6 col-md-3 col-lg-2">
+        <div class="stat-card">
+          <div class="stat-icon bg-primary text-white"><i class="bi bi-box-seam"></i></div>
+          <div>
+            <span class="stat-label">Total Products</span>
+            <span class="stat-value" id="stat-total">0</span>
+          </div>
+        </div>
+      </div>
+      <div class="col-6 col-md-3 col-lg-2">
+        <div class="stat-card">
+          <div class="stat-icon" style="background:#fdecea;color:#a32d2d;"><i class="bi bi-tag-fill"></i></div>
+          <div>
+            <span class="stat-label">On Sale</span>
+            <span class="stat-value" id="stat-sale" style="color:#a32d2d;">0</span>
+          </div>
+        </div>
+      </div>
+      <div class="col-6 col-md-3 col-lg-2">
+        <div class="stat-card">
+          <div class="stat-icon" style="background:#d4edda;color:#155724;"><i class="bi bi-truck"></i></div>
+          <div>
+            <span class="stat-label">Free Shipping</span>
+            <span class="stat-value" id="stat-free" style="color:#155724;">0</span>
+          </div>
+        </div>
+      </div>
+      <div class="col-6 col-md-3 col-lg-2">
+        <div class="stat-card">
+          <div class="stat-icon" style="background:#fff3cd;color:#856404;"><i class="bi bi-pencil-square"></i></div>
+          <div>
+            <span class="stat-label">Pending Changes</span>
+            <span class="stat-value" id="stat-changes" style="color:#856404;">0</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pending changes bar -->
+    <div class="pending-bar" id="pending-bar">
+      <i class="bi bi-exclamation-triangle-fill"></i>
+      <span id="pending-bar-text">You have unsaved changes.</span>
+      <button class="btn btn-sm btn-warning ms-auto" id="save-changes-btn">
+        <i class="bi bi-save me-1"></i> Save &amp; Export
+      </button>
+      <button class="btn btn-sm btn-outline-secondary ms-1" id="reset-changes-btn">
+        Discard
+      </button>
+    </div>
+
+    <!-- Filter Toolbar -->
+    <div class="admin-card p-3 mb-3">
+      <div class="toolbar">
+        <div class="input-group input-group-sm" style="width:230px;">
+          <span class="input-group-text bg-light"><i class="bi bi-search"></i></span>
+          <input type="text" class="form-control" id="search-input" placeholder="Search name or SKU...">
+        </div>
+        <select class="form-select form-select-sm" id="filter-cat" style="width:160px;">
+          <option value="">All categories</option>
+          <option value="dairy-organic">Dairy &amp; Organic</option>
+          <option value="mango">Mangoes</option>
+          <option value="edible-seeds">Edible Seeds</option>
+          <option value="feed-agri">Feed &amp; Agri</option>
+          <option value="agri-sowing-seed">Sowing Seeds</option>
+        </select>
+        <select class="form-select form-select-sm" id="filter-status" style="width:150px;">
+          <option value="">All products</option>
+          <option value="sale">On sale only</option>
+          <option value="free">Free shipping</option>
+          <option value="changed">Changed</option>
+        </select>
+        <button class="btn btn-sm btn-outline-secondary" id="clear-filters-btn">
+          <i class="bi bi-x-circle me-1"></i> Clear
+        </button>
+        <span class="ms-auto small text-muted" id="results-count"></span>
+      </div>
+    </div>
+
+    <!-- Products Table -->
+    <div class="admin-card overflow-hidden">
+      <div class="table-responsive">
+        <table class="table products-table mb-0">
+          <thead>
+            <tr>
+              <th style="width:40px;"><input type="checkbox" class="form-check-input" id="select-all-cb"></th>
+              <th style="width:48px;"></th>
+              <th>Product</th>
+              <th class="d-none-sm">SKU</th>
+              <th class="d-none-sm">Weight</th>
+              <th class="d-none-sm">Category</th>
+              <th>Original Price</th>
+              <th>Sale Price</th>
+              <th style="width:90px;">Free Ship</th>
+              <th style="width:80px;">Status</th>
+              <th style="width:80px;">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="products-tbody">
+            <tr>
+              <td colspan="11" class="text-center py-5 text-muted">
+                <div class="spinner-border spinner-border-sm text-primary me-2"></div>
+                Loading products...
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Bulk actions bar (appears when rows selected) -->
+    <div class="d-none mt-2" id="bulk-bar">
+      <div class="d-flex align-items-center gap-2 p-2 bg-white border rounded-3 shadow-sm" style="font-size:0.85rem;">
+        <span class="text-muted" id="bulk-count-label">0 selected</span>
+        <button class="btn btn-sm btn-outline-success ms-2" id="bulk-free-ship-btn">
+          <i class="bi bi-truck me-1"></i> Set Free Shipping
+        </button>
+        <button class="btn btn-sm btn-outline-danger" id="bulk-remove-sale-btn">
+          <i class="bi bi-tag me-1"></i> Remove Sale
+        </button>
+        <button class="btn btn-sm btn-outline-secondary ms-auto" id="bulk-deselect-btn">
+          Deselect all
+        </button>
+      </div>
+    </div>
+  </main>
+
+  <!-- Add/Edit Product Modal -->
+  <div class="modal fade" id="productModal" tabindex="-1" aria-labelledby="productModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="productModalLabel"><i class="bi bi-box-seam me-2"></i>Add / Edit Product</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <input type="hidden" id="modal-product-id">
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label">Product Name *</label>
+              <input type="text" class="form-control form-control-sm" id="modal-name" placeholder="e.g. Dusehri Mango (Pre-Order)">
+            </div>
+            <div class="col-md-3">
+              <label class="form-label">SKU *</label>
+              <input type="text" class="form-control form-control-sm" id="modal-sku" placeholder="OGN-068-5">
+            </div>
+            <div class="col-md-3">
+              <label class="form-label">Weight / Size</label>
+              <input type="text" class="form-control form-control-sm" id="modal-weight" placeholder="5 Kg Box">
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">Category *</label>
+              <select class="form-select form-select-sm" id="modal-category">
+                <option value="dairy-organic">Dairy &amp; Organic</option>
+                <option value="mango">Mangoes</option>
+                <option value="edible-seeds">Edible Seeds</option>
+                <option value="feed-agri">Feed &amp; Agri</option>
+                <option value="agri-sowing-seed">Sowing Seeds</option>
+              </select>
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">Price (Rs.) *</label>
+              <input type="number" class="form-control form-control-sm" id="modal-price" placeholder="2000" min="0">
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">Original Price (for sale)</label>
+              <input type="number" class="form-control form-control-sm" id="modal-original-price" placeholder="Leave blank if no sale" min="0">
+            </div>
+            <div class="col-md-8">
+              <label class="form-label">Image Path</label>
+              <input type="text" class="form-control form-control-sm" id="modal-image" placeholder="catalog/Dusehri-Mango.svg">
+            </div>
+            <div class="col-md-4 d-flex align-items-end">
+              <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" role="switch" id="modal-free-shipping">
+                <label class="form-check-label small fw-semibold" for="modal-free-shipping">Free Shipping</label>
+              </div>
+            </div>
+            <div class="col-12">
+              <label class="form-label">Tags (comma separated)</label>
+              <input type="text" class="form-control form-control-sm" id="modal-tags" placeholder="mango, dusehri, fruit, fresh, organic">
+            </div>
+          </div>
+
+          <!-- Preview -->
+          <div class="mt-3 p-3 rounded-3" style="background:#f8f6f0; border:1px solid var(--color-border);">
+            <div class="small text-muted fw-bold mb-2">CODE PREVIEW</div>
+            <pre class="mb-0" style="font-size:0.75rem; color:#121912;" id="modal-preview">Fill the form to see the code...</pre>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-sm btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-sm btn-primary" id="modal-save-btn">
+            <i class="bi bi-save me-1"></i> Save Product
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Export JS Modal -->
+  <div class="modal fade" id="exportModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title"><i class="bi bi-code-slash me-2"></i>Export — products-db.js changes</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <p class="text-muted small mb-2">Copy these entries and replace the matching blocks in <code>js/products-db.js</code>.</p>
+          <div class="position-relative">
+            <button class="btn btn-sm btn-outline-secondary position-absolute end-0 top-0 m-2" id="copy-export-btn">
+              <i class="bi bi-clipboard me-1"></i> Copy
+            </button>
+            <pre class="p-3 rounded-3 mb-0" style="background:#f8f6f0;font-size:0.75rem;max-height:450px;overflow:auto;border:1px solid var(--color-border);" id="export-content"></pre>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-sm btn-outline-secondary" data-bs-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="save-toast" id="save-toast">
+    <i class="bi bi-check-circle-fill"></i>
+    <span id="toast-msg">Changes saved!</span>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+  <script type="module">
+    import { auth } from "../js/firebase-init.js";
+    import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        if (user.email === "social.ahmro@gmail.com" || user.email.endsWith("@arbfarms.com")) {
+          document.getElementById("user-email-display").textContent = user.email;
+        } else {
+          await signOut(auth);
+          window.location.href = "login.html";
+        }
+      } else {
+        window.location.href = "login.html";
+      }
+    });
+
+    document.getElementById("logout-btn").addEventListener("click", () => {
+      signOut(auth).then(() => window.location.href = "login.html");
+    });
+  </script>
+
+  <script>
+    // ── PRODUCT DATA ─────────────────────────────────────────────────────────
+    // Source: js/products-db.js (all fields preserved)
+    const PRODUCTS_RAW = [
+      // Dairy & Organic
+      {id:"ogn-004-milk",sku:"OGN-004",name:"Cow Milk",weight:"1 Ltr",price:330,category:"dairy-organic",image:"catalog/ogn-004-cow-milk-1ltr-v2.svg",hoverImage:"catalog/ogn-004-cow-milk-1ltr-hover-v2.svg",tags:["milk","dairy","fresh","cow","multan"]},
+      {id:"ogn-005",sku:"OGN-005",name:"Buffalo Milk",weight:"1 Ltr",price:390,category:"dairy-organic",image:"catalog/ogn-005-buffalo-milk-1ltr-v2.svg",hoverImage:"catalog/ogn-005-hover-v2.svg",tags:["milk","dairy","fresh","buffalo","multan"]},
+      {id:"ogn-006",sku:"OGN-006",name:"Goat Milk",weight:"1 Ltr",price:1000,category:"dairy-organic",image:"catalog/ogn-006-goat-milk-1ltr-v2.svg",hoverImage:"catalog/ogn-006-goat-milk-1ltr-hover-v2.svg",tags:["milk","dairy","fresh","goat","multan"]},
+      {id:"ogn-007",sku:"OGN-007",name:"Desi Organic Gurr",weight:"1 Kg",price:720,category:"dairy-organic",image:"catalog/ogn-007-desi-organic-gurr-1kg-v2.svg",hoverImage:"catalog/ogn-007-desi-organic-gurr-1kg-hover-v2.svg",tags:["gurr","sweetener","jaggery","sugar"]},
+      {id:"ogn-008",sku:"OGN-008",name:"Gurr with Dry Fruits",weight:"1 Kg",price:1800,category:"dairy-organic",image:"catalog/ogn-008-gurr-with-dry-fruits-1kg-v2.svg",hoverImage:"catalog/ogn-007-desi-organic-gurr-1kg-hover-v2.svg",tags:["gurr","sweetener","premium","dry fruits","nuts"]},
+      {id:"ogn-009",sku:"OGN-009",name:"Organic Shakar",weight:"1 Kg",price:810,category:"dairy-organic",image:"catalog/ogn-009-organic-shakar-1kg-v2.svg",hoverImage:"catalog/ogn-009-organic-shakar-1kg-hover-v2.svg",tags:["shakar","sweetener","sugar","brown"]},
+      {id:"ogn-010",sku:"OGN-010",name:"Organic Shakar (Bulk)",weight:"6 Kg",price:4400,category:"dairy-organic",image:"catalog/ogn-009-organic-shakar-1kg-v2.svg",hoverImage:"catalog/ogn-009-organic-shakar-1kg-hover-v2.svg",tags:["shakar","sweetener","sugar","bulk"]},
+      {id:"ogn-011",sku:"OGN-011",name:"Sidr Honey Small",weight:"500 gm",price:5000,category:"dairy-organic",image:"catalog/ogn-011-sidr-honey-small-500gm-v2.svg",hoverImage:"catalog/ogn-011-sidr-honey-small-500gm-hover-v2.svg",tags:["honey","sidr","sweet","small","remedy"]},
+      {id:"ogn-012",sku:"OGN-012",name:"Sidr Honey Large",weight:"1 Kg",price:9000,category:"dairy-organic",image:"catalog/ogn-011-sidr-honey-small-500gm-v2.svg",hoverImage:"catalog/ogn-011-sidr-honey-small-500gm-hover-v2.svg",tags:["honey","sidr","sweet","large","premium"]},
+      {id:"ogn-013",sku:"OGN-013",name:"Desi Ghee Small",weight:"500 gm",price:5000,category:"dairy-organic",image:"catalog/ogn-013-desi-ghee-500gm-v2.svg",hoverImage:"catalog/ogn-013-desi-ghee-500gm-hover-v2.svg",tags:["ghee","desi","butter","dairy","fat"]},
+      {id:"ogn-014",sku:"OGN-014",name:"Desi Ghee Large",weight:"1 Kg",price:9000,category:"dairy-organic",image:"catalog/ogn-013-desi-ghee-500gm-v2.svg",hoverImage:"catalog/ogn-013-desi-ghee-500gm-hover-v2.svg",tags:["ghee","desi","butter","dairy","fat","premium"]},
+      {id:"ogn-015",sku:"OGN-015",name:"Organic Achaar Small",weight:"400 gm",price:700,category:"dairy-organic",image:"catalog/ogn-015-organic-achaar-400gm-v2.svg",hoverImage:"catalog/ogn-017-organic-achaar-1kg-hover-v2.svg",tags:["achaar","pickle","traditional","oil","mango"]},
+      {id:"ogn-016",sku:"OGN-016",name:"Organic Achaar Medium",weight:"750 gm",price:1000,category:"dairy-organic",image:"catalog/ogn-016-organic-achaar-750gm-v2.svg",hoverImage:"catalog/ogn-017-organic-achaar-1kg-hover-v2.svg",tags:["achaar","pickle","traditional","oil","medium"]},
+      {id:"ogn-017",sku:"OGN-017",name:"Organic Achaar Large",weight:"1 Kg",price:1400,category:"dairy-organic",image:"catalog/ogn-017-organic-achaar-1kg-v2.svg",hoverImage:"catalog/ogn-017-organic-achaar-1kg-hover-v2.svg",tags:["achaar","pickle","traditional","oil","large"]},
+      // Mangoes
+      {id:"ogn-066-white-chaunsa-5kg",sku:"OGN-066-5",name:"White Chaunsa (Pre-Order)",weight:"5 Kg Box",price:2000,originalPrice:2500,shipping:0,category:"mango",image:"catalog/White-Chaunsa.svg",hoverImage:"catalog/White-Chaunsa.svg",tags:["mango","chaunsa","white chaunsa","fruit","fresh","organic","pre-booking"]},
+      {id:"ogn-066-white-chaunsa-9kg",sku:"OGN-066-9",name:"White Chaunsa (Pre-Order)",weight:"9 Kg Box",price:3200,originalPrice:3800,shipping:0,category:"mango",image:"catalog/White-Chaunsa.svg",hoverImage:"catalog/White-Chaunsa.svg",tags:["mango","chaunsa","white chaunsa","fruit","fresh","organic","pre-booking"]},
+      {id:"ogn-067-sindhri-5kg",sku:"OGN-067-5",name:"Sindhri Mango (Pre-Order)",weight:"5 Kg Box",price:1700,originalPrice:1900,shipping:0,category:"mango",image:"catalog/Sindhri-Mango.svg",hoverImage:"catalog/Sindhri-Mango.svg",tags:["mango","sindhri","fruit","fresh","organic","pre-booking"]},
+      {id:"ogn-067-sindhri-9kg",sku:"OGN-067-9",name:"Sindhri Mango (Pre-Order)",weight:"9 Kg Box",price:2900,originalPrice:3100,shipping:0,category:"mango",image:"catalog/Sindhri-Mango.svg",hoverImage:"catalog/Sindhri-Mango.svg",tags:["mango","sindhri","fruit","fresh","organic","pre-booking"]},
+      {id:"ogn-068-dusehri-5kg",sku:"OGN-068-5",name:"Dusehri Mango (Pre-Order)",weight:"5 Kg Box",price:2000,originalPrice:2200,shipping:0,category:"mango",image:"catalog/Dusehri-Mango.svg",hoverImage:"catalog/Dusehri-Mango.svg",tags:["mango","dusehri","fruit","fresh","organic","pre-booking"]},
+      {id:"ogn-068-dusehri-9kg",sku:"OGN-068-9",name:"Dusehri Mango (Pre-Order)",weight:"9 Kg Box",price:3000,originalPrice:3400,shipping:0,category:"mango",image:"catalog/Dusehri-Mango.svg",hoverImage:"catalog/Dusehri-Mango.svg",tags:["mango","dusehri","fruit","fresh","organic","pre-booking"]},
+      {id:"ogn-069-anwar-ratol-5kg",sku:"OGN-069-5",name:"Anwar Ratol (Pre-Order)",weight:"5 Kg Box",price:2400,originalPrice:2700,shipping:0,category:"mango",image:"catalog/Anwar-Ratol.svg",hoverImage:"catalog/Anwar-Ratol.svg",tags:["mango","anwar ratol","fruit","fresh","organic","pre-booking"]},
+      {id:"ogn-069-anwar-ratol-9kg",sku:"OGN-069-9",name:"Anwar Ratol (Pre-Order)",weight:"9 Kg Box",price:3600,originalPrice:4100,shipping:0,category:"mango",image:"catalog/Anwar-Ratol.svg",hoverImage:"catalog/Anwar-Ratol.svg",tags:["mango","anwar ratol","fruit","fresh","organic","pre-booking"]},
+      // Edible Seeds
+      {id:"ogn-018",sku:"OGN-018",name:"Gandum (Wheat)",weight:"1 Kg",price:225,category:"edible-seeds",image:"catalog/ogn-018-gandum-40kg-v2.svg",hoverImage:"catalog/ogn-018-gandum-40kg-hover-v2.svg",tags:["wheat","gandum","grain","flour","staple"]},
+      {id:"ogn-018-5kg",sku:"OGN-018",name:"Gandum (Wheat)",weight:"5 Kg",price:1100,category:"edible-seeds",image:"catalog/ogn-018-gandum-40kg-v2.svg",hoverImage:"catalog/ogn-018-gandum-40kg-hover-v2.svg",tags:["wheat","gandum","grain","flour","staple"]},
+      {id:"ogn-018-40kg",sku:"OGN-018",name:"Gandum (Wheat)",weight:"40 Kg (Maund)",price:9000,category:"edible-seeds",image:"catalog/ogn-018-gandum-40kg-v2.svg",hoverImage:"catalog/ogn-018-gandum-40kg-hover-v2.svg",tags:["wheat","gandum","grain","flour","staple","bulk"]},
+      {id:"ogn-027-edible",sku:"OGN-027",name:"Kalonji (Black Seed)",weight:"250 gm",price:720,category:"edible-seeds",image:"catalog/ogn-027-kalonji-250gm-v2.svg",hoverImage:"catalog/ogn-027-kalonji-250gm-hover-v2.svg",tags:["kalonji","black seed","superfood","spice"]},
+      {id:"ogn-046",sku:"OGN-046",name:"Kalonji (Black Seed)",weight:"500 gm",price:1350,category:"edible-seeds",image:"catalog/ogn-027-kalonji-250gm-v2.svg",hoverImage:"catalog/ogn-027-kalonji-250gm-hover-v2.svg",tags:["kalonji","black seed","superfood","spice"]},
+      {id:"ogn-028-edible",sku:"OGN-028",name:"Chia Seed",weight:"250 gm",price:1400,category:"edible-seeds",image:"catalog/ogn-028-chia-seed-250gm-v2.svg",hoverImage:"catalog/ogn-028-chia-seed-250gm-hover-v2.svg",tags:["chia","seeds","fiber","weight loss","superfood"]},
+      {id:"ogn-048",sku:"OGN-048",name:"Chia Seed",weight:"500 gm",price:2700,category:"edible-seeds",image:"catalog/ogn-028-chia-seed-250gm-v2.svg",hoverImage:"catalog/ogn-028-chia-seed-250gm-hover-v2.svg",tags:["chia","seeds","fiber","weight loss","superfood"]},
+      {id:"ogn-055",sku:"OGN-055",name:"Flax Seed",weight:"250 gm",price:720,category:"edible-seeds",image:"catalog/ogn-055-flax-seed-250gm-v2.svg",hoverImage:"catalog/ogn-055-flax-seed-250gm-hover-v2.svg",tags:["flax","alsi","omega-3","oils","superfood"]},
+      {id:"ogn-056",sku:"OGN-056",name:"Flax Seed",weight:"500 gm",price:1350,category:"edible-seeds",image:"catalog/ogn-055-flax-seed-250gm-v2.svg",hoverImage:"catalog/ogn-055-flax-seed-250gm-hover-v2.svg",tags:["flax","alsi","omega-3","oils","superfood"]},
+      {id:"ogn-051",sku:"OGN-051",name:"Basil Seed (Tukh Malanga)",weight:"250 gm",price:720,category:"edible-seeds",image:"catalog/ogn-051-basil-seed-250gm-v2.svg",hoverImage:"catalog/ogn-051-basil-seed-250gm-hover-v2.svg",tags:["basil","tukh malanga","cooling","drink"]},
+      {id:"ogn-052",sku:"OGN-052",name:"Pumpkin Seed",weight:"250 gm",price:1400,category:"edible-seeds",image:"catalog/ogn-052-pumpkin-seed-250gm-v2.svg",hoverImage:"catalog/ogn-052-pumpkin-seed-250gm-hover-v2.svg",tags:["pumpkin","kaddu","snack","premium","zinc"]},
+      {id:"ogn-053-moringa",sku:"OGN-053",name:"Moringa Powder",weight:"250 gm",price:1400,category:"edible-seeds",image:"catalog/ogn-053-moringa-powder-250gm-v2.svg",hoverImage:"catalog/ogn-053-moringa-powder-250gm-hover-v2.svg",tags:["moringa","suhunjna","powder","health","herbal"]},
+      {id:"ogn-063",sku:"OGN-063",name:"Isapghol",weight:"100 gm",price:1400,category:"edible-seeds",image:"catalog/ogn-063-isapghol-100gm-v2.svg",hoverImage:"catalog/ogn-063-isapghol-100gm-hover-v2.svg",tags:["isapghol","husk","fiber","digestion","laxative"]},
+      // Feed & Agri
+      {id:"ogn-041",sku:"OGN-041",name:"Silage Fodder Bale",weight:"40 Kg",price:900,category:"feed-agri",image:"catalog/ogn-041-silage-40kg-v2.svg",hoverImage:"catalog/ogn-041-silage-40kg-hover-v2.svg",tags:["silage","fodder","animal feed","cows","maund"]},
+      {id:"ogn-042",sku:"OGN-042",name:"Alfalfa Hay Bale",weight:"40 Kg",price:5400,category:"feed-agri",image:"catalog/ogn-042-hay-40kg-v2.svg",hoverImage:"catalog/ogn-042-hay-40kg-hover-v2.svg",tags:["hay","alfalfa","animal feed","cows","maund"]},
+      {id:"ogn-044",sku:"OGN-044",name:"Toori (Wheat Straw)",weight:"40 Kg",price:1100,category:"feed-agri",image:"catalog/ogn-044-toori-40kg-v2.svg",hoverImage:"catalog/ogn-044-toori-40kg-hover-v2.svg",tags:["toori","wheat straw","roughage","animal bedding","fodder"]},
+      // Sowing Seeds
+      {id:"ogn-019",sku:"OGN-019",name:"Jodal (Oats Jodri) Sowing Seed",weight:"1 Kg",price:1000,category:"agri-sowing-seed",image:"catalog/ogn-019-jodal-sowing-v2.svg",hoverImage:"catalog/ogn-019-jodal-sowing-hover-v2.svg",tags:["seed","sowing","jodal"]},
+      {id:"ogn-020",sku:"OGN-020",name:"Desi Javi (Oats Seed) Sowing Seed",weight:"1 Kg",price:1000,category:"agri-sowing-seed",image:"catalog/ogn-020-desi-javi-sowing-v2.svg",hoverImage:"catalog/ogn-020-desi-javi-sowing-hover-v2.svg",tags:["seed","sowing","javi"]},
+      {id:"ogn-022",sku:"OGN-022",name:"Methi (Fenugreek) Sowing Seed",weight:"1 Kg",price:2500,category:"agri-sowing-seed",image:"catalog/ogn-022-methi-sowing-v2.svg",hoverImage:"catalog/ogn-022-methi-sowing-v2.svg",tags:["seed","sowing","methi"]},
+      {id:"ogn-024",sku:"OGN-024",name:"Kaddo (Pumpkin) Sowing Seed",weight:"1 Kg",price:3500,category:"agri-sowing-seed",image:"catalog/ogn-024-kaddu-sowing-v2.svg",hoverImage:"catalog/ogn-024-kaddu-sowing-hover-v2.svg",tags:["seed","sowing","kaddo"]},
+      {id:"ogn-027-seed",sku:"OGN-027",name:"Kalonji Sowing Seed",weight:"1 Kg",price:3000,category:"agri-sowing-seed",image:"catalog/ogn-027-kalonji-sowing-v2.svg",hoverImage:"catalog/ogn-027-kalonji-sowing-hover-v2.svg",tags:["seed","sowing","kalonji"]},
+      {id:"ogn-039",sku:"OGN-039",name:"Lucerne Sowing Seed",weight:"1 Kg",price:6000,category:"agri-sowing-seed",image:"catalog/ogn-039-lucerne-fodder-v2.svg",hoverImage:"catalog/ogn-039-lucerne-fodder-hover-v2.svg",tags:["seed","sowing","lucerne"]},
+      {id:"ogn-040",sku:"OGN-040",name:"Bajra (Pearl Millet) Sowing Seed",weight:"1 Kg",price:1000,category:"agri-sowing-seed",image:"catalog/ogn-040-bajra-sowing-v2.svg",hoverImage:"catalog/ogn-040-bajra-sowing-hover-v2.svg",tags:["seed","sowing","bajra"]},
+      {id:"ogn-061",sku:"OGN-061",name:"Okra Seed (less than 40kg)",weight:"1 Kg",price:3000,category:"agri-sowing-seed",image:"catalog/ogn-061-okra-retail-v2.svg",hoverImage:"catalog/ogn-061-okra-retail-v2.svg",tags:["seed","sowing","okra"]},
+      {id:"ogn-004-seed",sku:"OGN-004",name:"Organic Wheat Sowing Seed",weight:"40 Kg",price:4500,category:"agri-sowing-seed",image:"catalog/ogn-004-wheat-sowing-v2.svg",hoverImage:"catalog/ogn-004-hover-v2.svg",tags:["seed","sowing","wheat"]},
+    ];
+
+    const CAT_LABELS = {
+      "dairy-organic":"Dairy & Organic",
+      "mango":"Mangoes",
+      "edible-seeds":"Edible Seeds",
+      "feed-agri":"Feed & Agri",
+      "agri-sowing-seed":"Sowing Seeds"
+    };
+    const CAT_CLASS = {
+      "dairy-organic":"cat-dairy",
+      "mango":"cat-mango",
+      "edible-seeds":"cat-seeds",
+      "feed-agri":"cat-feed",
+      "agri-sowing-seed":"cat-sowing"
+    };
+
+    // ── STATE ─────────────────────────────────────────────────────────────────
+    let products = PRODUCTS_RAW.map(p => ({ ...p, _changed: false, _isNew: false }));
+    let selectedIds = new Set();
+
+    // ── HELPERS ───────────────────────────────────────────────────────────────
+    function Rs(n) { return 'Rs. ' + Number(n).toLocaleString(); }
+
+    function showToast(msg) {
+      const t = document.getElementById('save-toast');
+      document.getElementById('toast-msg').textContent = msg;
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 3000);
+    }
+
+    function updateStats() {
+      document.getElementById('stat-total').textContent = products.length;
+      document.getElementById('stat-sale').textContent = products.filter(p => p.originalPrice && p.originalPrice > p.price).length;
+      document.getElementById('stat-free').textContent = products.filter(p => p.shipping === 0).length;
+      const ch = products.filter(p => p._changed).length;
+      document.getElementById('stat-changes').textContent = ch;
+      const bar = document.getElementById('pending-bar');
+      if (ch > 0) {
+        bar.classList.add('show');
+        document.getElementById('pending-bar-text').textContent = `You have ${ch} unsaved change${ch > 1 ? 's' : ''}.`;
+      } else {
+        bar.classList.remove('show');
+      }
+    }
+
+    // ── RENDER TABLE ──────────────────────────────────────────────────────────
+    function getFiltered() {
+      const q = document.getElementById('search-input').value.toLowerCase();
+      const cat = document.getElementById('filter-cat').value;
+      const status = document.getElementById('filter-status').value;
+      return products.filter(p => {
+        if (q && !p.name.toLowerCase().includes(q) && !p.sku.toLowerCase().includes(q) && !p.id.toLowerCase().includes(q)) return false;
+        if (cat && p.category !== cat) return false;
+        if (status === 'sale' && !(p.originalPrice && p.originalPrice > p.price)) return false;
+        if (status === 'free' && p.shipping !== 0) return false;
+        if (status === 'changed' && !p._changed) return false;
+        return true;
+      });
+    }
+
+    function renderTable() {
+      const filtered = getFiltered();
+      const tbody = document.getElementById('products-tbody');
+      document.getElementById('results-count').textContent = `${filtered.length} of ${products.length} products`;
+
+      if (!filtered.length) {
+        tbody.innerHTML = `<tr><td colspan="11" class="text-center py-5 text-muted"><i class="bi bi-search me-2"></i>No products match your filters.</td></tr>`;
+        updateStats();
+        return;
+      }
+
+      tbody.innerHTML = filtered.map(p => {
+        const isSale = p.originalPrice && p.originalPrice > p.price;
+        const isFree = p.shipping === 0;
+        const checked = selectedIds.has(p.id) ? 'checked' : '';
+        const rowClass = p._changed ? 'row-changed' : '';
+
+        return `<tr class="${rowClass}" data-id="${p.id}">
+          <td><input type="checkbox" class="form-check-input row-cb" value="${p.id}" ${checked}></td>
+          <td>
+            <img src="../${p.image}" class="product-img-thumb" alt="" onerror="this.style.display='none'">
+          </td>
+          <td>
+            <div class="fw-semibold" style="font-size:0.875rem;">${p.name}</div>
+            <div class="small text-muted">${p.id}</div>
+          </td>
+          <td class="d-none-sm text-muted" style="font-size:0.8rem;">${p.sku}</td>
+          <td class="d-none-sm text-muted" style="font-size:0.8rem;">${p.weight}</td>
+          <td class="d-none-sm"><span class="cat-badge ${CAT_CLASS[p.category] || ''}">${CAT_LABELS[p.category] || p.category}</span></td>
+          <td>
+            <input type="number" class="price-field ${isSale ? 'is-orig' : ''}"
+              value="${p.originalPrice || p.price}"
+              min="0" step="1"
+              data-field="originalPrice" data-id="${p.id}"
+              title="Original (struck-through) price">
+          </td>
+          <td>
+            <input type="number" class="price-field ${isSale ? 'is-sale' : ''}"
+              value="${isSale ? p.price : ''}"
+              min="0" step="1" placeholder="—"
+              data-field="salePrice" data-id="${p.id}"
+              title="Sale price (leave blank to remove sale)">
+          </td>
+          <td class="text-center">
+            <div class="form-check form-switch d-inline-block mb-0">
+              <input class="form-check-input" type="checkbox" role="switch"
+                ${isFree ? 'checked' : ''}
+                data-field="freeShipping" data-id="${p.id}">
+            </div>
+          </td>
+          <td>
+            ${isSale ? `<span class="sale-pill">Sale</span>` : ''}
+            ${isFree ? `<span class="free-ship-pill">Free</span>` : ''}
+            ${!isSale && !isFree ? `<span class="text-muted small">—</span>` : ''}
+          </td>
+          <td>
+            <div class="dropdown">
+              <button class="btn btn-sm btn-light" data-bs-toggle="dropdown"><i class="bi bi-three-dots-vertical"></i></button>
+              <ul class="dropdown-menu shadow-sm dropdown-menu-end">
+                <li><a class="dropdown-item small" href="#" onclick="editProduct('${p.id}')"><i class="bi bi-pencil me-2"></i>Edit details</a></li>
+                <li><a class="dropdown-item small" href="#" onclick="duplicateProduct('${p.id}')"><i class="bi bi-copy me-2"></i>Duplicate</a></li>
+                <li><hr class="dropdown-divider"></li>
+                <li><a class="dropdown-item small text-danger" href="#" onclick="deleteProduct('${p.id}')"><i class="bi bi-trash me-2"></i>Delete</a></li>
+              </ul>
+            </div>
+          </td>
+        </tr>`;
+      }).join('');
+
+      updateStats();
+      updateBulkBar();
+    }
+
+    // ── INLINE EDITING ────────────────────────────────────────────────────────
+    document.getElementById('products-tbody').addEventListener('change', (e) => {
+      const el = e.target;
+      const id = el.dataset.id;
+      const field = el.dataset.field;
+      if (!id || !field) return;
+
+      const idx = products.findIndex(p => p.id === id);
+      if (idx < 0) return;
+
+      if (field === 'originalPrice') {
+        const val = parseFloat(el.value) || 0;
+        products[idx].originalPrice = val;
+        products[idx]._changed = true;
+      } else if (field === 'salePrice') {
+        const val = el.value === '' ? null : parseFloat(el.value);
+        if (val === null) {
+          // Remove sale — set price back to originalPrice
+          if (products[idx].originalPrice) {
+            products[idx].price = products[idx].originalPrice;
+            products[idx].originalPrice = null;
+          }
+        } else {
+          if (!products[idx].originalPrice || products[idx].originalPrice <= val) {
+            products[idx].originalPrice = products[idx].price;
+          }
+          products[idx].price = val;
+        }
+        products[idx]._changed = true;
+      } else if (field === 'freeShipping') {
+        products[idx].shipping = el.checked ? 0 : undefined;
+        products[idx]._changed = true;
+      }
+
+      renderTable();
+    });
+
+    // ── SEARCH / FILTER ───────────────────────────────────────────────────────
+    document.getElementById('search-input').addEventListener('input', renderTable);
+    document.getElementById('filter-cat').addEventListener('change', renderTable);
+    document.getElementById('filter-status').addEventListener('change', renderTable);
+    document.getElementById('clear-filters-btn').addEventListener('click', () => {
+      document.getElementById('search-input').value = '';
+      document.getElementById('filter-cat').value = '';
+      document.getElementById('filter-status').value = '';
+      renderTable();
+    });
+
+    // ── SELECT ALL ────────────────────────────────────────────────────────────
+    document.getElementById('select-all-cb').addEventListener('change', (e) => {
+      const filtered = getFiltered();
+      filtered.forEach(p => {
+        if (e.target.checked) selectedIds.add(p.id);
+        else selectedIds.delete(p.id);
+      });
+      renderTable();
+    });
+
+    document.getElementById('products-tbody').addEventListener('change', (e) => {
+      if (e.target.classList.contains('row-cb')) {
+        const id = e.target.value;
+        if (e.target.checked) selectedIds.add(id);
+        else selectedIds.delete(id);
+        updateBulkBar();
+      }
+    });
+
+    function updateBulkBar() {
+      const bar = document.getElementById('bulk-bar');
+      const lbl = document.getElementById('bulk-count-label');
+      if (selectedIds.size > 0) {
+        bar.classList.remove('d-none');
+        lbl.textContent = `${selectedIds.size} product${selectedIds.size > 1 ? 's' : ''} selected`;
+      } else {
+        bar.classList.add('d-none');
+      }
+    }
+
+    document.getElementById('bulk-deselect-btn').addEventListener('click', () => {
+      selectedIds.clear();
+      renderTable();
+    });
+
+    document.getElementById('bulk-free-ship-btn').addEventListener('click', () => {
+      selectedIds.forEach(id => {
+        const idx = products.findIndex(p => p.id === id);
+        if (idx >= 0) { products[idx].shipping = 0; products[idx]._changed = true; }
+      });
+      showToast(`Free shipping set on ${selectedIds.size} products`);
+      selectedIds.clear();
+      renderTable();
+    });
+
+    document.getElementById('bulk-remove-sale-btn').addEventListener('click', () => {
+      selectedIds.forEach(id => {
+        const idx = products.findIndex(p => p.id === id);
+        if (idx >= 0 && products[idx].originalPrice) {
+          products[idx].price = products[idx].originalPrice;
+          products[idx].originalPrice = null;
+          products[idx]._changed = true;
+        }
+      });
+      showToast(`Sale removed from ${selectedIds.size} products`);
+      selectedIds.clear();
+      renderTable();
+    });
+
+    // ── SAVE / RESET ──────────────────────────────────────────────────────────
+    document.getElementById('save-changes-btn').addEventListener('click', () => {
+      openExportModal();
+      products.forEach(p => p._changed = false);
+      renderTable();
+    });
+
+    document.getElementById('reset-changes-btn').addEventListener('click', () => {
+      if (!confirm('Discard all unsaved changes?')) return;
+      products = PRODUCTS_RAW.map(p => ({ ...p, _changed: false, _isNew: false }));
+      renderTable();
+      showToast('Changes discarded');
+    });
+
+    // ── EXPORT JS ─────────────────────────────────────────────────────────────
+    function buildExportCode() {
+      const changed = products.filter(p => p._changed || p._isNew);
+      if (!changed.length) return '// No changes to export.\n';
+
+      return changed.map(p => {
+        const tags = (p.tags || []).map(t => `"${t}"`).join(', ');
+        let code = `  {\n`;
+        code += `    id: "${p.id}",\n`;
+        code += `    sku: "${p.sku}",\n`;
+        code += `    name: "${p.name}",\n`;
+        code += `    weight: "${p.weight}",\n`;
+        code += `    price: ${p.price},\n`;
+        if (p.originalPrice && p.originalPrice > p.price) code += `    originalPrice: ${p.originalPrice},\n`;
+        if (p.shipping === 0) code += `    shipping: 0,\n`;
+        code += `    category: "${p.category}",\n`;
+        code += `    image: "${p.image}",\n`;
+        code += `    hoverImage: "${p.hoverImage || p.image}",\n`;
+        code += `    tags: [${tags}]\n`;
+        code += `  }`;
+        return code;
+      }).join(',\n');
+    }
+
+    function openExportModal() {
+      document.getElementById('export-content').textContent = buildExportCode();
+      new bootstrap.Modal(document.getElementById('exportModal')).show();
+    }
+
+    document.getElementById('export-js-btn').addEventListener('click', openExportModal);
+
+    document.getElementById('copy-export-btn').addEventListener('click', () => {
+      navigator.clipboard.writeText(document.getElementById('export-content').textContent)
+        .then(() => showToast('Copied to clipboard!'));
+    });
+
+    // ── EXPORT CSV ────────────────────────────────────────────────────────────
+    document.getElementById('export-csv-btn').addEventListener('click', () => {
+      const rows = [['ID','SKU','Name','Weight','Category','Price','Original Price','Shipping','Tags']];
+      products.forEach(p => {
+        rows.push([
+          p.id, p.sku, p.name, p.weight,
+          CAT_LABELS[p.category] || p.category,
+          p.price,
+          p.originalPrice || '',
+          p.shipping === 0 ? 'Free' : 'Standard',
+          (p.tags || []).join(' | ')
+        ]);
+      });
+      const csv = rows.map(r => r.map(v => `"${v}"`).join(',')).join('\n');
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv' }));
+      a.download = `arb-products-${new Date().toISOString().split('T')[0]}.csv`;
+      a.click();
+      showToast('CSV downloaded!');
+    });
+
+    // ── ADD / EDIT MODAL ──────────────────────────────────────────────────────
+    function updateModalPreview() {
+      const name = document.getElementById('modal-name').value || 'Product Name';
+      const sku  = document.getElementById('modal-sku').value || 'OGN-XXX';
+      const weight = document.getElementById('modal-weight').value || '1 Kg';
+      const price = document.getElementById('modal-price').value || '0';
+      const origPrice = document.getElementById('modal-original-price').value;
+      const cat = document.getElementById('modal-category').value;
+      const image = document.getElementById('modal-image').value || 'catalog/image.svg';
+      const tags = document.getElementById('modal-tags').value || '';
+      const freeShip = document.getElementById('modal-free-shipping').checked;
+      const tagsArr = tags.split(',').map(t => `"${t.trim()}"`).filter(Boolean).join(', ');
+
+      let code = `  {\n    id: "${sku.toLowerCase().replace(/[^a-z0-9]/g,'-')}",\n`;
+      code += `    sku: "${sku}",\n    name: "${name}",\n    weight: "${weight}",\n`;
+      code += `    price: ${price},\n`;
+      if (origPrice) code += `    originalPrice: ${origPrice},\n`;
+      if (freeShip) code += `    shipping: 0,\n`;
+      code += `    category: "${cat}",\n    image: "${image}",\n`;
+      code += `    tags: [${tagsArr}]\n  }`;
+      document.getElementById('modal-preview').textContent = code;
+    }
+
+    ['modal-name','modal-sku','modal-weight','modal-price','modal-original-price','modal-category','modal-image','modal-tags'].forEach(id => {
+      document.getElementById(id).addEventListener('input', updateModalPreview);
+    });
+    document.getElementById('modal-free-shipping').addEventListener('change', updateModalPreview);
+
+    window.editProduct = function(id) {
+      const p = products.find(x => x.id === id);
+      if (!p) return;
+      document.getElementById('modal-product-id').value = p.id;
+      document.getElementById('modal-name').value = p.name;
+      document.getElementById('modal-sku').value = p.sku;
+      document.getElementById('modal-weight').value = p.weight;
+      document.getElementById('modal-price').value = p.price;
+      document.getElementById('modal-original-price').value = p.originalPrice || '';
+      document.getElementById('modal-category').value = p.category;
+      document.getElementById('modal-image').value = p.image;
+      document.getElementById('modal-tags').value = (p.tags || []).join(', ');
+      document.getElementById('modal-free-shipping').checked = p.shipping === 0;
+      document.getElementById('productModalLabel').innerHTML = '<i class="bi bi-pencil-square me-2"></i>Edit Product';
+      updateModalPreview();
+      new bootstrap.Modal(document.getElementById('productModal')).show();
+    };
+
+    window.duplicateProduct = function(id) {
+      const p = products.find(x => x.id === id);
+      if (!p) return;
+      const newId = p.id + '-copy-' + Date.now();
+      products.push({ ...p, id: newId, _changed: true, _isNew: true });
+      showToast('Product duplicated — edit the new entry below.');
+      renderTable();
+    };
+
+    window.deleteProduct = function(id) {
+      if (!confirm('Delete this product? This only removes it from this view. You still need to remove it from products-db.js manually.')) return;
+      products = products.filter(p => p.id !== id);
+      selectedIds.delete(id);
+      showToast('Product removed from this session.');
+      renderTable();
+    };
+
+    document.getElementById('add-product-btn').addEventListener('click', () => {
+      document.getElementById('modal-product-id').value = '';
+      document.getElementById('productModalLabel').innerHTML = '<i class="bi bi-plus-lg me-2"></i>Add New Product';
+      ['modal-name','modal-sku','modal-weight','modal-price','modal-original-price','modal-image','modal-tags'].forEach(id => {
+        document.getElementById(id).value = '';
+      });
+      document.getElementById('modal-free-shipping').checked = false;
+      document.getElementById('modal-category').value = 'dairy-organic';
+      updateModalPreview();
+    });
+
+    document.getElementById('modal-save-btn').addEventListener('click', () => {
+      const name  = document.getElementById('modal-name').value.trim();
+      const sku   = document.getElementById('modal-sku').value.trim();
+      const price = parseFloat(document.getElementById('modal-price').value);
+      if (!name || !sku || isNaN(price)) {
+        alert('Please fill in Name, SKU, and Price.'); return;
+      }
+
+      const existingId = document.getElementById('modal-product-id').value;
+      const origPrice  = parseFloat(document.getElementById('modal-original-price').value) || null;
+      const weight     = document.getElementById('modal-weight').value.trim();
+      const cat        = document.getElementById('modal-category').value;
+      const image      = document.getElementById('modal-image').value.trim() || 'catalog/image.svg';
+      const tags       = document.getElementById('modal-tags').value.split(',').map(t => t.trim()).filter(Boolean);
+      const freeShip   = document.getElementById('modal-free-shipping').checked;
+
+      if (existingId) {
+        const idx = products.findIndex(p => p.id === existingId);
+        if (idx >= 0) {
+          products[idx] = { ...products[idx], name, sku, weight, price, originalPrice: origPrice, shipping: freeShip ? 0 : undefined, category: cat, image, tags, _changed: true };
+        }
+      } else {
+        const newId = sku.toLowerCase().replace(/[^a-z0-9]/g, '-') + '-' + Date.now();
+        products.push({ id: newId, name, sku, weight, price, originalPrice: origPrice, shipping: freeShip ? 0 : undefined, category: cat, image, hoverImage: image, tags, _changed: true, _isNew: true });
+      }
+
+      bootstrap.Modal.getInstance(document.getElementById('productModal')).hide();
+      showToast(existingId ? 'Product updated!' : 'Product added!');
+      renderTable();
+    });
+
+    // ── INIT ──────────────────────────────────────────────────────────────────
+    renderTable();
+  </script>
+</body>
+</html>
