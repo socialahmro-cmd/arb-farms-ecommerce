@@ -10,311 +10,271 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
   
+  <!-- Custom Styles -->
+  <link href="css/index.css?v=c0cb305a" rel="stylesheet">
+
+  <link rel="canonical" href="https://arbfarms.com/account">
+
+  <!-- PWA Meta Tags -->
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#2b422a">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="apple-touch-icon" href="/catalog/arbfarms-logo-v2.svg">
+
   <style>
-    body {
-      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-      min-height: 100vh;
+    /* Additional styles for better visibility */
+    .alert {
+      border-radius: 10px;
     }
-    .login-card {
-      backdrop-filter: blur(10px);
-      background: rgba(255, 255, 255, 0.95);
-      border-radius: 20px;
-      box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+    .btn-primary {
+      background-color: #2b422a;
+      border-color: #2b422a;
     }
-    .btn-admin {
-      background: #2b422a;
-      color: white;
-      transition: all 0.3s ease;
-    }
-    .btn-admin:hover {
-      background: #1e2e1d;
-      transform: translateY(-2px);
-      box-shadow: 0 5px 15px rgba(43,66,42,0.3);
+    .btn-primary:hover {
+      background-color: #1e2e1d;
+      border-color: #1e2e1d;
     }
   </style>
 </head>
 <body>
 
-  <div class="container">
-    <div class="row justify-content-center align-items-center min-vh-100">
-      <div class="col-md-6 col-lg-5">
-        <div class="login-card p-4 p-md-5">
-          
-          <!-- Logo & Header -->
+  <!-- Announcement Banner -->
+  <div id="fomo-announcement-banner">
+    <div class="container text-center py-2 text-white fw-bold">
+      <span>📦 100% Advance Payment available all over Pakistan!</span>
+    </div>
+  </div>
+
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg bg-forest sticky-top shadow-sm py-2">
+    <div class="container">
+      <a class="navbar-brand d-flex align-items-center" href="/">
+        <img src="catalog/arbfarms-logo-v2.svg" alt="ARB Farms Logo" class="me-2">
+        <span class="font-primary text-white fs-4 tracking-wide">ARB FARMS</span>
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar" aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
+        <div class="arb-hamburger" aria-hidden="true">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+      </button>
+      
+      <div class="collapse navbar-collapse" id="mainNavbar">
+        <ul class="navbar-nav mx-auto mb-2 mb-lg-0 gap-lg-3">
+          <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
+          <li class="nav-item"><a class="nav-link" href="shop">Shop Catalog</a></li>
+          <li class="nav-item"><a class="nav-link" href="about">About Us</a></li>
+          <li class="nav-item"><a class="nav-link" href="calculator">Sowing Tools</a></li>
+          <li class="nav-item"><a class="nav-link" href="contact">Contact Us</a></li>
+        </ul>
+        
+        <div class="d-flex align-items-center gap-3">
+          <button id="search-trigger" aria-label="Search products" title="Search"><i class="bi bi-search"></i></button>
+          <a href="account" class="text-white fs-5" aria-label="My Account" title="My Account"><i class="bi bi-person"></i></a>
+          <a href="compare" class="text-white fs-5" aria-label="Compare Seeds" title="Compare Seeds"><i class="bi bi-arrow-left-right"></i></a>
+          <a href="wishlist" class="position-relative text-white fs-5" aria-label="View Wishlist">
+            <i class="bi bi-heart"></i>
+            <span id="wishlist-count" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size: 0.65rem;">0</span>
+          </a>
+          <a href="cart" class="position-relative text-white fs-5" aria-label="View Cart">
+            <i class="bi bi-cart3"></i>
+            <span id="cart-count" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-warning text-dark" style="font-size: 0.65rem;">0</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Container -->
+  <main class="container py-5">
+    <div class="row justify-content-center py-5">
+      <div class="col-md-5">
+        <div class="card border-0 shadow-sm p-4 p-sm-5 bg-white rounded-3">
           <div class="text-center mb-4">
-            <img src="catalog/arbfarms-logo-v2.svg" alt="ARB Farms" height="70" class="mb-3">
-            <h2 class="h3 mb-2">Admin Portal</h2>
-            <p class="text-muted">Sign in to manage your farm store</p>
+            <i class="bi bi-shield-lock text-primary" style="font-size: 3rem;"></i>
+            <h1 class="h4 font-primary text-dark mt-2 mb-1">Admin Portal Login</h1>
+            <p class="text-muted small">Sign in with an authorized account to manage farm orders.</p>
           </div>
 
-          <!-- Error Alert -->
-          <div id="error-alert" class="alert alert-danger d-none" role="alert">
-            <i class="bi bi-exclamation-triangle-fill me-2"></i>
-            <span id="error-message"></span>
+          <div class="alert alert-danger d-none" id="login-error-alert">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i> <span id="error-message"></span>
           </div>
-
-          <!-- Success Alert -->
-          <div id="success-alert" class="alert alert-success d-none" role="alert">
-            <i class="bi bi-check-circle-fill me-2"></i>
-            <span id="success-message"></span>
-          </div>
-
-          <!-- Login Form -->
-          <form id="admin-login-form">
+          
+          <form id="login-form" novalidate>
             <div class="mb-3">
-              <label for="email" class="form-label fw-semibold">Email Address</label>
-              <div class="input-group">
-                <span class="input-group-text bg-white">
-                  <i class="bi bi-envelope"></i>
-                </span>
-                <input type="email" class="form-control form-control-lg" id="email" 
-                       placeholder="admin@arbfarms.com" required autocomplete="email">
-              </div>
+              <label for="email" class="form-label fw-bold text-dark">Email Address</label>
+              <input type="email" class="form-control" id="email" placeholder="social.ahmro@gmail.com" required value="social.ahmro@gmail.com">
             </div>
 
             <div class="mb-4">
-              <label for="password" class="form-label fw-semibold">Password</label>
-              <div class="input-group">
-                <span class="input-group-text bg-white">
-                  <i class="bi bi-lock"></i>
-                </span>
-                <input type="password" class="form-control form-control-lg" id="password" 
-                       placeholder="Enter your password" required autocomplete="current-password">
-              </div>
+              <label for="password" class="form-label fw-bold text-dark">Password</label>
+              <input type="password" class="form-control" id="password" placeholder="••••••••" required>
             </div>
 
-            <button type="submit" class="btn btn-admin btn-lg w-100" id="login-btn">
-              <i class="bi bi-box-arrow-in-right me-2"></i>Sign In
-            </button>
+            <button type="submit" class="btn btn-primary w-100 py-3 text-uppercase font-primary" id="login-btn">Sign In</button>
           </form>
-
-          <hr class="my-4">
-
-          <div class="text-center">
+          
+          <div class="text-center mt-3">
             <small class="text-muted">
-              <i class="bi bi-shield-lock"></i> Secure admin access only
+              <i class="bi bi-info-circle"></i> Authorized admin access only
             </small>
           </div>
         </div>
       </div>
     </div>
-  </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="py-5 bg-forest text-white" style="border-top: 5px solid var(--color-secondary);">
+    <div class="container">
+      <div class="row g-4 mb-5">
+        <div class="col-lg-4">
+          <h4 class="h5 text-gold mb-3">ARB Farms &amp; Organics</h4>
+          <p class="small text-white-50">Providing organic dietary staples and high-nutrition livestock forage directly from our off-grid farm in Multan, Pakistan.</p>
+          <p class="small text-white-50"><i class="bi bi-geo-alt-fill text-gold me-2"></i> Street 1, Fatima Avenue, Opp. Fatima Masjid, Near Prime Mart. MPS Road, Multan, Punjab, Pakistan</p>
+          <p class="small text-white-50"><i class="bi bi-telephone-fill text-gold me-2"></i> +92 320 000 5367</p>
+        </div>
+        
+        <div class="col-md-4 col-lg-3 offset-lg-1">
+          <h4 class="h5 text-gold mb-3">Product Catalogs</h4>
+          <ul class="list-unstyled small d-flex flex-column gap-2">
+            <li><a href="shop.html?category=edible-seeds" class="text-white-50 text-decoration-none">Superfood &amp; Edible Seeds</a></li>
+            <li><a href="shop.html?category=dairy-organic" class="text-white-50 text-decoration-none">Desi Ghee &amp; Raw Honey</a></li>
+            <li><a href="shop.html?category=feed-agri" class="text-white-50 text-decoration-none">Livestock Silage &amp; Baled Fodder</a></li>
+          </ul>
+        </div>
+        
+        <div class="col-md-4 col-lg-2">
+          <h4 class="h5 text-gold mb-3">Customer Service</h4>
+          <ul class="list-unstyled small d-flex flex-column gap-2">
+            <li><a href="about" class="text-white-50 text-decoration-none">About Us</a></li>
+            <li><a href="contact" class="text-white-50 text-decoration-none">Contact Us</a></li>
+            <li><a href="/delivery" class="text-white-50 text-decoration-none">Nationwide Delivery Hub</a></li>
+            <li><a href="legal/shipping-policy" class="text-white-50 text-decoration-none">Shipping Tiers &amp; Rules</a></li>
+            <li><a href="legal/refund-policy" class="text-white-50 text-decoration-none">Return Policy</a></li>
+            <li><a href="legal/terms-conditions" class="text-white-50 text-decoration-none">Terms of Service</a></li>
+            <li><a href="legal/privacy-policy" class="text-white-50 text-decoration-none">Privacy Policy</a></li>
+          </ul>
+        </div>
+        
+        <div class="col-md-4 col-lg-2">
+          <h4 class="h5 text-gold mb-3">Follow Our Farm</h4>
+          <div class="d-flex gap-3 fs-5">
+            <a href="https://www.tiktok.com/@arborganics" class="text-white-50"><i class="bi bi-tiktok"></i></a>
+            <a href="https://www.instagram.com/arb.organicsouq/" class="text-white-50"><i class="bi bi-instagram"></i></a>
+            <a href="https://www.facebook.com/ARBORGANIC" class="text-white-50"><i class="bi bi-facebook"></i></a>
+            <a href="https://wa.me/923200005367" class="text-white-50"><i class="bi bi-whatsapp"></i></a>
+          </div>
+        </div>
+      </div>
+      
+      <div class="border-top border-secondary pt-4 d-flex flex-wrap justify-content-between align-items-center gap-3">
+        <p class="small mb-0 text-white-50">&copy; 2026 ARB Farms Organics. All rights reserved.</p>
+        <div class="d-flex align-items-center gap-3">
+          <span class="small text-white-50">Accepted Methods:</span>
+          <span class="badge bg-secondary">100% Advance Bank Transfer</span>
+          <span class="badge bg-secondary">Card Settlement</span>
+        </div>
+      </div>
+    </div>
+  </footer>
 
   <!-- Scripts -->
-  <script type="importmap">
-    {
-      "imports": {
-        "firebase/app": "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js",
-        "firebase/auth": "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js",
-        "firebase/firestore": "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js"
-      }
-    }
-  </script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="js/main.js?v=96661f0d"></script>
 
   <script type="module">
-    // Initialize Firebase
-    import { initializeApp } from "firebase/app";
-    import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "firebase/auth";
-    import { getFirestore, doc, getDoc } from "firebase/firestore";
+    import { auth } from "./js/firebase-init.js";
+    import { signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
-    // Your Firebase configuration
-    const firebaseConfig = {
-      apiKey: "YOUR_API_KEY",
-      authDomain: "YOUR_AUTH_DOMAIN",
-      projectId: "YOUR_PROJECT_ID",
-      storageBucket: "YOUR_STORAGE_BUCKET",
-      messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-      appId: "YOUR_APP_ID"
-    };
+    const form = document.getElementById("login-form");
+    const errorAlert = document.getElementById("login-error-alert");
+    const errorMessage = document.getElementById("error-message");
+    const submitBtn = document.getElementById("login-btn");
 
-    // Initialize Firebase
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
+    function showError(msg) {
+      errorMessage.textContent = msg;
+      errorAlert.classList.remove("d-none");
+    }
 
-    // DOM Elements
-    const form = document.getElementById('admin-login-form');
-    const emailInput = document.getElementById('email');
-    const passwordInput = document.getElementById('password');
-    const loginBtn = document.getElementById('login-btn');
-    const errorAlert = document.getElementById('error-alert');
-    const errorMessage = document.getElementById('error-message');
-    const successAlert = document.getElementById('success-alert');
-    const successMessage = document.getElementById('success-message');
-
-    // Check if already logged in
-    onAuthStateChanged(auth, async (user) => {
+    // Check if already logged in as admin
+    onAuthStateChanged(auth, (user) => {
       if (user) {
-        console.log('User already logged in:', user.email);
-        
-        // Check if user is admin
-        const isAdmin = await checkIfAdmin(user);
-        
-        if (isAdmin) {
-          console.log('Already admin, redirecting to dashboard');
-          window.location.href = 'admin/dashboard.html';
-        } else {
-          console.log('Not admin, signing out');
-          await signOut(auth);
+        console.log("User already logged in:", user.email);
+        if (user.email === "social.ahmro@gmail.com" || (user.email && user.email.endsWith("@arbfarms.com"))) {
+          console.log("Already admin, redirecting...");
+          window.location.href = "admin/dashboard.html";
         }
       }
     });
 
-    // Function to check if user is admin
-    async function checkIfAdmin(user) {
-      if (!user) return false;
-      
-      // Method 1: Check email whitelist
-      const adminEmails = [
-        'social.ahmro@gmail.com',
-        'admin@arbfarms.com',
-        'manager@arbfarms.com'
-      ];
-      
-      if (adminEmails.includes(user.email) || user.email.endsWith('@arbfarms.com')) {
-        console.log('Admin verified by email whitelist');
-        return true;
-      }
-      
-      // Method 2: Check Firestore role
-      try {
-        const userDoc = await getDoc(doc(db, 'users', user.uid));
-        if (userDoc.exists() && userDoc.data().role === 'admin') {
-          console.log('Admin verified by Firestore role');
-          return true;
-        }
-      } catch (error) {
-        console.log('Firestore check failed:', error);
-      }
-      
-      return false;
-    }
-
-    // Show error message
-    function showError(message) {
-      errorMessage.textContent = message;
-      errorAlert.classList.remove('d-none');
-      successAlert.classList.add('d-none');
-      
-      // Auto hide after 5 seconds
-      setTimeout(() => {
-        errorAlert.classList.add('d-none');
-      }, 5000);
-    }
-
-    // Show success message
-    function showSuccess(message) {
-      successMessage.textContent = message;
-      successAlert.classList.remove('d-none');
-      errorAlert.classList.add('d-none');
-      
-      // Auto hide after 3 seconds
-      setTimeout(() => {
-        successAlert.classList.add('d-none');
-      }, 3000);
-    }
-
-    // Handle form submission
-    form.addEventListener('submit', async (e) => {
+    form.addEventListener("submit", async (e) => {
       e.preventDefault();
-      
-      // Hide any previous alerts
-      errorAlert.classList.add('d-none');
-      successAlert.classList.add('d-none');
-      
-      // Get values
-      const email = emailInput.value.trim();
-      const password = passwordInput.value;
-      
-      // Validate
-      if (!email || !password) {
-        showError('Please enter both email and password');
+      errorAlert.classList.add("d-none");
+
+      if (!form.checkValidity()) {
+        form.classList.add("was-validated");
         return;
       }
-      
-      // Disable button and show loading
-      loginBtn.disabled = true;
-      loginBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status"></span>Signing In...';
-      
-      console.log('Attempting login for:', email);
-      
+
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value;
+
+      submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Signing In...';
+      submitBtn.disabled = true;
+
+      console.log("Attempting login for:", email);
+
       try {
-        // Attempt sign in
         const userCredential = await signInWithEmailAndPassword(auth, email, password);
         const user = userCredential.user;
         
-        console.log('Login successful for:', user.email);
-        showSuccess('Login successful! Verifying admin access...');
+        console.log("Login successful for:", user.email);
         
-        // Check if user is admin
-        const isAdmin = await checkIfAdmin(user);
-        
-        if (isAdmin) {
-          console.log('Admin verified, redirecting to dashboard');
-          showSuccess('Admin verified! Redirecting to dashboard...');
-          
-          // Small delay to show success message
-          setTimeout(() => {
-            window.location.href = 'admin/dashboard.html';
-          }, 1000);
+        // Validate authorization check (SAME LOGIC AS YOUR OLD CODE)
+        if (user.email === "social.ahmro@gmail.com" || user.email.endsWith("@arbfarms.com")) {
+          console.log("Admin authorized, redirecting to dashboard");
+          window.location.href = "admin/dashboard.html";
         } else {
-          console.log('Not an admin account');
-          await signOut(auth);
-          showError('Access Denied: This account does not have admin privileges.');
-          loginBtn.disabled = false;
-          loginBtn.innerHTML = '<i class="bi bi-box-arrow-in-right me-2"></i>Sign In';
+          console.log("Not authorized, signing out");
+          await auth.signOut();
+          showError("Access Denied: This account is not authorized.");
+          submitBtn.innerHTML = "Sign In";
+          submitBtn.disabled = false;
         }
-        
       } catch (error) {
-        console.error('Login error:', error.code, error.message);
+        console.error("Login failed:", error.code, error.message);
         
-        // Handle specific error codes
-        switch (error.code) {
-          case 'auth/invalid-credential':
-          case 'auth/wrong-password':
-          case 'auth/user-not-found':
-            showError('Invalid email or password. Please try again.');
-            break;
-          case 'auth/too-many-requests':
-            showError('Too many failed attempts. Please try again later.');
-            break;
-          case 'auth/network-request-failed':
-            showError('Network error. Please check your internet connection.');
-            break;
-          default:
-            showError('Login failed: ' + error.message);
+        // Better error messages
+        if (error.code === 'auth/invalid-credential' || error.code === 'auth/wrong-password') {
+          showError("Invalid email or password. Please try again.");
+        } else if (error.code === 'auth/user-not-found') {
+          showError("No account found with this email address.");
+        } else if (error.code === 'auth/too-many-requests') {
+          showError("Too many failed attempts. Please try again later.");
+        } else {
+          showError("Login failed: " + error.message);
         }
         
-        loginBtn.disabled = false;
-        loginBtn.innerHTML = '<i class="bi bi-box-arrow-in-right me-2"></i>Sign In';
+        submitBtn.innerHTML = "Sign In";
+        submitBtn.disabled = false;
       }
     });
+  </script>
 
-    // Add password show/hide toggle (optional)
-    const addPasswordToggle = () => {
-      const passwordField = document.getElementById('password');
-      const toggleBtn = document.createElement('button');
-      toggleBtn.type = 'button';
-      toggleBtn.className = 'btn btn-outline-secondary';
-      toggleBtn.innerHTML = '<i class="bi bi-eye"></i>';
-      toggleBtn.style.position = 'absolute';
-      toggleBtn.style.right = '10px';
-      toggleBtn.style.top = '50%';
-      toggleBtn.style.transform = 'translateY(-50%)';
-      
-      const wrapper = passwordField.parentElement;
-      wrapper.style.position = 'relative';
-      wrapper.appendChild(toggleBtn);
-      
-      toggleBtn.addEventListener('click', () => {
-        const type = passwordField.getAttribute('type') === 'password' ? 'text' : 'password';
-        passwordField.setAttribute('type', type);
-        toggleBtn.innerHTML = type === 'password' ? '<i class="bi bi-eye"></i>' : '<i class="bi bi-eye-slash"></i>';
+  <!-- PWA Service Worker Registration -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js').then(registration => {
+          console.log('ServiceWorker registration successful');
+        }).catch(err => {
+          console.log('ServiceWorker registration failed: ', err);
+        });
       });
-    };
-    
-    // Uncomment to add password toggle
-    // addPasswordToggle();
+    }
   </script>
 </body>
 </html>
