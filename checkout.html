@@ -22,6 +22,23 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <link rel="apple-touch-icon" href="/catalog/arbfarms-logo-v2.svg">
 
+  <style>
+    .password-strength {
+      height: 4px;
+      transition: all 0.3s ease;
+      border-radius: 2px;
+    }
+    .strength-weak { width: 33%; background-color: #dc3545; }
+    .strength-medium { width: 66%; background-color: #ffc107; }
+    .strength-strong { width: 100%; background-color: #28a745; }
+    .receipt-upload-zone {
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+    .receipt-upload-zone:hover {
+      background-color: #e9ecef !important;
+    }
+  </style>
 </head>
 <body>
 
@@ -149,6 +166,49 @@
               <label for="address" class="form-label fw-bold text-dark">Shipping Address <span class="text-danger">*</span></label>
               <textarea class="form-control" id="address" rows="3" placeholder="House number, Street name, Area details" required></textarea>
               <div class="invalid-feedback">Please enter your detailed shipping address.</div>
+            </div>
+
+            <!-- Account Creation Section -->
+            <div class="mb-4">
+              <div class="form-check p-3 border rounded-3 mb-3 bg-light">
+                <input class="form-check-input" type="checkbox" id="createAccountCheckbox">
+                <label class="form-check-label fw-semibold text-dark" for="createAccountCheckbox">
+                  <i class="bi bi-person-plus-fill text-primary me-2"></i>
+                  Create an account for faster checkout next time
+                </label>
+                <p class="small text-muted mb-0 mt-1 ms-4">Track orders, save addresses, and get exclusive farm offers.</p>
+              </div>
+              
+              <!-- Account Details (Hidden by default) -->
+              <div id="accountDetailsSection" style="display: none;">
+                <div class="border rounded-3 p-3" style="background-color: #fef9e6;">
+                  <div class="mb-3">
+                    <label for="accountEmail" class="form-label fw-bold text-dark">Email Address <span class="text-danger">*</span></label>
+                    <input type="email" class="form-control" id="accountEmail" placeholder="you@example.com">
+                    <div class="form-text">We'll send order updates to this email.</div>
+                    <div id="emailError" class="text-danger small mt-1"></div>
+                  </div>
+                  
+                  <div class="mb-3">
+                    <label for="accountPassword" class="form-label fw-bold text-dark">Password <span class="text-danger">*</span></label>
+                    <input type="password" class="form-control" id="accountPassword" placeholder="Create a password (min 6 characters)">
+                    <div class="password-strength mt-2" id="passwordStrength"></div>
+                    <div class="form-text">Use at least 6 characters.</div>
+                  </div>
+                  
+                  <div class="mb-3">
+                    <label for="confirmPassword" class="form-label fw-bold text-dark">Confirm Password <span class="text-danger">*</span></label>
+                    <input type="password" class="form-control" id="confirmPassword" placeholder="Confirm your password">
+                    <div id="passwordMatchError" class="text-danger small mt-1"></div>
+                  </div>
+                  
+                  <div class="alert alert-info small mb-0">
+                    <i class="bi bi-shield-lock-fill me-1"></i>
+                    By creating an account, you agree to our <a href="legal/terms-conditions" target="_blank">Terms</a> and 
+                    <a href="legal/privacy-policy" target="_blank">Privacy Policy</a>.
+                  </div>
+                </div>
+              </div>
             </div>
 
             <h2 class="h5 font-primary border-bottom pb-3 mb-4"><i class="bi bi-wallet2 text-primary me-2"></i> Payment Method</h2>
@@ -312,395 +372,627 @@
   <!-- Checkout Logic -->
   <script type="module">
     import { auth, db } from "/js/firebase-init.js";
-    import { doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-    import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    import { 
+      doc, setDoc, getDoc, updateDoc, arrayUnion, collection, query, where, getDocs 
+    } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { 
+      onAuthStateChanged, 
+      createUserWithEmailAndPassword, 
+      fetchSignInMethodsForEmail 
+    } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
-      const summaryItems = document.getElementById("checkout-summary-items");
-      const subtotalEl = document.getElementById("summary-subtotal");
-      const weightEl = document.getElementById("summary-weight");
-      const shippingEl = document.getElementById("summary-shipping");
-      const totalEl = document.getElementById("summary-total");
+    // DOM Elements
+    const summaryItems = document.getElementById("checkout-summary-items");
+    const subtotalEl = document.getElementById("summary-subtotal");
+    const weightEl = document.getElementById("summary-weight");
+    const shippingEl = document.getElementById("summary-shipping");
+    const totalEl = document.getElementById("summary-total");
+    const checkoutForm = document.getElementById("checkout-form");
+    const citySelect = document.getElementById("city");
+    const dairyAlert = document.getElementById("dairy-restriction-alert");
+    const createAccountCheckbox = document.getElementById("createAccountCheckbox");
+    const accountDetailsSection = document.getElementById("accountDetailsSection");
+    const accountEmail = document.getElementById("accountEmail");
+    const accountPassword = document.getElementById("accountPassword");
+    const confirmPassword = document.getElementById("confirmPassword");
+    const emailError = document.getElementById("emailError");
+    const passwordMatchError = document.getElementById("passwordMatchError");
 
-      const checkoutForm = document.getElementById("checkout-form");
-      const citySelect = document.getElementById("city");
-      const dairyAlert = document.getElementById("dairy-restriction-alert");
+    // State variables
+    let subtotal = 0;
+    let totalWeight = 0;
+    let shippingFee = 0;
+    let grandTotal = 0;
+    let hasFreshMilk = false;
+    let cart = [];
+    let uploadedUrl = "";
+    let receiptUploaded = false;
+    let isEmailAvailable = false;
+    let passwordsMatch = false;
 
-      let subtotal = 0;
-      let totalWeight = 0;
-      let shippingFee = 0;
-      let grandTotal = 0;
-      let hasFreshMilk = false;
-      let cart = [];
-      let uploadedUrl = "";
-      let receiptUploaded = false;
-      let userTier = "Guest";
-      let userStatus = "pending";
+    // Helper: Parse item weight
+    function parseItemWeight(item) {
+      let rawWeight = item.weight;
+      let val = parseFloat(rawWeight);
+      if (isNaN(val)) return 0;
+      
+      const itemId = (item.id || '').toLowerCase();
+      let wStr = String(rawWeight).toLowerCase();
+      if (wStr.includes('gm') || wStr.includes('gram') || (val >= 100 && !wStr.includes('kg') && !itemId.includes('seeds') && !itemId.includes('wheat') && !itemId.includes('bales'))) {
+        return val / 1000;
+      }
+      return val;
+    }
 
-      function parseItemWeight(item) {
-        let rawWeight = item.weight;
-        let val = parseFloat(rawWeight);
-        if (isNaN(val)) return 0;
-        
+    // Helper: Calculate shipping
+    function calculateShipping(cart) {
+      if (!cart || cart.length === 0) return { fee: 0, tier: "None" };
+      
+      let wheatWeight = 0;
+      let nonWheatWeight = 0;
+      let mangoWeight = 0;
+
+      cart.forEach(item => {
+        const itemWeight = parseItemWeight(item) * item.qty;
         const itemId = (item.id || '').toLowerCase();
-        let wStr = String(rawWeight).toLowerCase();
-        if (wStr.includes('gm') || wStr.includes('gram') || (val >= 100 && !wStr.includes('kg') && !itemId.includes('seeds') && !itemId.includes('wheat') && !itemId.includes('bales'))) {
-          return val / 1000;
+        const itemName = (item.name || '').toLowerCase();
+
+        const isMango = itemId.includes('ogn-066') ||
+                        itemId.includes('ogn-067') ||
+                        itemId.includes('ogn-068') ||
+                        itemId.includes('ogn-069') ||
+                        itemId.includes('ogn-065') ||
+                        itemName.includes('mango') ||
+                        itemName.includes('chaunsa') ||
+                        itemName.includes('sindhri') ||
+                        itemName.includes('dusehri') ||
+                        itemName.includes('anwar ratol');
+
+        const isWheat = !isMango && (
+                        itemId.includes('wheat') || 
+                        itemId.includes('ogn-018') ||
+                        itemName.includes('wheat') || 
+                        itemName.includes('gandum') ||
+                        (item.category && item.category === 'agri-sowing-seed'));
+
+        if (isMango) {
+          mangoWeight += itemWeight;
+        } else if (isWheat) {
+          wheatWeight += itemWeight;
+        } else {
+          nonWheatWeight += itemWeight;
         }
-        return val;
+      });
+
+      let fee = 0;
+      let tiers = [];
+
+      if (mangoWeight > 0) {
+        tiers.push(`Mangoes (${mangoWeight.toFixed(1)} kg) — FREE Delivery`);
       }
 
-      function calculateShipping(cart) {
-        if (!cart || cart.length === 0) return { fee: 0, tier: "None" };
-        
-        let wheatWeight = 0;
-        let nonWheatWeight = 0;
-        let mangoWeight = 0;
+      if (wheatWeight > 0) {
+        let wheatFee = 0;
+        let wheatTier = "";
+        const weightInGrams = wheatWeight * 1000;
+        if (weightInGrams <= 5999) {
+          const billableKg = Math.ceil(wheatWeight);
+          wheatFee = billableKg * 300;
+          wheatTier = `Wheat Light (${billableKg} kg @ 300/kg)`;
+        } else if (weightInGrams < 40000) {
+          const billableKg = Math.ceil(wheatWeight);
+          wheatFee = billableKg * 150;
+          wheatTier = `Wheat Medium (${billableKg} kg @ 150/kg)`;
+        } else {
+          const maunds = wheatWeight / 40;
+          const billableMaunds = Math.ceil(maunds);
+          wheatFee = billableMaunds * 1500;
+          wheatTier = `Wheat Bulk (${billableMaunds} Maund @ 1500/Maund)`;
+        }
+        fee += wheatFee;
+        tiers.push(wheatTier);
+      }
 
-        cart.forEach(item => {
-          const itemWeight = parseItemWeight(item) * item.qty;
-          const itemId = (item.id || '').toLowerCase();
-          const itemName = (item.name || '').toLowerCase();
+      if (nonWheatWeight > 0) {
+        let nwFee = 0;
+        let nwTier = "";
+        const weightInGrams = nonWheatWeight * 1000;
+        if (weightInGrams <= 1000) {
+          nwFee = 300;
+          nwTier = "Standard Light (Flat 300)";
+        } else if (weightInGrams < 6000) {
+          const billableKg = Math.ceil(nonWheatWeight);
+          nwFee = billableKg * 300;
+          nwTier = `Standard Medium (${billableKg} kg @ 300/kg)`;
+        } else {
+          const billableKg = Math.ceil(nonWheatWeight);
+          nwFee = billableKg * 150;
+          nwTier = `Standard Heavy (${billableKg} kg @ 150/kg)`;
+        }
+        fee += nwFee;
+        tiers.push(nwTier);
+      }
 
-          const isMango = itemId.includes('ogn-066') ||
-                          itemId.includes('ogn-067') ||
-                          itemId.includes('ogn-068') ||
-                          itemId.includes('ogn-069') ||
-                          itemId.includes('ogn-065') ||
-                          itemName.includes('mango') ||
-                          itemName.includes('chaunsa') ||
-                          itemName.includes('sindhri') ||
-                          itemName.includes('dusehri') ||
-                          itemName.includes('anwar ratol');
+      return { fee: fee, tier: tiers.length > 0 ? tiers.join(" + ") : "None" };
+    }
 
-          const isWheat = !isMango && (
-                          itemId.includes('wheat') || 
-                          itemId.includes('ogn-018') ||
-                          itemName.includes('wheat') || 
-                          itemName.includes('gandum') ||
-                          (item.category && item.category === 'agri-sowing-seed'));
+    // Check email availability
+    async function checkEmailExists(email) {
+      if (!email) return false;
+      try {
+        const methods = await fetchSignInMethodsForEmail(auth, email);
+        return methods.length > 0;
+      } catch (error) {
+        console.error("Error checking email:", error);
+        return false;
+      }
+    }
 
-          if (isMango) {
-            mangoWeight += itemWeight;
-          } else if (isWheat) {
-            wheatWeight += itemWeight;
-          } else {
-            nonWheatWeight += itemWeight;
-          }
+    // Check if user is already logged in
+    async function checkLoggedInUser() {
+      return new Promise((resolve) => {
+        const unsubscribe = onAuthStateChanged(auth, (user) => {
+          unsubscribe();
+          resolve(user);
         });
+      });
+    }
 
-        let fee = 0;
-        let tiers = [];
+    // Password strength checker
+    function checkPasswordStrength(password) {
+      const strengthBar = document.getElementById("passwordStrength");
+      if (!strengthBar) return;
+      
+      if (!password) {
+        strengthBar.className = "password-strength";
+        return;
+      }
+      
+      if (password.length < 6) {
+        strengthBar.className = "password-strength strength-weak";
+      } else if (password.length >= 6 && password.length < 8) {
+        strengthBar.className = "password-strength strength-medium";
+      } else {
+        strengthBar.className = "password-strength strength-strong";
+      }
+    }
 
-        // 0. Mangoes: FREE shipping
-        if (mangoWeight > 0) {
-          tiers.push(`Mangoes (${mangoWeight.toFixed(1)} kg) — FREE Delivery`);
-        }
-
-        // 1. Calculate Wheat Shipping
-        if (wheatWeight > 0) {
-          let wheatFee = 0;
-          let wheatTier = "";
-          const weightInGrams = wheatWeight * 1000;
-          if (weightInGrams <= 5999) {
-            const billableKg = Math.ceil(wheatWeight);
-            wheatFee = billableKg * 300;
-            wheatTier = `Wheat Light (${billableKg} kg @ 300/kg)`;
-          } else if (weightInGrams < 40000) {
-            const billableKg = Math.ceil(wheatWeight);
-            wheatFee = billableKg * 150;
-            wheatTier = `Wheat Medium (${billableKg} kg @ 150/kg)`;
+    // Toggle account details section
+    if (createAccountCheckbox) {
+      createAccountCheckbox.addEventListener("change", async (e) => {
+        const isChecked = e.target.checked;
+        accountDetailsSection.style.display = isChecked ? "block" : "none";
+        
+        if (!isChecked) {
+          if (accountEmail) accountEmail.value = "";
+          if (accountPassword) accountPassword.value = "";
+          if (confirmPassword) confirmPassword.value = "";
+          if (emailError) emailError.innerHTML = "";
+          if (passwordMatchError) passwordMatchError.innerHTML = "";
+          isEmailAvailable = false;
+          passwordsMatch = false;
+        } else {
+          // Check if user is already logged in
+          const loggedInUser = await checkLoggedInUser();
+          if (loggedInUser && loggedInUser.email) {
+            if (accountEmail) {
+              accountEmail.value = loggedInUser.email;
+              accountEmail.readOnly = true;
+              accountEmail.classList.add("bg-light");
+              emailError.innerHTML = '<i class="bi bi-check-circle-fill text-success me-1"></i> You are already logged in as ' + loggedInUser.email;
+              isEmailAvailable = true;
+            }
+            if (accountPassword) {
+              accountPassword.required = false;
+              accountPassword.placeholder = "Leave blank to keep existing password";
+            }
           } else {
-            const maunds = wheatWeight / 40;
-            const billableMaunds = Math.ceil(maunds);
-            wheatFee = billableMaunds * 1500;
-            wheatTier = `Wheat Bulk (${billableMaunds} Maund @ 1500/Maund)`;
+            if (accountEmail) accountEmail.readOnly = false;
+            if (accountPassword) accountPassword.required = true;
           }
-          fee += wheatFee;
-          tiers.push(wheatTier);
         }
+      });
+    }
 
-        // 2. Calculate Non-Wheat Shipping
-        if (nonWheatWeight > 0) {
-          let nwFee = 0;
-          let nwTier = "";
-          const weightInGrams = nonWheatWeight * 1000;
-          if (weightInGrams <= 1000) {
-            nwFee = 300;
-            nwTier = "Standard Light (Flat 300)";
-          } else if (weightInGrams < 6000) {
-            const billableKg = Math.ceil(nonWheatWeight);
-            nwFee = billableKg * 300;
-            nwTier = `Standard Medium (${billableKg} kg @ 300/kg)`;
+    // Email validation on blur
+    if (accountEmail) {
+      accountEmail.addEventListener("blur", async () => {
+        const email = accountEmail.value.trim();
+        if (createAccountCheckbox && createAccountCheckbox.checked && email) {
+          const loggedInUser = await checkLoggedInUser();
+          if (loggedInUser && loggedInUser.email === email) {
+            emailError.innerHTML = '<i class="bi bi-check-circle-fill text-success me-1"></i> You are logged in with this email.';
+            accountEmail.classList.remove("is-invalid");
+            accountEmail.classList.add("is-valid");
+            isEmailAvailable = true;
+            return;
+          }
+          
+          const exists = await checkEmailExists(email);
+          if (exists) {
+            emailError.innerHTML = '<i class="bi bi-exclamation-circle-fill me-1"></i> This email is already registered. <a href="login.html" target="_blank">Login instead</a> or use a different email.';
+            accountEmail.classList.add("is-invalid");
+            accountEmail.classList.remove("is-valid");
+            isEmailAvailable = false;
           } else {
-            const billableKg = Math.ceil(nonWheatWeight);
-            nwFee = billableKg * 150;
-            nwTier = `Standard Heavy (${billableKg} kg @ 150/kg)`;
+            emailError.innerHTML = '<i class="bi bi-check-circle-fill text-success me-1"></i> Email available!';
+            accountEmail.classList.remove("is-invalid");
+            accountEmail.classList.add("is-valid");
+            isEmailAvailable = true;
           }
-          fee += nwFee;
-          tiers.push(nwTier);
+        } else if (!createAccountCheckbox || !createAccountCheckbox.checked) {
+          isEmailAvailable = true;
         }
+      });
+    }
 
-        return {
-          fee: fee,
-          tier: tiers.length > 0 ? tiers.join(" + ") : "None"
-        };
+    // Password validation
+    if (accountPassword) {
+      accountPassword.addEventListener("input", () => {
+        checkPasswordStrength(accountPassword.value);
+        if (confirmPassword && confirmPassword.value) {
+          validatePasswords();
+        }
+      });
+    }
+
+    function validatePasswords() {
+      if (!createAccountCheckbox || !createAccountCheckbox.checked) {
+        passwordsMatch = true;
+        return true;
+      }
+      
+      const loggedInUser = checkLoggedInUser();
+      if (loggedInUser && accountPassword && !accountPassword.value) {
+        passwordsMatch = true;
+        if (passwordMatchError) passwordMatchError.innerHTML = "";
+        return true;
+      }
+      
+      if (accountPassword && confirmPassword) {
+        if (accountPassword.value === confirmPassword.value && accountPassword.value.length >= 6) {
+          if (passwordMatchError) passwordMatchError.innerHTML = '<i class="bi bi-check-circle-fill text-success me-1"></i> Passwords match!';
+          passwordsMatch = true;
+          return true;
+        } else if (accountPassword.value !== confirmPassword.value && confirmPassword.value) {
+          if (passwordMatchError) passwordMatchError.innerHTML = '<i class="bi bi-exclamation-circle-fill me-1"></i> Passwords do not match!';
+          passwordsMatch = false;
+          return false;
+        } else {
+          if (passwordMatchError) passwordMatchError.innerHTML = "";
+          passwordsMatch = false;
+          return false;
+        }
+      }
+      passwordsMatch = false;
+      return false;
+    }
+
+    if (confirmPassword) {
+      confirmPassword.addEventListener("input", validatePasswords);
+    }
+
+    // Load checkout summary
+    async function loadCheckoutSummary() {
+      cart = JSON.parse(localStorage.getItem('arb_cart')) || [];
+      
+      if (cart.length === 0) {
+        window.location.href = "shop.html";
+        return;
       }
 
-      async function loadCheckoutSummary() {
-        cart = JSON.parse(localStorage.getItem('arb_cart')) || [];
+      summaryItems.innerHTML = cart.map(item => {
+        if (item.id === "ogn-004-milk" || item.id === "ogn-005" || item.id === "ogn-006") {
+          hasFreshMilk = true;
+        }
+        const parsedUnitWeight = parseItemWeight(item);
+        const displayUnitWeight = parsedUnitWeight >= 1 ? `${parsedUnitWeight.toFixed(2)} kg` : `${(parsedUnitWeight * 1000).toFixed(0)} gm`;
+        return `
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <span class="small fw-semibold text-dark d-block">${item.name}</span>
+              <span class="text-muted small">${item.qty}x ${displayUnitWeight}</span>
+            </div>
+            <span class="small fw-bold">Rs. ${(item.price * item.qty).toLocaleString()}</span>
+          </div>
+        `;
+      }).join("");
+
+      subtotal = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+      totalWeight = cart.reduce((sum, item) => sum + (parseItemWeight(item) * item.qty), 0);
+      
+      let discountAmount = 0;
+      const shipping = calculateShipping(cart);
+      shippingFee = shipping.fee;
+      grandTotal = subtotal - discountAmount + shippingFee;
+
+      subtotalEl.textContent = `Rs. ${subtotal.toLocaleString()}`;
+      const displayTotalWeight = totalWeight >= 1 ? `${totalWeight.toFixed(2)} kg` : `${(totalWeight * 1000).toFixed(0)} gm`;
+      weightEl.textContent = displayTotalWeight;
+      shippingEl.textContent = shippingFee === 0 ? "FREE" : `Rs. ${shippingFee.toLocaleString()}`;
+      totalEl.textContent = `Rs. ${grandTotal.toLocaleString()}`;
+      
+      const discountRow = document.getElementById('summary-discount-row');
+      const discountEl = document.getElementById('summary-discount');
+      if (discountRow && discountEl) {
+        if (discountAmount > 0) {
+          discountEl.textContent = `- Rs. ${discountAmount.toLocaleString()}`;
+          discountRow.classList.remove('d-none');
+        } else {
+          discountRow.classList.add('d-none');
+        }
+      }
+    }
+
+    // Dairy restriction check
+    citySelect.addEventListener("change", () => {
+      const city = citySelect.value;
+      if (hasFreshMilk && city !== "multan") {
+        dairyAlert.classList.remove("d-none");
+      } else {
+        dairyAlert.classList.add("d-none");
+      }
+    });
+
+    // Submit checkout form
+    checkoutForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      
+      const city = citySelect.value;
+      if (hasFreshMilk && city !== "multan") {
+        dairyAlert.classList.remove("d-none");
+        citySelect.focus();
+        return;
+      }
+
+      if (!checkoutForm.checkValidity()) {
+        e.stopPropagation();
+        checkoutForm.classList.add("was-validated");
+        const firstInvalidEl = checkoutForm.querySelector(":invalid");
+        if (firstInvalidEl) {
+          firstInvalidEl.scrollIntoView({ behavior: "smooth", block: "center" });
+          firstInvalidEl.focus();
+        }
+        return;
+      }
+
+      if (!receiptUploaded || !uploadedUrl) {
+        alert("Please upload your payment receipt screenshot before placing the order.");
+        const uploadContainer = document.getElementById("receipt-upload-container");
+        if (uploadContainer) {
+          uploadContainer.scrollIntoView({ behavior: "smooth", block: "center" });
+        }
+        return;
+      }
+
+      // Phone number formatting
+      let phoneVal = document.getElementById("phone").value.trim();
+      const phoneWithZero = phoneVal.startsWith("0") ? phoneVal : "0" + phoneVal;
+      const phoneWithoutZero = phoneWithZero.slice(1);
+      if (phoneVal.startsWith("0")) {
+        phoneVal = phoneVal.substring(1);
+      }
+
+      // Account creation logic
+      let userUid = null;
+      let userEmail = null;
+      let createdNewAccount = false;
+
+      if (createAccountCheckbox && createAccountCheckbox.checked) {
+        const email = accountEmail ? accountEmail.value.trim() : "";
+        const password = accountPassword ? accountPassword.value : "";
         
-        if (cart.length === 0) {
-          window.location.href = "shop.html";
+        if (!email && !(await checkLoggedInUser())) {
+          alert("Please enter email address to create account");
+          if (accountEmail) accountEmail.focus();
           return;
         }
 
-        // Render small line items
-        summaryItems.innerHTML = cart.map(item => {
-          // Detect dairy milk products OGN-004-milk, OGN-005, OGN-006
-          if (item.id === "ogn-004-milk" || item.id === "ogn-005" || item.id === "ogn-006") {
-            hasFreshMilk = true;
+        const loggedInUser = await checkLoggedInUser();
+        
+        if (!loggedInUser) {
+          if (!password || password.length < 6) {
+            alert("Password must be at least 6 characters");
+            if (accountPassword) accountPassword.focus();
+            return;
           }
-          const parsedUnitWeight = parseItemWeight(item);
-          const displayUnitWeight = parsedUnitWeight >= 1 ? `${parsedUnitWeight.toFixed(2)} kg` : `${(parsedUnitWeight * 1000).toFixed(0)} gm`;
-          return `
-            <div class="d-flex justify-content-between align-items-center">
-              <div>
-                <span class="small fw-semibold text-dark d-block">${item.name}</span>
-                <span class="text-muted small">${item.qty}x ${displayUnitWeight}</span>
-              </div>
-              <span class="small fw-bold">Rs. ${(item.price * item.qty).toLocaleString()}</span>
-            </div>
-          `;
-        }).join("");
-
-        // Calculate base aggregates
-        subtotal = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
-        totalWeight = cart.reduce((sum, item) => sum + (parseItemWeight(item) * item.qty), 0);
-        
-        // Removed auth tier check
-        let discountAmount = 0; // Removed tier discounts
-        const shipping = calculateShipping(cart);
-        shippingFee = shipping.fee;
-        
-        grandTotal = subtotal - discountAmount + shippingFee;
-
-          subtotalEl.textContent = `Rs. ${subtotal.toLocaleString()}`;
-          const displayTotalWeight = totalWeight >= 1 ? `${totalWeight.toFixed(2)} kg` : `${(totalWeight * 1000).toFixed(0)} gm`;
-          weightEl.textContent = displayTotalWeight;
-          shippingEl.textContent = shippingFee === 0 ? "FREE" : `Rs. ${shippingFee.toLocaleString()}`;
-          totalEl.textContent = `Rs. ${grandTotal.toLocaleString()}`;
           
-          const discountRow = document.getElementById('summary-discount-row');
-          const discountEl = document.getElementById('summary-discount');
-          if (discountRow && discountEl) {
-            if (discountAmount > 0) {
-              discountEl.textContent = `- Rs. ${discountAmount.toLocaleString()}`;
-              discountRow.classList.remove('d-none');
-            } else {
-              discountRow.classList.add('d-none');
+          if (!validatePasswords()) {
+            alert("Passwords do not match");
+            if (confirmPassword) confirmPassword.focus();
+            return;
+          }
+          
+          if (!isEmailAvailable) {
+            alert("Please use a different email address or login to existing account");
+            if (accountEmail) accountEmail.focus();
+            return;
+          }
+          
+          // Create the user account
+          try {
+            const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+            userUid = userCredential.user.uid;
+            userEmail = email;
+            createdNewAccount = true;
+            
+            // Create user document in Firestore
+            const userDocRef = doc(db, "users", userUid);
+            await setDoc(userDocRef, {
+              name: document.getElementById("fullName").value,
+              email: email,
+              phone: phoneWithoutZero,
+              createdAt: new Date().toISOString(),
+              role: "client",
+              orderNumbers: []
+            });
+            
+            console.log("Account created successfully for:", email);
+          } catch (error) {
+            console.error("Account creation failed:", error);
+            alert("Failed to create account: " + error.message);
+            return;
+          }
+        } else {
+          // User is already logged in
+          userUid = loggedInUser.uid;
+          userEmail = loggedInUser.email;
+          
+          // Update user's phone number if not set
+          const userDocRef = doc(db, "users", userUid);
+          const userDoc = await getDoc(userDocRef);
+          if (userDoc.exists()) {
+            const userData = userDoc.data();
+            if (!userData.phone) {
+              await updateDoc(userDocRef, { phone: phoneWithoutZero });
             }
           }
-        // Removed closing bracket of onAuthStateChanged
+        }
       }
 
-      // Check dairy restriction on city change
-      citySelect.addEventListener("change", () => {
-        const city = citySelect.value;
-        if (hasFreshMilk && city !== "multan") {
-          dairyAlert.classList.remove("d-none");
-        } else {
-          dairyAlert.classList.add("d-none");
-        }
-      });
+      // Prepare order data
+      const orderData = {
+        orderNumber: "ARB-" + Math.floor(100000 + Math.random() * 900000),
+        customerName: document.getElementById("fullName").value,
+        phone: phoneWithoutZero,
+        phoneAlt: phoneWithZero,
+        userId: userUid,
+        email: userEmail || null,
+        address: document.getElementById("address").value,
+        city: city,
+        paymentMethod: document.querySelector('input[name="paymentMethod"]:checked').value,
+        subtotal: subtotal,
+        weight: totalWeight,
+        shipping: shippingFee,
+        total: grandTotal,
+        items: cart,
+        status: "Awaiting Verification",
+        receiptUploaded: true,
+        receiptUrl: uploadedUrl,
+        orderDate: new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })
+      };
 
-      // Submit checkout form
-      checkoutForm.addEventListener("submit", async (e) => {
-        e.preventDefault();
-        
-        // Custom validations
-        const city = citySelect.value;
-        if (hasFreshMilk && city !== "multan") {
-          dairyAlert.classList.remove("d-none");
-          citySelect.focus();
-          return;
-        }
+      const submitBtn = document.querySelector("#checkout-form button[type='submit']");
+      const originalBtnText = submitBtn.innerHTML;
+      submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Processing...';
+      submitBtn.disabled = true;
 
-        if (!checkoutForm.checkValidity()) {
-          e.stopPropagation();
-          checkoutForm.classList.add("was-validated");
-          
-          // Scroll first invalid field into view for a better user experience
-          const firstInvalidEl = checkoutForm.querySelector(":invalid");
-          if (firstInvalidEl) {
-            firstInvalidEl.scrollIntoView({ behavior: "smooth", block: "center" });
-            firstInvalidEl.focus();
-          }
-          return;
-        }
-
-        // Require payment receipt upload
-        if (!receiptUploaded || !uploadedUrl) {
-          alert("Please upload your payment receipt screenshot before placing the order.");
-          const uploadContainer = document.getElementById("receipt-upload-container");
-          if (uploadContainer) {
-            uploadContainer.scrollIntoView({ behavior: "smooth", block: "center" });
-          }
-          const dropZone = document.getElementById("drop-zone");
-          if (dropZone) {
-            dropZone.style.setProperty("border-color", "#dc3545", "important");
-            setTimeout(() => {
-              dropZone.style.removeProperty("border-color");
-            }, 1500);
-          }
-          return;
-        }
-
-        // Form valid - prepare checkout data and sanitize phone number (remove leading zero if present)
-        let phoneVal = document.getElementById("phone").value.trim();
-        // Store BOTH formats so dashboard can find the order regardless of format mismatch
-        const phoneWithZero    = phoneVal.startsWith("0") ? phoneVal : "0" + phoneVal;  // 03001234567
-        const phoneWithoutZero = phoneWithZero.slice(1);                                 // 3001234567
-        if (phoneVal.startsWith("0")) {
-          phoneVal = phoneVal.substring(1);
-        }
-
-        // Wait for Firebase Auth to fully load before reading user
-        const currentUser = await new Promise(resolve => {
-          const unsub = onAuthStateChanged(auth, u => { unsub(); resolve(u); });
-        });
-        const orderData = {
-          orderNumber: "ARB-" + Math.floor(100000 + Math.random() * 900000),
-          customerName: document.getElementById("fullName").value,
-          phone: phoneWithoutZero,
-          phoneAlt: phoneWithZero,
-          userId: currentUser ? currentUser.uid : null,
-          email: currentUser ? currentUser.email : null,
-          address: document.getElementById("address").value,
-          city: city,
-          paymentMethod: document.querySelector('input[name="paymentMethod"]:checked').value,
-          subtotal: subtotal,
-          weight: totalWeight,
-          shipping: shippingFee,
-          total: grandTotal,
-          items: cart,
-          status: "Awaiting Verification",
-          receiptUploaded: true,
-          receiptUrl: uploadedUrl,
-          orderDate: new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })
-        };
-
-        const submitBtn = document.querySelector("#checkout-form button[type='submit']");
-        submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Processing...';
-        submitBtn.disabled = true;
-
-        // Save order directly to Cloud Firestore DB
+      try {
+        // Save order to Firestore
         const orderDocRef = doc(db, "orders", orderData.orderNumber);
-        setDoc(orderDocRef, orderData)
-          .then(() => {
-            console.log("Firestore order saved successfully");
-          })
-          .catch(err => {
-            console.error("Firestore save error:", err);
-          })
-          .finally(() => {
-            // Also invoke legacy API endpoint if Vercel serverless is loaded
-            fetch('/api/checkout', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify(orderData)
-            }).catch(err => console.warn("Local demo mode: API route not online.", err))
-              .finally(() => {
-                sessionStorage.setItem("arb_latest_order", JSON.stringify(orderData));
-                const clientOrders = JSON.parse(localStorage.getItem("arb_all_orders")) || [];
-                clientOrders.push(orderData);
-                localStorage.setItem("arb_all_orders", JSON.stringify(clientOrders));
-                localStorage.setItem("arb_cart", JSON.stringify([]));
-                window.location.href = "thank-you.html";
-              });
+        await setDoc(orderDocRef, orderData);
+        console.log("Order saved to Firestore");
+        
+        // If user account was created or user is logged in, update their orderNumbers array
+        if (userUid) {
+          const userDocRef = doc(db, "users", userUid);
+          await updateDoc(userDocRef, {
+            orderNumbers: arrayUnion(orderData.orderNumber)
           });
+          console.log("Order linked to user account");
+        }
+        
+        // Save to localStorage as backup
+        sessionStorage.setItem("arb_latest_order", JSON.stringify(orderData));
+        const clientOrders = JSON.parse(localStorage.getItem("arb_all_orders")) || [];
+        clientOrders.push(orderData);
+        localStorage.setItem("arb_all_orders", JSON.stringify(clientOrders));
+        localStorage.setItem("arb_cart", JSON.stringify([]));
+        
+        // Clear cart
+        localStorage.removeItem("arb_cart");
+        
+        // Redirect to thank you page
+        window.location.href = "thank-you.html";
+        
+      } catch (error) {
+        console.error("Order save failed:", error);
+        alert("Failed to place order. Please try again.");
+        submitBtn.innerHTML = originalBtnText;
+        submitBtn.disabled = false;
+      }
+    });
+
+    // Receipt upload handlers
+    const dropZone = document.getElementById("drop-zone");
+    const fileInput = document.getElementById("receipt-file-input");
+    const progressContainer = document.getElementById("upload-progress-container");
+    const progressBar = document.getElementById("upload-progress-bar");
+    const successAlert = document.getElementById("upload-success-alert");
+
+    if (dropZone && fileInput) {
+      dropZone.addEventListener("click", () => fileInput.click());
+
+      dropZone.addEventListener("dragover", (e) => {
+        e.preventDefault();
+        dropZone.style.backgroundColor = "var(--color-accent)";
       });
 
-      // Drag and Drop Receipt Uploader Handlers in Checkout
-      const dropZone = document.getElementById("drop-zone");
-      const fileInput = document.getElementById("receipt-file-input");
-      const progressContainer = document.getElementById("upload-progress-container");
-      const progressBar = document.getElementById("upload-progress-bar");
-      const successAlert = document.getElementById("upload-success-alert");
+      dropZone.addEventListener("dragleave", () => {
+        dropZone.style.backgroundColor = "var(--color-accent-light)";
+      });
 
-      if (dropZone && fileInput) {
-        dropZone.addEventListener("click", () => fileInput.click());
+      dropZone.addEventListener("drop", (e) => {
+        e.preventDefault();
+        dropZone.style.backgroundColor = "var(--color-accent-light)";
+        const files = e.dataTransfer.files;
+        if (files.length > 0) {
+          handleReceiptUpload(files[0]);
+        }
+      });
 
-        dropZone.addEventListener("dragover", (e) => {
-          e.preventDefault();
-          dropZone.style.backgroundColor = "var(--color-accent)";
-        });
+      fileInput.addEventListener("change", () => {
+        if (fileInput.files.length > 0) {
+          handleReceiptUpload(fileInput.files[0]);
+        }
+      });
+    }
 
-        dropZone.addEventListener("dragleave", () => {
-          dropZone.style.backgroundColor = "var(--color-accent-light)";
-        });
+    function handleReceiptUpload(file) {
+      dropZone.classList.add("d-none");
+      progressContainer.classList.remove("d-none");
+      progressBar.style.width = "30%";
 
-        dropZone.addEventListener("drop", (e) => {
-          e.preventDefault();
-          dropZone.style.backgroundColor = "var(--color-accent-light)";
-          const files = e.dataTransfer.files;
-          if (files.length > 0) {
-            handleReceiptUpload(files[0]);
-          }
-        });
+      const tempOrderNumber = "ARB-" + Math.floor(100000 + Math.random() * 900000);
+      const ext = (file.name.split('.').pop() || 'jpg').toLowerCase();
+      const filename = `receipts/${tempOrderNumber}_receipt.${ext}`;
 
-        fileInput.addEventListener("change", () => {
-          if (fileInput.files.length > 0) {
-            handleReceiptUpload(fileInput.files[0]);
-          }
-        });
-      }
+      progressBar.style.width = "60%";
 
-      function handleReceiptUpload(file) {
-        dropZone.classList.add("d-none");
-        progressContainer.classList.remove("d-none");
-        progressBar.style.width = "30%";
-
-        const tempOrderNumber = "ARB-" + Math.floor(100000 + Math.random() * 900000);
-        const ext = (file.name.split('.').pop() || 'jpg').toLowerCase();
-        const filename = `receipts/${tempOrderNumber}_receipt.${ext}`;
-
-        progressBar.style.width = "60%";
-
-        // Send raw binary directly to our server — server uploads to Vercel Blob with token
-        fetch(`/api/upload?filename=${encodeURIComponent(filename)}`, {
-          method: 'POST',
-          headers: { 'Content-Type': file.type || 'application/octet-stream' },
-          body: file,
-        })
-        .then(async (res) => {
-          if (!res.ok) {
-            const err = await res.json().catch(() => ({ error: `Server error ${res.status}` }));
-            throw new Error(err.error || `Upload failed (${res.status})`);
-          }
-          return res.json();
-        })
-        .then((result) => {
-          progressBar.style.width = "100%";
-          setTimeout(() => {
-            progressContainer.classList.add("d-none");
-            successAlert.classList.remove("d-none");
-            uploadedUrl = result.url;
-            receiptUploaded = true;
-          }, 300);
-        })
-        .catch((err) => {
-          console.error("[Upload] Error:", err);
+      fetch(`/api/upload?filename=${encodeURIComponent(filename)}`, {
+        method: 'POST',
+        headers: { 'Content-Type': file.type || 'application/octet-stream' },
+        body: file,
+      })
+      .then(async (res) => {
+        if (!res.ok) {
+          const err = await res.json().catch(() => ({ error: `Server error ${res.status}` }));
+          throw new Error(err.error || `Upload failed (${res.status})`);
+        }
+        return res.json();
+      })
+      .then((result) => {
+        progressBar.style.width = "100%";
+        setTimeout(() => {
           progressContainer.classList.add("d-none");
-          // If server upload fails, allow customer to proceed - mark receipt as pending manual
           successAlert.classList.remove("d-none");
-          successAlert.innerHTML = `<i class="bi bi-check-circle-fill me-2"></i> Receipt saved locally. Please send it via WhatsApp (+92-XXX-XXXXXXX) with your order number after placing the order.`;
-          uploadedUrl = "manual-whatsapp";
+          uploadedUrl = result.url;
           receiptUploaded = true;
-          dropZone.classList.add("d-none");
-        });
-      }
+        }, 300);
+      })
+      .catch((err) => {
+        console.error("[Upload] Error:", err);
+        progressContainer.classList.add("d-none");
+        successAlert.classList.remove("d-none");
+        successAlert.innerHTML = `<i class="bi bi-check-circle-fill me-2"></i> Receipt saved locally. Please send it via WhatsApp (+92 320 000 5367) with your order number after placing the order.`;
+        uploadedUrl = "manual-whatsapp";
+        receiptUploaded = true;
+        dropZone.classList.add("d-none");
+      });
+    }
 
-      loadCheckoutSummary();
+    // Initialize
+    loadCheckoutSummary();
   </script>
 
   <!-- PWA Service Worker Registration -->
