@@ -2,7 +2,7 @@ rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
-
+    
     function isAdmin() {
       return request.auth != null && 
         (request.auth.token.email == 'social.ahmro@gmail.com' || 
@@ -12,29 +12,27 @@ service cloud.firestore {
         );
     }
 
-   match /orders/{orderId} {
-  // Anyone can place an order (guest checkout)
-  allow create: if true;
+    // Orders: anyone can create (guest checkout), users read their own, admins read all
+    match /orders/{orderId} {
+      allow create: if true;
+      allow read: if request.auth != null && 
+                     resource.data.userId == request.auth.uid;
+      allow read, update, delete: if isAdmin();
+    }
 
-  // Admins can do everything
-  allow read, update, delete: if isAdmin();
-
-  // Logged-in users: get a single doc by ID
-  allow get: if request.auth != null;
-
-  // Logged-in users: query/list their own orders only
-  allow list: if request.auth != null && (
-    request.auth.token.email == resource.data.email ||
-    request.auth.uid == resource.data.uid
-  );
-}
+    // Users: read/write own profile, admins manage all
     match /users/{userId} {
+      allow read: if request.auth != null && request.auth.uid == userId;
+      allow create: if request.auth != null && request.auth.uid == userId;
+      allow update: if request.auth != null && request.auth.uid == userId && 
+                    (!request.resource.data.diff(resource.data).affectedKeys().hasAny(['landSizeStatus', 'tier']));
       allow read, write: if isAdmin();
-      allow read, create: if request.auth != null && request.auth.uid == userId;
-      allow update: if request.auth != null &&
-                    request.auth.uid == userId &&
-                    !request.resource.data.diff(resource.data).affectedKeys()
-                      .hasAny(['landSizeStatus', 'tier']);
+    }
+
+    // Products: anyone can read, only admins can write
+    match /products/{productId} {
+      allow read: if true;
+      allow write: if isAdmin();
     }
   }
 }
