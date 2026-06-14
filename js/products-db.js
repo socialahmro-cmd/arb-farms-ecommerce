@@ -559,6 +559,16 @@ const productsDb = [
 ];
 
 const productVariations = {
+  // Mangoes - 5kg and 9kg box variants
+  "ogn-066-white-chaunsa-5kg": ["ogn-066-white-chaunsa-5kg", "ogn-066-white-chaunsa-9kg"],
+  "ogn-066-white-chaunsa-9kg": ["ogn-066-white-chaunsa-5kg", "ogn-066-white-chaunsa-9kg"],
+  "ogn-067-sindhri-5kg":       ["ogn-067-sindhri-5kg",       "ogn-067-sindhri-9kg"],
+  "ogn-067-sindhri-9kg":       ["ogn-067-sindhri-5kg",       "ogn-067-sindhri-9kg"],
+  "ogn-068-dusehri-5kg":       ["ogn-068-dusehri-5kg",       "ogn-068-dusehri-9kg"],
+  "ogn-068-dusehri-9kg":       ["ogn-068-dusehri-5kg",       "ogn-068-dusehri-9kg"],
+  "ogn-069-anwar-ratol-5kg":   ["ogn-069-anwar-ratol-5kg",   "ogn-069-anwar-ratol-9kg"],
+  "ogn-069-anwar-ratol-9kg":   ["ogn-069-anwar-ratol-5kg",   "ogn-069-anwar-ratol-9kg"],
+  // Other products
   "ogn-018": ["ogn-018", "ogn-018-5kg", "ogn-018-40kg"],  // Wheat (Gandum)
   "ogn-018-5kg": ["ogn-018", "ogn-018-5kg", "ogn-018-40kg"],
   "ogn-018-40kg": ["ogn-018", "ogn-018-5kg", "ogn-018-40kg"],
