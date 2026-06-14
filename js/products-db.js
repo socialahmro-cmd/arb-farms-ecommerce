@@ -208,7 +208,7 @@ const productsDb = [
     sku: "OGN-068-5",
     name: "Dusehri Mango (Pre-Order)",
     weight: "5 Kg Box",
-    price: 2200,
+    price: 2000,
     category: "dairy-organic",
     image: "catalog/Dusehri-Mango.svg",
     hoverImage: "catalog/Dusehri-Mango.svg",
