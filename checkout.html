@@ -601,7 +601,8 @@
           status: "Awaiting Verification",
           receiptUploaded: true,
           receiptUrl: uploadedUrl,
-          orderDate: new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })
+          orderDate: new Date().toISOString(),
+          orderDateDisplay: new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })
         };
 
         const submitBtn = document.querySelector("#checkout-form button[type='submit']");
