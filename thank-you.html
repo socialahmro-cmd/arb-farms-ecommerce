@@ -109,6 +109,27 @@
               <div class="mt-2 w-100" id="receipt-link-container"></div>
             </div>
           </div>
+
+          <!-- Guest: Create Account Banner (hidden for logged-in users) -->
+          <div class="alert mt-4 text-start d-none" id="guest-account-banner"
+               style="background:#f0f7ed;border:1.5px solid #4caf50;border-radius:10px;">
+            <div class="d-flex align-items-start gap-3">
+              <i class="bi bi-person-plus-fill text-success mt-1" style="font-size:1.4rem;flex-shrink:0;"></i>
+              <div>
+                <strong class="text-dark">Track your order anytime — create a free account</strong>
+                <p class="small text-muted mb-2 mt-1">
+                  You checked out as a guest. Create an account with the same phone number
+                  and your order will automatically appear in your dashboard.
+                </p>
+                <a href="register.html" class="btn btn-sm btn-success me-2">
+                  <i class="bi bi-person-check me-1"></i>Create Account
+                </a>
+                <a href="login.html" class="btn btn-sm btn-outline-secondary">
+                  Already have one? Sign In
+                </a>
+              </div>
+            </div>
+          </div>
           
           <!-- Order Details Grid -->
           <div class="row text-start mt-4 g-3">
@@ -272,6 +293,18 @@
   </script>
 
   <!-- Load Order Data -->
+  <script type="module">
+    // Show "create account" banner for guests only
+    import { auth } from "/js/firebase-init.js";
+    import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    onAuthStateChanged(auth, (user) => {
+      if (!user) {
+        const banner = document.getElementById('guest-account-banner');
+        if (banner) banner.classList.remove('d-none');
+      }
+    });
+  </script>
+
   <script type="module">
     // ----------------------------------------------------------------
     // Resolve the order object from URL param → sessionStorage → localStorage
