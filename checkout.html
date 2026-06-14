@@ -201,6 +201,30 @@
               <strong>Dairy Restriction Alert:</strong> Cow Milk, Buffalo Milk, and Goat Milk can only be shipped to <strong>Multan</strong>. Please remove the fresh dairy items from your cart to select other cities, or select Multan as your destination.
             </div>
 
+            <!-- Optional: Create Account -->
+            <div class="border rounded-3 p-3 mb-4 bg-light" id="create-account-section">
+              <div class="form-check mb-0">
+                <input class="form-check-input" type="checkbox" id="create-account-cb">
+                <label class="form-check-label fw-semibold text-dark" for="create-account-cb">
+                  <i class="bi bi-person-plus-fill text-primary me-1"></i> Create an account to track your orders
+                </label>
+              </div>
+              <div class="d-none mt-3" id="account-fields">
+                <p class="small text-muted mb-3">Your name and phone are already filled in. Just add an email and password.</p>
+                <div class="mb-2">
+                  <label class="form-label fw-bold text-dark small">Email Address <span class="text-danger">*</span></label>
+                  <input type="email" class="form-control form-control-sm" id="acc-email" placeholder="you@example.com">
+                  <div class="invalid-feedback">Please enter a valid email.</div>
+                </div>
+                <div class="mb-0">
+                  <label class="form-label fw-bold text-dark small">Password <span class="text-danger">*</span></label>
+                  <input type="password" class="form-control form-control-sm" id="acc-password" placeholder="Min 6 characters">
+                  <div class="invalid-feedback">Password must be at least 6 characters.</div>
+                </div>
+                <div class="alert alert-danger d-none mt-2 mb-0 py-2 small" id="acc-error"></div>
+              </div>
+            </div>
+
             <button type="submit" class="btn btn-primary w-100 py-3 font-primary text-uppercase" id="submit-order-btn">
               <i class="bi bi-check-circle me-1"></i> Place Order
             </button>
@@ -313,7 +337,7 @@
   <script type="module">
     import { auth, db } from "/js/firebase-init.js";
     import { doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-    import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    import { onAuthStateChanged, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
       const summaryItems = document.getElementById("checkout-summary-items");
       const subtotalEl = document.getElementById("summary-subtotal");
@@ -354,34 +378,17 @@
         
         let wheatWeight = 0;
         let nonWheatWeight = 0;
-        let mangoWeight = 0;
 
         cart.forEach(item => {
           const itemWeight = parseItemWeight(item) * item.qty;
           const itemId = (item.id || '').toLowerCase();
           const itemName = (item.name || '').toLowerCase();
-
-          const isMango = itemId.includes('ogn-066') ||
-                          itemId.includes('ogn-067') ||
-                          itemId.includes('ogn-068') ||
-                          itemId.includes('ogn-069') ||
-                          itemId.includes('ogn-065') ||
-                          itemName.includes('mango') ||
-                          itemName.includes('chaunsa') ||
-                          itemName.includes('sindhri') ||
-                          itemName.includes('dusehri') ||
-                          itemName.includes('anwar ratol');
-
-          const isWheat = !isMango && (
-                          itemId.includes('wheat') || 
+          const isWheat = itemId.includes('wheat') || 
                           itemId.includes('ogn-018') ||
                           itemName.includes('wheat') || 
                           itemName.includes('gandum') ||
-                          (item.category && item.category === 'agri-sowing-seed'));
-
-          if (isMango) {
-            mangoWeight += itemWeight;
-          } else if (isWheat) {
+                          (item.category && item.category === 'agri-sowing-seed');
+          if (isWheat) {
             wheatWeight += itemWeight;
           } else {
             nonWheatWeight += itemWeight;
@@ -390,11 +397,6 @@
 
         let fee = 0;
         let tiers = [];
-
-        // 0. Mangoes: FREE shipping
-        if (mangoWeight > 0) {
-          tiers.push(`Mangoes (${mangoWeight.toFixed(1)} kg) — FREE Delivery`);
-        }
 
         // 1. Calculate Wheat Shipping
         if (wheatWeight > 0) {
@@ -557,22 +559,14 @@
 
         // Form valid - prepare checkout data and sanitize phone number (remove leading zero if present)
         let phoneVal = document.getElementById("phone").value.trim();
-        // Store BOTH formats so dashboard can find the order regardless of format mismatch
-        const phoneWithZero    = phoneVal.startsWith("0") ? phoneVal : "0" + phoneVal;  // 03001234567
-        const phoneWithoutZero = phoneWithZero.slice(1);                                 // 3001234567
         if (phoneVal.startsWith("0")) {
           phoneVal = phoneVal.substring(1);
         }
 
-        // Resolve current auth user at submit time (may have loaded by now)
-        const currentUser = auth.currentUser;
         const orderData = {
           orderNumber: "ARB-" + Math.floor(100000 + Math.random() * 900000),
           customerName: document.getElementById("fullName").value,
-          phone: phoneWithoutZero,
-          phoneAlt: phoneWithZero,
-          uid: currentUser ? currentUser.uid : null,
-          email: currentUser ? currentUser.email : null,   // ← key for reliable lookup
+          phone: phoneVal,
           address: document.getElementById("address").value,
           city: city,
           paymentMethod: document.querySelector('input[name="paymentMethod"]:checked').value,
@@ -590,6 +584,59 @@
         const submitBtn = document.querySelector("#checkout-form button[type='submit']");
         submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Processing...';
         submitBtn.disabled = true;
+
+        // Handle optional account creation
+        const createAccCb = document.getElementById('create-account-cb');
+        const wantsAccount = createAccCb && createAccCb.checked;
+        let firebaseUserId = null;
+
+        // Check if already logged in
+        const currentUser = auth.currentUser;
+        if (currentUser) {
+          firebaseUserId = currentUser.uid;
+        }
+
+        if (wantsAccount && !firebaseUserId) {
+          const email = document.getElementById('acc-email').value.trim();
+          const password = document.getElementById('acc-password').value;
+          const accError = document.getElementById('acc-error');
+          accError.classList.add('d-none');
+
+          if (!email || !password || password.length < 6) {
+            accError.textContent = !email ? 'Please enter your email.' : 'Password must be at least 6 characters.';
+            accError.classList.remove('d-none');
+            submitBtn.innerHTML = '<i class="bi bi-check-circle me-1"></i> Place Order';
+            submitBtn.disabled = false;
+            return;
+          }
+
+          try {
+            const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+            firebaseUserId = userCredential.user.uid;
+            // Save user profile to Firestore
+            await setDoc(doc(db, 'users', firebaseUserId), {
+              name: orderData.customerName,
+              email: email,
+              phone: orderData.phone,
+              role: 'client',
+              createdAt: new Date().toISOString()
+            });
+          } catch (err) {
+            const accError = document.getElementById('acc-error');
+            accError.textContent = err.code === 'auth/email-already-in-use'
+              ? 'This email is already registered. Please log in instead.'
+              : err.message;
+            accError.classList.remove('d-none');
+            submitBtn.innerHTML = '<i class="bi bi-check-circle me-1"></i> Place Order';
+            submitBtn.disabled = false;
+            return;
+          }
+        }
+
+        // Attach userId to order if available
+        if (firebaseUserId) {
+          orderData.userId = firebaseUserId;
+        }
 
         // Save order directly to Cloud Firestore DB
         const orderDocRef = doc(db, "orders", orderData.orderNumber);
@@ -689,16 +736,38 @@
         .catch((err) => {
           console.error("[Upload] Error:", err);
           progressContainer.classList.add("d-none");
-          // If server upload fails, allow customer to proceed - mark receipt as pending manual
-          successAlert.classList.remove("d-none");
-          successAlert.innerHTML = `<i class="bi bi-check-circle-fill me-2"></i> Receipt saved locally. Please send it via WhatsApp (+92-XXX-XXXXXXX) with your order number after placing the order.`;
-          uploadedUrl = "manual-whatsapp";
-          receiptUploaded = true;
-          dropZone.classList.add("d-none");
+          dropZone.classList.remove("d-none");
+          alert(`Upload failed: ${err.message}\n\nPlease try a smaller file or contact us on WhatsApp to send the receipt manually.`);
         });
       }
 
       loadCheckoutSummary();
+
+      // Toggle create account fields
+      const createAccCb = document.getElementById('create-account-cb');
+      const accountFields = document.getElementById('account-fields');
+      if (createAccCb) {
+        createAccCb.addEventListener('change', () => {
+          if (createAccCb.checked) {
+            accountFields.classList.remove('d-none');
+          } else {
+            accountFields.classList.add('d-none');
+          }
+        });
+      }
+
+      // Pre-fill email if already logged in
+      onAuthStateChanged(auth, (user) => {
+        if (user) {
+          const section = document.getElementById('create-account-section');
+          if (section) {
+            section.innerHTML = `<div class="alert alert-success mb-0 py-2 small">
+              <i class="bi bi-person-check-fill me-2"></i>
+              Logged in as <strong>${user.email}</strong> — your order will be linked to your account.
+            </div>`;
+          }
+        }
+      });
   </script>
 
   <!-- PWA Service Worker Registration -->
