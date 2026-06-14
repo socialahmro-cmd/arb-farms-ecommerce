@@ -437,20 +437,16 @@ const saveAmt = regPrice - newPrice;
   }
 
   // Update prices
+  const regPriceLabel = card.querySelector('.reg-price-label');
+  if (regPriceLabel) {
+    regPriceLabel.textContent = `${hasRealSale ? 'Was' : 'Regular'}: Rs. ${regPrice.toLocaleString()}`;
+  }
   const priceLabel = card.querySelector('.price-label');
   if (priceLabel) {
-    priceLabel.textContent = `Rs. ${newPrice.toLocaleString()}`;
+    priceLabel.innerHTML = hasRealSale
+      ? `<span style="color:#c0392b;">Rs. ${newPrice.toLocaleString()}</span>`
+      : `Rs. ${newPrice.toLocaleString()}`;
   }
-const regPriceLabel = card.querySelector('.reg-price-label');
-if (regPriceLabel) {
-  regPriceLabel.textContent = `${hasRealSale ? 'Was' : 'Regular'}: Rs. ${regPrice.toLocaleString()}`;
-}
-const priceLabel = card.querySelector('.price-label');
-if (priceLabel) {
-  priceLabel.innerHTML = hasRealSale
-    ? `<span style="color:#c0392b;">Rs. ${newPrice.toLocaleString()}</span>`
-    : `Rs. ${newPrice.toLocaleString()}`;
-}
 
   // Update weight label
   const weightLabel = card.querySelector('.weight-label');
