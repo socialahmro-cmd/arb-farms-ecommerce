@@ -564,12 +564,15 @@
           phoneVal = phoneVal.substring(1);
         }
 
+        // Resolve current auth user at submit time (may have loaded by now)
+        const currentUser = auth.currentUser;
         const orderData = {
           orderNumber: "ARB-" + Math.floor(100000 + Math.random() * 900000),
           customerName: document.getElementById("fullName").value,
-          phone: phoneWithoutZero,      // canonical format without leading zero
-          phoneAlt: phoneWithZero,      // alternate format with leading zero
-          uid: auth.currentUser ? auth.currentUser.uid : null,
+          phone: phoneWithoutZero,
+          phoneAlt: phoneWithZero,
+          uid: currentUser ? currentUser.uid : null,
+          email: currentUser ? currentUser.email : null,   // ← key for reliable lookup
           address: document.getElementById("address").value,
           city: city,
           paymentMethod: document.querySelector('input[name="paymentMethod"]:checked').value,
