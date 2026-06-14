@@ -383,6 +383,21 @@
           const itemWeight = parseItemWeight(item) * item.qty;
           const itemId = (item.id || '').toLowerCase();
           const itemName = (item.name || '').toLowerCase();
+
+          // Mangoes are always free shipping — skip them entirely
+          const isMango = itemId.includes('ogn-066') ||
+                          itemId.includes('ogn-067') ||
+                          itemId.includes('ogn-068') ||
+                          itemId.includes('ogn-069') ||
+                          itemName.includes('mango') ||
+                          itemName.includes('chaunsa') ||
+                          itemName.includes('sindhri') ||
+                          itemName.includes('dusehri') ||
+                          itemName.includes('anwar ratol') ||
+                          item.category === 'mango' ||
+                          item.shipping === 0;
+          if (isMango) return;
+
           const isWheat = itemId.includes('wheat') || 
                           itemId.includes('ogn-018') ||
                           itemName.includes('wheat') || 
@@ -464,11 +479,19 @@
           }
           const parsedUnitWeight = parseItemWeight(item);
           const displayUnitWeight = parsedUnitWeight >= 1 ? `${parsedUnitWeight.toFixed(2)} kg` : `${(parsedUnitWeight * 1000).toFixed(0)} gm`;
+          const _id = (item.id || '').toLowerCase();
+          const _name = (item.name || '').toLowerCase();
+          const isMango = _id.includes('ogn-066') || _id.includes('ogn-067') ||
+                          _id.includes('ogn-068') || _id.includes('ogn-069') ||
+                          _name.includes('mango') || _name.includes('chaunsa') ||
+                          _name.includes('sindhri') || _name.includes('dusehri') ||
+                          _name.includes('anwar ratol') || item.category === 'mango' || item.shipping === 0;
           return `
             <div class="d-flex justify-content-between align-items-center">
               <div>
                 <span class="small fw-semibold text-dark d-block">${item.name}</span>
                 <span class="text-muted small">${item.qty}x ${displayUnitWeight}</span>
+                ${isMango ? `<span class="badge bg-success ms-1" style="font-size:0.6rem;">🚚 Free Shipping</span>` : ''}
               </div>
               <span class="small fw-bold">Rs. ${(item.price * item.qty).toLocaleString()}</span>
             </div>
