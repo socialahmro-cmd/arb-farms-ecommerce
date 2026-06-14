@@ -417,8 +417,10 @@ document.addEventListener('change', (e) => {
   if (!card) return;
 
   // Calculate pricing
-  const regPrice = Math.round(newPrice * 1.15 / 50) * 50;
-  const saveAmt = regPrice - newPrice;
+ const origPrice = parseFloat(selectedOption.getAttribute('data-original-price')) || 0;
+const hasRealSale = origPrice && origPrice > newPrice;
+const regPrice = hasRealSale ? origPrice : Math.round(newPrice * 1.15 / 50) * 50;
+const saveAmt = regPrice - newPrice;
 
   // Update SKU badge
   const skuBadge = card.querySelector('.sku-badge');
@@ -439,10 +441,16 @@ document.addEventListener('change', (e) => {
   if (priceLabel) {
     priceLabel.textContent = `Rs. ${newPrice.toLocaleString()}`;
   }
-  const regPriceLabel = card.querySelector('.reg-price-label');
-  if (regPriceLabel) {
-    regPriceLabel.textContent = `Regular: Rs. ${regPrice.toLocaleString()}`;
-  }
+const regPriceLabel = card.querySelector('.reg-price-label');
+if (regPriceLabel) {
+  regPriceLabel.textContent = `${hasRealSale ? 'Was' : 'Regular'}: Rs. ${regPrice.toLocaleString()}`;
+}
+const priceLabel = card.querySelector('.price-label');
+if (priceLabel) {
+  priceLabel.innerHTML = hasRealSale
+    ? `<span style="color:#c0392b;">Rs. ${newPrice.toLocaleString()}</span>`
+    : `Rs. ${newPrice.toLocaleString()}`;
+}
 
   // Update weight label
   const weightLabel = card.querySelector('.weight-label');
