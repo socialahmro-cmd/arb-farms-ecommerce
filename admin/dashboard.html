@@ -282,6 +282,7 @@
             <option value="Dispatched">Mark Dispatched</option>
             <option value="Verified & Processing">Mark Processing</option>
             <option value="Cancelled">Mark Cancelled</option>
+            <option value="__SYNC_ERP__">⟳ Sync Selected to ERP</option>
           </select>
           <button class="btn btn-sm btn-primary ms-1" id="apply-bulk-btn">Apply</button>
         </div>
@@ -373,6 +374,10 @@
     from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
   import { collection, query, orderBy, onSnapshot, doc, updateDoc, deleteDoc }
     from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+  // ── ERP SYNC CONFIG ── (change these to match your server)
+  const ERP_SYNC_URL    = '/api/sync-to-erp.php';   // URL of the PHP endpoint
+  const ERP_SYNC_SECRET = 'Jawad@1234';           // must match SYNC_SECRET in config.php
 
   // ── DOM refs ──────────────────────────────────────────────────────────
   const debugText        = document.getElementById("debug-text");
@@ -539,7 +544,9 @@
       return `
         <tr>
           <td><input class="form-check-input row-cb" type="checkbox" value="${order.id}"></td>
-          <td><strong class="font-monospace text-primary">${order.orderNumber || '—'}</strong></td>
+          <td><strong class="font-monospace text-primary">${order.orderNumber || '—'}</strong>
+            ${order.erp_synced ? `<br><span class="badge bg-success-subtle text-success border border-success-subtle" style="font-size:0.65rem;">✓ ERP</span>` : ''}
+          </td>
           <td class="small text-muted text-nowrap">${orderDateFormatted}</td>
           <td>
             <div class="fw-bold">${order.customerName || '—'}</div>
@@ -566,6 +573,12 @@
                 <i class="bi bi-three-dots-vertical"></i>
               </button>
               <ul class="dropdown-menu shadow-sm dropdown-menu-end">
+                <li>
+                  <a class="dropdown-item small text-success fw-semibold" href="#"
+                     onclick="window.syncOrderToERP('${order.id}');return false;">
+                    <i class="bi bi-arrow-repeat me-2"></i>Sync to ERP
+                  </a>
+                </li>
                 ${order.receiptUrl
                   ? `<li><a class="dropdown-item small" href="#" onclick="window.openLightbox('${order.receiptUrl}');return false;">
                        <i class="bi bi-file-earmark-image me-2"></i>View Receipt
@@ -765,6 +778,115 @@
       const f = document.getElementById("csv-upload");
       if (!f.files.length) { alert("Please select a CSV file."); return; }
       alert("CSV upload feature — implement as needed");
+    });
+  }
+
+  // ── ERP SYNC ─────────────────────────────────────────────────────────────
+  /**
+   * Sync a single Firebase order to the ERP MySQL database.
+   * @param {string} firebaseDocId  — Firestore document ID
+   * @param {boolean} silent        — suppress alerts (used in bulk mode)
+   * @returns {Promise<{success, erp_order_id?, message}>}
+   */
+  async function syncOrderToERP(firebaseDocId, silent = false) {
+    const order = allOrders.find(o => o.id === firebaseDocId);
+    if (!order) {
+      if (!silent) alert('Order not found in local cache. Try refreshing.');
+      return { success: false, message: 'Order not found' };
+    }
+
+    try {
+      const res = await fetch(ERP_SYNC_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${ERP_SYNC_SECRET}`,
+        },
+        body: JSON.stringify({ order: { ...order, id: firebaseDocId } }),
+      });
+
+      const data = await res.json();
+
+      if (data.success) {
+        // Tag the Firebase doc so the row shows it was synced
+        await updateDoc(doc(db, 'orders', firebaseDocId), {
+          erp_synced: true,
+          erp_order_id: data.erp_order_id ?? null,
+          erp_synced_at: new Date().toISOString(),
+        });
+
+        if (!silent) {
+          const warn = data.warnings?.length ? '\n\n⚠️ ' + data.warnings.join('\n') : '';
+          alert(`✅ Synced to ERP!\nERP Order ID: ${data.erp_order_id}\nOrder: ${data.order_number}${warn}`);
+        }
+        updateDebug(`ERP sync OK — ${order.orderNumber} → ERP #${data.erp_order_id}`);
+        return data;
+      } else {
+        if (!silent) alert(`❌ ERP sync failed:\n${data.message}`);
+        updateDebug(`ERP sync failed: ${data.message}`, true);
+        return data;
+      }
+    } catch (err) {
+      const msg = 'Network error reaching ERP server: ' + err.message;
+      if (!silent) alert('❌ ' + msg);
+      updateDebug(msg, true);
+      return { success: false, message: msg };
+    }
+  }
+
+  // Expose for per-row dropdown
+  window.syncOrderToERP = (id) => syncOrderToERP(id);
+
+  // ── BULK SYNC HANDLER (hooked into existing applyBulkBtn) ────────────────
+  // We extend the existing bulk handler to intercept __SYNC_ERP__
+  if (applyBulkBtn) {
+    // Remove the old listener by cloning the node, then re-add both handlers
+    const oldBtn = applyBulkBtn;
+    const newBtn = oldBtn.cloneNode(true);
+    oldBtn.parentNode.replaceChild(newBtn, oldBtn);
+
+    newBtn.addEventListener("click", async () => {
+      const selectedIds = Array.from(document.querySelectorAll(".row-cb:checked")).map(cb => cb.value);
+      const action = document.getElementById("bulk-action-select").value;
+      if (!action || !selectedIds.length) return;
+
+      // ── ERP bulk sync branch ──
+      if (action === '__SYNC_ERP__') {
+        if (!confirm(`Sync ${selectedIds.length} order(s) to ERP?\nAlready-synced orders will be skipped.`)) return;
+
+        let ok = 0, skip = 0, fail = 0;
+        const failedOrders = [];
+        updateDebug(`Syncing ${selectedIds.length} orders to ERP…`);
+
+        for (const id of selectedIds) {
+          const result = await syncOrderToERP(id, true);
+          if (result.success) {
+            result.duplicate ? skip++ : ok++;
+          } else {
+            fail++;
+            const o = allOrders.find(x => x.id === id);
+            failedOrders.push((o?.orderNumber ?? id) + ': ' + result.message);
+          }
+        }
+
+        let summary = `ERP Sync complete:\n✅ Synced: ${ok}\n⏭ Skipped (already synced): ${skip}`;
+        if (fail > 0) summary += `\n❌ Failed: ${fail}\n${failedOrders.join('\n')}`;
+        alert(summary);
+        updateDebug(`ERP Bulk sync: ${ok} ok, ${skip} skipped, ${fail} failed`);
+        if (selectAllCb) selectAllCb.checked = false;
+        document.getElementById("bulk-actions-container").classList.add("d-none");
+        return;
+      }
+
+      // ── Normal status-change branch ──
+      if (confirm(`Change status to "${action}" for ${selectedIds.length} order(s)?`)) {
+        for (const id of selectedIds) {
+          await updateDoc(doc(db, "orders", id), { status: action });
+        }
+        alert("Bulk action applied.");
+        if (selectAllCb) selectAllCb.checked = false;
+        document.getElementById("bulk-actions-container").classList.add("d-none");
+      }
     });
   }
 </script>
