@@ -2,7 +2,7 @@
 // Vercel serverless proxy — forwards Firebase order to ERP MySQL.
 // Secret lives server-side only, never exposed to the browser.
 
-const ERP_URL    = 'https://erp.ahmroglobal.com/api/sync-to-erp.php';
+const ERP_URL    = 'https://erp.ahmroglobal.com/organics/api/sync-to-erp.php';
 const ERP_SECRET = 'Jawad@1234';
 
 export default async function handler(req, res) {
