@@ -13,9 +13,8 @@
   <link href="../css/index.css?v=c0cb305a" rel="stylesheet">
   
   <style>
-    body {
-      background-color: #f0ede6;
-    }
+    body { background-color: #f0ede6; }
+
     .admin-card {
       border-radius: var(--radius-md);
       border: 1px solid var(--color-border);
@@ -29,6 +28,81 @@
       padding: 4px 8px;
       border-radius: 50px;
     }
+
+    /* ── Receipt thumbnail in row ── */
+    .receipt-thumb-wrap {
+      position: relative;
+      display: inline-block;
+      cursor: zoom-in;
+    }
+    .receipt-thumb {
+      width: 44px;
+      height: 44px;
+      object-fit: cover;
+      border-radius: 6px;
+      border: 1.5px solid #dee2e6;
+      transition: transform 0.18s ease, box-shadow 0.18s ease;
+      display: block;
+    }
+    .receipt-thumb-wrap:hover .receipt-thumb {
+      transform: scale(3.5);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.32);
+      z-index: 99;
+      border-color: #2b422a;
+    }
+    /* make sure zoom doesn't get clipped by table overflow */
+    .table-responsive { overflow: visible !important; }
+    table { overflow: visible !important; }
+    tr { overflow: visible !important; }
+    td { overflow: visible !important; }
+
+    /* ── Receipt lightbox ── */
+    #receipt-lightbox {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.82);
+      z-index: 9999;
+      align-items: center;
+      justify-content: center;
+      cursor: zoom-out;
+    }
+    #receipt-lightbox.active { display: flex; }
+    #receipt-lightbox img {
+      max-width: 90vw;
+      max-height: 88vh;
+      border-radius: 10px;
+      box-shadow: 0 16px 64px rgba(0,0,0,0.6);
+    }
+    #receipt-lightbox .lb-close {
+      position: absolute;
+      top: 18px; right: 24px;
+      color: #fff;
+      font-size: 2rem;
+      cursor: pointer;
+      line-height: 1;
+      background: none;
+      border: none;
+    }
+
+    /* ── Filter row ── */
+    .filter-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    .filter-row input[type="date"] {
+      font-size: 0.82rem;
+      padding: 4px 8px;
+    }
+    .filter-label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: #6c757d;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
   </style>
 
   <!-- PWA Meta Tags -->
@@ -37,594 +111,677 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <link rel="apple-touch-icon" href="/catalog/arbfarms-logo-v2.svg">
-
 </head>
 <body>
 
-  <!-- Top Navbar -->
-  <nav class="navbar navbar-expand-lg bg-forest sticky-top shadow-sm py-2">
-    <div class="container">
-      <span class="navbar-brand d-flex align-items-center">
-        <img src="../catalog/arbfarms-logo-v2.svg" alt="ARB Farms Logo" class="me-2" style="height:35px;">
-        <span class="font-primary text-white fs-5 tracking-wide">ARB ADMIN PORTAL</span>
-      </span>
-      <div class="d-flex align-items-center gap-3">
-        <span class="text-white-50 small d-none d-sm-inline" id="user-email-display">admin@arbfarms.com</span>
-        <button class="btn btn-sm btn-outline-light py-1 px-3" id="logout-btn"><i class="bi bi-box-arrow-right me-1"></i> Logout</button>
-      </div>
+<!-- Receipt Lightbox Overlay -->
+<div id="receipt-lightbox" onclick="closeLightbox()">
+  <button class="lb-close" onclick="closeLightbox()"><i class="bi bi-x-circle-fill"></i></button>
+  <img id="lightbox-img" src="" alt="Payment Receipt">
+</div>
+
+<!-- Top Navbar -->
+<nav class="navbar navbar-expand-lg bg-forest sticky-top shadow-sm py-2">
+  <div class="container">
+    <span class="navbar-brand d-flex align-items-center">
+      <img src="../catalog/arbfarms-logo-v2.svg" alt="ARB Farms Logo" class="me-2" style="height:35px;">
+      <span class="font-primary text-white fs-5 tracking-wide">ARB ADMIN PORTAL</span>
+    </span>
+    <div class="d-flex align-items-center gap-3">
+      <span class="text-white-50 small d-none d-sm-inline" id="user-email-display">admin@arbfarms.com</span>
+      <button class="btn btn-sm btn-outline-light py-1 px-3" id="logout-btn"><i class="bi bi-box-arrow-right me-1"></i> Logout</button>
     </div>
-  </nav>
+  </div>
+</nav>
 
-  <!-- Main Content -->
-  <main class="container py-4">
-    
-    <!-- Debug Message (remove after working) -->
-    <div id="debug-status" class="alert alert-info mb-3" style="font-size: 12px;">
-      <i class="bi bi-info-circle"></i> <span id="debug-text">Initializing...</span>
-    </div>
-    
-    <!-- Tabs Navigation -->
-    <ul class="nav nav-tabs mb-4" id="adminTabs" role="tablist">
-      <li class="nav-item" role="presentation">
-        <button class="nav-link active font-primary" id="orders-tab" data-bs-toggle="tab" data-bs-target="#orders-pane" type="button" role="tab">Order Management</button>
-      </li>
-      <li class="nav-item" role="presentation">
-        <button class="nav-link font-primary" id="users-tab" data-bs-toggle="tab" data-bs-target="#users-pane" type="button" role="tab">User Management</button>
-      </li>
-    </ul>
+<!-- Main Content -->
+<main class="container py-4">
 
-    <div class="tab-content" id="adminTabsContent">
-      <!-- Orders Tab -->
-      <div class="tab-pane fade show active" id="orders-pane" role="tabpanel">
-    <!-- Analytics Header Cards -->
-    <div class="row g-3 mb-4">
-      <div class="col-6 col-md-4 col-lg-2">
-        <div class="admin-card p-3 d-flex align-items-center gap-3 h-100">
-          <div class="bg-primary text-white p-2 rounded-3 fs-5"><i class="bi bi-wallet2"></i></div>
+  <!-- Debug Message -->
+  <div id="debug-status" class="alert alert-info mb-3" style="font-size: 12px;">
+    <i class="bi bi-info-circle"></i> <span id="debug-text">Initializing...</span>
+  </div>
+
+  <!-- Tabs Navigation -->
+  <ul class="nav nav-tabs mb-4" id="adminTabs" role="tablist">
+    <li class="nav-item" role="presentation">
+      <button class="nav-link active font-primary" id="orders-tab" data-bs-toggle="tab" data-bs-target="#orders-pane" type="button" role="tab">Order Management</button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link font-primary" id="users-tab" data-bs-toggle="tab" data-bs-target="#users-pane" type="button" role="tab">User Management</button>
+    </li>
+  </ul>
+
+  <div class="tab-content" id="adminTabsContent">
+
+    <!-- ══════════════════════════════════════ ORDERS TAB ══════════════════════════════════════ -->
+    <div class="tab-pane fade show active" id="orders-pane" role="tabpanel">
+
+      <!-- Analytics Header Cards -->
+      <div class="row g-3 mb-4">
+        <div class="col-6 col-md-4 col-lg-2">
+          <div class="admin-card p-3 d-flex align-items-center gap-3 h-100">
+            <div class="bg-primary text-white p-2 rounded-3 fs-5"><i class="bi bi-wallet2"></i></div>
+            <div>
+              <span class="text-muted small d-block">Total Sales</span>
+              <strong class="h6 mb-0 font-primary text-dark" id="stat-sales">Rs. 0</strong>
+            </div>
+          </div>
+        </div>
+        <div class="col-6 col-md-4 col-lg-2">
+          <div class="admin-card p-3 d-flex align-items-center gap-3 h-100">
+            <div class="bg-info text-white p-2 rounded-3 fs-5"><i class="bi bi-calendar-day"></i></div>
+            <div>
+              <span class="text-muted small d-block">Orders Today</span>
+              <strong class="h6 mb-0 font-primary text-dark" id="stat-today">0</strong>
+            </div>
+          </div>
+        </div>
+        <div class="col-6 col-md-4 col-lg-3">
+          <div class="admin-card p-3 d-flex align-items-center gap-3 h-100">
+            <div class="bg-warning text-dark p-2 rounded-3 fs-5"><i class="bi bi-clock-history"></i></div>
+            <div>
+              <span class="text-muted small d-block">Pending Review</span>
+              <strong class="h6 mb-0 font-primary text-dark" id="stat-pending">0</strong>
+            </div>
+          </div>
+        </div>
+        <div class="col-6 col-md-6 col-lg-2">
+          <div class="admin-card p-3 d-flex align-items-center gap-3 h-100">
+            <div class="bg-success text-white p-2 rounded-3 fs-5"><i class="bi bi-box-seam"></i></div>
+            <div>
+              <span class="text-muted small d-block">Dispatched</span>
+              <strong class="h6 mb-0 font-primary text-dark" id="stat-dispatched">0</strong>
+            </div>
+          </div>
+        </div>
+        <div class="col-12 col-md-6 col-lg-3">
+          <div class="admin-card p-3 d-flex align-items-center gap-3 h-100">
+            <div class="bg-secondary text-white p-2 rounded-3 fs-5"><i class="bi bi-scale"></i></div>
+            <div>
+              <span class="text-muted small d-block">Total Weight</span>
+              <strong class="h6 mb-0 font-primary text-dark" id="stat-weight">0 kg</strong>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Orders Table Card -->
+      <div class="admin-card p-4">
+        <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-3">
+          <h2 class="h5 font-primary mb-0 text-dark d-flex align-items-center gap-2">
+            Customer Order Management
+            <span class="badge bg-forest py-1 px-2 small" id="orders-count-badge">0</span>
+          </h2>
+          <button class="btn btn-sm btn-outline-success" id="export-btn">
+            <i class="bi bi-file-earmark-spreadsheet me-1"></i> Export CSV
+          </button>
+        </div>
+
+        <!-- ── Filter Row ── -->
+        <div class="filter-row mb-3 p-3 rounded-3" style="background:#f8f9fa; border:1px solid #e9ecef;">
+          <!-- Search -->
+          <div class="input-group input-group-sm" style="width:220px;">
+            <span class="input-group-text bg-white"><i class="bi bi-search text-muted"></i></span>
+            <input type="text" id="search-input" class="form-control" placeholder="Order, name, phone…">
+          </div>
+
+          <!-- Status -->
           <div>
-            <span class="text-muted small d-block">Total Sales</span>
-            <strong class="h6 mb-0 font-primary text-dark" id="stat-sales">Rs. 0</strong>
+            <div class="filter-label mb-1">Status</div>
+            <select id="filter-status" class="form-select form-select-sm" style="width:140px;">
+              <option value="">All Statuses</option>
+              <option value="Awaiting Receipt">Awaiting Receipt</option>
+              <option value="Awaiting Verification">Verifying</option>
+              <option value="Verified & Processing">Processing</option>
+              <option value="Dispatched">Dispatched</option>
+              <option value="Cancelled">Cancelled</option>
+            </select>
           </div>
-        </div>
-      </div>
-      <div class="col-6 col-md-4 col-lg-2">
-        <div class="admin-card p-3 d-flex align-items-center gap-3 h-100">
-          <div class="bg-info text-white p-2 rounded-3 fs-5"><i class="bi bi-calendar-day"></i></div>
-          <div>
-            <span class="text-muted small d-block">Orders Today</span>
-            <strong class="h6 mb-0 font-primary text-dark" id="stat-today">0</strong>
-          </div>
-        </div>
-      </div>
-      <div class="col-6 col-md-4 col-lg-3">
-        <div class="admin-card p-3 d-flex align-items-center gap-3 h-100">
-          <div class="bg-warning text-dark p-2 rounded-3 fs-5"><i class="bi bi-clock-history"></i></div>
-          <div>
-            <span class="text-muted small d-block">Pending Review</span>
-            <strong class="h6 mb-0 font-primary text-dark" id="stat-pending">0</strong>
-          </div>
-        </div>
-      </div>
-      <div class="col-6 col-md-6 col-lg-2">
-        <div class="admin-card p-3 d-flex align-items-center gap-3 h-100">
-          <div class="bg-success text-white p-2 rounded-3 fs-5"><i class="bi bi-box-seam"></i></div>
-          <div>
-            <span class="text-muted small d-block">Dispatched</span>
-            <strong class="h6 mb-0 font-primary text-dark" id="stat-dispatched">0</strong>
-          </div>
-        </div>
-      </div>
-      <div class="col-12 col-md-6 col-lg-3">
-        <div class="admin-card p-3 d-flex align-items-center gap-3 h-100">
-          <div class="bg-secondary text-white p-2 rounded-3 fs-5"><i class="bi bi-scale"></i></div>
-          <div>
-            <span class="text-muted small d-block">Total Weight</span>
-            <strong class="h6 mb-0 font-primary text-dark" id="stat-weight">0 kg</strong>
-          </div>
-        </div>
-      </div>
-    </div>
 
-    <!-- Active Orders list -->
-    <div class="admin-card p-4">
-      <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-3">
-        <h2 class="h5 font-primary mb-0 text-dark d-flex align-items-center gap-2">
-          Customer Order Management
-          <span class="badge bg-forest py-1 px-2 small" id="orders-count-badge">0</span>
-        </h2>
-        
-        <div class="d-flex gap-2 flex-wrap">
-          <div class="input-group input-group-sm" style="width: 250px;">
-            <span class="input-group-text bg-light"><i class="bi bi-search"></i></span>
-            <input type="text" id="search-input" class="form-control" placeholder="Search order, name, phone...">
+          <!-- City -->
+          <div>
+            <div class="filter-label mb-1">City</div>
+            <select id="filter-city" class="form-select form-select-sm" style="width:140px;">
+              <option value="">All Cities</option>
+            </select>
           </div>
-          <select id="filter-status" class="form-select form-select-sm" style="width: 150px;">
-            <option value="">All Statuses</option>
-            <option value="Awaiting Receipt">Awaiting Receipt</option>
-            <option value="Awaiting Verification">Verifying</option>
-            <option value="Verified & Processing">Processing</option>
-            <option value="Dispatched">Dispatched</option>
-            <option value="Cancelled">Cancelled</option>
-          </select>
-          <button class="btn btn-sm btn-outline-success" id="export-btn"><i class="bi bi-file-earmark-spreadsheet me-1"></i> Export CSV</button>
-        </div>
-      </div>
 
-      <div class="mb-2 d-none" id="bulk-actions-container">
-        <select id="bulk-action-select" class="form-select form-select-sm d-inline-block w-auto">
-          <option value="">Bulk Actions...</option>
-          <option value="Dispatched">Mark Dispatched</option>
-        </select>
-        <button class="btn btn-sm btn-primary" id="apply-bulk-btn">Apply</button>
-      </div>
+          <!-- Date From -->
+          <div>
+            <div class="filter-label mb-1">From</div>
+            <input type="date" id="filter-date-from" class="form-control form-control-sm" style="width:145px;">
+          </div>
 
-      <div class="table-responsive">
-        <table class="table align-middle table-hover text-dark">
-          <thead class="table-light">
-            <tr>
-              <th scope="col" style="width: 40px;"><input class="form-check-input" type="checkbox" id="select-all-cb"></th>
-              <th scope="col" style="font-size:0.8rem; text-transform:uppercase;">Order #</th>
-              <th scope="col" style="font-size:0.8rem; text-transform:uppercase;">Date</th>
-              <th scope="col" style="font-size:0.8rem; text-transform:uppercase;">Customer</th>
-              <th scope="col" style="font-size:0.8rem; text-transform:uppercase;">City</th>
-              <th scope="col" style="font-size:0.8rem; text-transform:uppercase;">Products</th>
-              <th scope="col" style="font-size:0.8rem; text-transform:uppercase;">Amount</th>
-              <th scope="col" style="font-size:0.8rem; text-transform:uppercase;">Status</th>
-              <th scope="col" style="font-size:0.8rem; text-transform:uppercase;">Actions</th>
-            </tr>
-          </thead>
-          <tbody id="orders-table-body">
-            <tr>
-              <td colspan="9" class="text-center py-5 text-muted">
-                <div class="spinner-border spinner-border-sm me-2 text-primary" role="status"></div> Loading live order feed...
-               </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
+          <!-- Date To -->
+          <div>
+            <div class="filter-label mb-1">To</div>
+            <input type="date" id="filter-date-to" class="form-control form-control-sm" style="width:145px;">
+          </div>
 
-      <!-- Users Tab -->
-      <div class="tab-pane fade" id="users-pane" role="tabpanel">
-        
-        <div class="admin-card p-4">
-          <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-3">
-            <h2 class="h5 font-primary mb-0 text-dark d-flex align-items-center gap-2">
-              Customer Loyalty Management
-              <span class="badge bg-primary py-1 px-2 small" id="users-count-badge">0</span>
-            </h2>
-            
-            <div class="d-flex align-items-center gap-2">
-              <input type="text" id="users-search-input" class="form-control form-control-sm border-0 shadow-sm" placeholder="Search users by name, email or phone..." style="width: 250px;">
+          <!-- Has Receipt -->
+          <div class="d-flex align-items-end pb-1">
+            <div class="form-check form-switch mb-0">
+              <input class="form-check-input" type="checkbox" id="filter-has-receipt" role="switch">
+              <label class="form-check-label filter-label" for="filter-has-receipt">Has Receipt</label>
             </div>
           </div>
 
-          <div class="mb-3 d-flex gap-2">
-            <input type="file" id="csv-upload" accept=".csv" class="form-control form-control-sm" style="max-width: 300px;">
-            <button class="btn btn-sm btn-primary" id="upload-csv-btn"><i class="bi bi-upload me-1"></i> Bulk Upload CSV</button>
-            <a href="../admin_sample_users_import.csv" class="btn btn-sm btn-outline-secondary" download><i class="bi bi-download me-1"></i> Sample CSV</a>
-          </div>
-
-          <div class="table-responsive">
-            <table class="table align-middle table-hover text-dark">
-              <thead class="table-light">
-                <tr>
-                  <th scope="col" style="font-size:0.8rem; text-transform:uppercase;">Name</th>
-                  <th scope="col" style="font-size:0.8rem; text-transform:uppercase;">Email</th>
-                  <th scope="col" style="font-size:0.8rem; text-transform:uppercase;">Phone</th>
-                  <th scope="col" style="font-size:0.8rem; text-transform:uppercase;">Role</th>
-                  <th scope="col" style="font-size:0.8rem; text-transform:uppercase;">Actions</th>
-                </tr>
-              </thead>
-              <tbody id="users-table-body">
-                <tr>
-                  <td colspan="5" class="text-center py-5 text-muted">
-                    <div class="spinner-border spinner-border-sm me-2 text-primary" role="status"></div> Loading live users feed...
-                   </td>
-                </tr>
-              </tbody>
-            </table>
+          <!-- Clear -->
+          <div class="d-flex align-items-end pb-1">
+            <button class="btn btn-sm btn-outline-secondary" id="clear-filters-btn">
+              <i class="bi bi-x-lg me-1"></i>Clear
+            </button>
           </div>
         </div>
 
+        <!-- Bulk Actions -->
+        <div class="mb-2 d-none" id="bulk-actions-container">
+          <select id="bulk-action-select" class="form-select form-select-sm d-inline-block w-auto">
+            <option value="">Bulk Actions...</option>
+            <option value="Dispatched">Mark Dispatched</option>
+            <option value="Verified & Processing">Mark Processing</option>
+            <option value="Cancelled">Mark Cancelled</option>
+          </select>
+          <button class="btn btn-sm btn-primary ms-1" id="apply-bulk-btn">Apply</button>
+        </div>
+
+        <div class="table-responsive">
+          <table class="table align-middle table-hover text-dark">
+            <thead class="table-light">
+              <tr>
+                <th style="width:40px;"><input class="form-check-input" type="checkbox" id="select-all-cb"></th>
+                <th style="font-size:0.8rem;text-transform:uppercase;">Order #</th>
+                <th style="font-size:0.8rem;text-transform:uppercase;">Date</th>
+                <th style="font-size:0.8rem;text-transform:uppercase;">Customer</th>
+                <th style="font-size:0.8rem;text-transform:uppercase;">City</th>
+                <th style="font-size:0.8rem;text-transform:uppercase;">Products</th>
+                <th style="font-size:0.8rem;text-transform:uppercase;">Receipt</th>
+                <th style="font-size:0.8rem;text-transform:uppercase;">Amount</th>
+                <th style="font-size:0.8rem;text-transform:uppercase;">Status</th>
+                <th style="font-size:0.8rem;text-transform:uppercase;">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="orders-table-body">
+              <tr>
+                <td colspan="10" class="text-center py-5 text-muted">
+                  <div class="spinner-border spinner-border-sm me-2 text-primary" role="status"></div>
+                  Loading live order feed…
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
-    </div>
-  </main>
+    </div><!-- /orders-pane -->
 
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- ══════════════════════════════════════ USERS TAB ══════════════════════════════════════ -->
+    <div class="tab-pane fade" id="users-pane" role="tabpanel">
+      <div class="admin-card p-4">
+        <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-3">
+          <h2 class="h5 font-primary mb-0 text-dark d-flex align-items-center gap-2">
+            Customer Loyalty Management
+            <span class="badge bg-primary py-1 px-2 small" id="users-count-badge">0</span>
+          </h2>
+          <div class="d-flex align-items-center gap-2">
+            <input type="text" id="users-search-input" class="form-control form-control-sm border-0 shadow-sm"
+              placeholder="Search users by name, email or phone…" style="width:250px;">
+          </div>
+        </div>
 
-  <script type="module">
-    import { auth, db } from "../js/firebase-init.js";
-    import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-    import { collection, query, orderBy, onSnapshot, doc, updateDoc, deleteDoc, setDoc, getDocs, where } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        <div class="mb-3 d-flex gap-2">
+          <input type="file" id="csv-upload" accept=".csv" class="form-control form-control-sm" style="max-width:300px;">
+          <button class="btn btn-sm btn-primary" id="upload-csv-btn"><i class="bi bi-upload me-1"></i> Bulk Upload CSV</button>
+          <a href="../admin_sample_users_import.csv" class="btn btn-sm btn-outline-secondary" download>
+            <i class="bi bi-download me-1"></i> Sample CSV
+          </a>
+        </div>
 
-    const debugText = document.getElementById("debug-text");
-    const userDisplay = document.getElementById("user-email-display");
-    const tableBody = document.getElementById("orders-table-body");
-    const logoutBtn = document.getElementById("logout-btn");
+        <div class="table-responsive">
+          <table class="table align-middle table-hover text-dark">
+            <thead class="table-light">
+              <tr>
+                <th style="font-size:0.8rem;text-transform:uppercase;">Name</th>
+                <th style="font-size:0.8rem;text-transform:uppercase;">Email</th>
+                <th style="font-size:0.8rem;text-transform:uppercase;">Phone</th>
+                <th style="font-size:0.8rem;text-transform:uppercase;">Role</th>
+                <th style="font-size:0.8rem;text-transform:uppercase;">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="users-table-body">
+              <tr>
+                <td colspan="5" class="text-center py-5 text-muted">
+                  <div class="spinner-border spinner-border-sm me-2 text-primary" role="status"></div>
+                  Loading live users feed…
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div><!-- /users-pane -->
 
-    // Stats elements
-    const statSales = document.getElementById("stat-sales");
-    const statPending = document.getElementById("stat-pending");
-    const statDispatched = document.getElementById("stat-dispatched");
-    const statWeight = document.getElementById("stat-weight");
-    const statToday = document.getElementById("stat-today");
-    const ordersCountBadge = document.getElementById("orders-count-badge");
+  </div><!-- /tab-content -->
+</main>
 
-    // Controls
-    const searchInput = document.getElementById("search-input");
-    const filterStatus = document.getElementById("filter-status");
-    const exportBtn = document.getElementById("export-btn");
-    const selectAllCb = document.getElementById("select-all-cb");
-    const bulkActionsContainer = document.getElementById("bulk-actions-container");
-    const bulkActionSelect = document.getElementById("bulk-action-select");
-    const applyBulkBtn = document.getElementById("apply-bulk-btn");
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
-    let allOrders = [];
+<!-- ═══════════════════════════════════════════════════════════ SCRIPTS ══ -->
+<script type="module">
+  import { auth, db } from "../js/firebase-init.js";
+  import { onAuthStateChanged, signOut }
+    from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+  import { collection, query, orderBy, onSnapshot, doc, updateDoc, deleteDoc }
+    from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-    function updateDebug(msg, isError = false) {
-      debugText.textContent = msg;
-      console.log(msg);
-      if (isError) {
-        document.getElementById("debug-status").className = "alert alert-danger mb-3";
-      }
-    }
+  // ── DOM refs ──────────────────────────────────────────────────────────
+  const debugText        = document.getElementById("debug-text");
+  const userDisplay      = document.getElementById("user-email-display");
+  const tableBody        = document.getElementById("orders-table-body");
+  const logoutBtn        = document.getElementById("logout-btn");
 
-    // Auth State Route Guard
-    onAuthStateChanged(auth, async (user) => {
-      updateDebug(`Auth: ${user ? user.email : 'No user'}`);
-      
-      if (user) {
-        if (user.email === "social.ahmro@gmail.com" || user.email.endsWith("@arbfarms.com")) {
-          userDisplay.textContent = user.email;
-          updateDebug(`Admin verified: ${user.email}. Loading Firestore data...`);
-          initializeDashboardFeed();
-          initializeUsersFeed();
-        } else {
-          updateDebug(`Not admin: ${user.email}. Redirecting...`, true);
-          await signOut(auth);
-          window.location.href = "login.html";
-        }
+  const statSales        = document.getElementById("stat-sales");
+  const statPending      = document.getElementById("stat-pending");
+  const statDispatched   = document.getElementById("stat-dispatched");
+  const statWeight       = document.getElementById("stat-weight");
+  const statToday        = document.getElementById("stat-today");
+  const ordersCountBadge = document.getElementById("orders-count-badge");
+
+  const searchInput      = document.getElementById("search-input");
+  const filterStatus     = document.getElementById("filter-status");
+  const filterCity       = document.getElementById("filter-city");
+  const filterDateFrom   = document.getElementById("filter-date-from");
+  const filterDateTo     = document.getElementById("filter-date-to");
+  const filterHasReceipt = document.getElementById("filter-has-receipt");
+  const clearFiltersBtn  = document.getElementById("clear-filters-btn");
+  const exportBtn        = document.getElementById("export-btn");
+  const selectAllCb      = document.getElementById("select-all-cb");
+  const bulkActionsContainer = document.getElementById("bulk-actions-container");
+  const bulkActionSelect = document.getElementById("bulk-action-select");
+  const applyBulkBtn     = document.getElementById("apply-bulk-btn");
+
+  let allOrders = [];
+
+  // ── Helpers ───────────────────────────────────────────────────────────
+  function updateDebug(msg, isError = false) {
+    debugText.textContent = msg;
+    document.getElementById("debug-status").className =
+      `alert ${isError ? 'alert-danger' : 'alert-info'} mb-3`;
+  }
+
+  // ── Auth ──────────────────────────────────────────────────────────────
+  onAuthStateChanged(auth, async (user) => {
+    updateDebug(`Auth: ${user ? user.email : 'No user'}`);
+    if (user) {
+      if (user.email === "social.ahmro@gmail.com" || user.email.endsWith("@arbfarms.com")) {
+        userDisplay.textContent = user.email;
+        updateDebug(`Admin verified: ${user.email}. Loading Firestore data…`);
+        initializeDashboardFeed();
+        initializeUsersFeed();
       } else {
-        updateDebug("No user, redirecting to login...", true);
+        updateDebug(`Not admin: ${user.email}. Redirecting…`, true);
+        await signOut(auth);
         window.location.href = "login.html";
       }
+    } else {
+      updateDebug("No user, redirecting to login…", true);
+      window.location.href = "login.html";
+    }
+  });
+
+  logoutBtn.addEventListener("click", () =>
+    signOut(auth).then(() => window.location.href = "login.html")
+  );
+
+  // ── Firestore feed ────────────────────────────────────────────────────
+  function initializeDashboardFeed() {
+    updateDebug("Connecting to 'orders' collection…");
+    const q = query(collection(db, "orders"), orderBy("orderDate", "desc"));
+    onSnapshot(q, (snapshot) => {
+      updateDebug(`✅ Orders loaded: ${snapshot.size} orders found`);
+      allOrders = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+      populateCityFilter();
+      renderTable();
+    }, (err) => {
+      updateDebug(`❌ Firestore error: ${err.message}`, true);
+      tableBody.innerHTML = `<tr><td colspan="10" class="text-center py-5 text-danger">
+        Database error: ${err.message}<br>
+        <small>Make sure 'orders' collection exists in Firestore</small>
+      </td></tr>`;
+    });
+  }
+
+  // ── City filter dropdown ──────────────────────────────────────────────
+  function populateCityFilter() {
+    const cities = [...new Set(allOrders.map(o => (o.city || '').trim()).filter(Boolean))].sort();
+    const currentVal = filterCity.value;
+    filterCity.innerHTML = '<option value="">All Cities</option>';
+    cities.forEach(c => {
+      const opt = document.createElement("option");
+      opt.value = c;
+      opt.textContent = c;
+      if (c === currentVal) opt.selected = true;
+      filterCity.appendChild(opt);
+    });
+  }
+
+  // ── Main render ───────────────────────────────────────────────────────
+  function renderTable() {
+    const searchTerm  = searchInput.value.toLowerCase().trim();
+    const statusVal   = filterStatus.value;
+    const cityVal     = filterCity.value.toLowerCase();
+    const dateFrom    = filterDateFrom.value ? new Date(filterDateFrom.value) : null;
+    const dateTo      = filterDateTo.value   ? new Date(filterDateTo.value + "T23:59:59") : null;
+    const onlyReceipt = filterHasReceipt.checked;
+
+    const filteredOrders = allOrders.filter(order => {
+      if (statusVal && order.status !== statusVal) return false;
+      if (cityVal && (order.city || '').toLowerCase() !== cityVal) return false;
+      if (onlyReceipt && !order.receiptUrl) return false;
+      if (dateFrom || dateTo) {
+        const d = order.orderDate ? new Date(order.orderDate) : null;
+        if (!d) return false;
+        if (dateFrom && d < dateFrom) return false;
+        if (dateTo   && d > dateTo)   return false;
+      }
+      if (searchTerm) {
+        const hay = `${order.orderNumber} ${order.customerName} ${order.phone} ${order.city}`.toLowerCase();
+        if (!hay.includes(searchTerm)) return false;
+      }
+      return true;
     });
 
-    logoutBtn.addEventListener("click", () => {
-      signOut(auth).then(() => window.location.href = "login.html");
+    // ── Stats (always from full set) ──
+    let totalSalesVal = 0, pendingVal = 0, dispatchedVal = 0, totalWeightVal = 0, todayVal = 0;
+    const todayStr = new Date().toISOString().split('T')[0];
+    allOrders.forEach(o => {
+      totalSalesVal   += o.total  || 0;
+      totalWeightVal  += o.weight || 0;
+      if (o.status === "Awaiting Verification") pendingVal++;
+      if (o.status === "Dispatched")            dispatchedVal++;
+      if (o.orderDate && o.orderDate.startsWith(todayStr)) todayVal++;
     });
+    statSales.textContent      = `Rs. ${totalSalesVal.toLocaleString()}`;
+    statPending.textContent    = pendingVal;
+    statDispatched.textContent = dispatchedVal;
+    statWeight.textContent     = `${totalWeightVal.toFixed(2)} kg`;
+    statToday.textContent      = todayVal;
+    ordersCountBadge.textContent = `${filteredOrders.length} / ${allOrders.length} orders`;
 
-    // Realtime Database Feed
-    function initializeDashboardFeed() {
-      updateDebug("Connecting to 'orders' collection...");
-      const ordersRef = collection(db, "orders");
-      const q = query(ordersRef, orderBy("orderDate", "desc"));
-
-      onSnapshot(q, (snapshot) => {
-        updateDebug(`✅ Orders loaded: ${snapshot.size} orders found`);
-        
-        if (snapshot.empty) {
-          allOrders = [];
-          renderTable();
-          return;
-        }
-        allOrders = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-        renderTable();
-      }, (err) => {
-        updateDebug(`❌ Firestore error: ${err.message}`, true);
-        console.error("Firestore error:", err);
-        tableBody.innerHTML = `<tr><td colspan="9" class="text-center py-5 text-danger">Database error: ${err.message}<br><small>Make sure 'orders' collection exists in Firestore</small></td></tr>`;
-      });
+    if (filteredOrders.length === 0) {
+      tableBody.innerHTML = `<tr><td colspan="10" class="text-center py-5 text-muted">No orders match your filters.</td></tr>`;
+      return;
     }
 
-    function renderTable() {
-      const searchTerm = searchInput.value.toLowerCase().trim();
-      const statusFilter = filterStatus.value;
+    tableBody.innerHTML = filteredOrders.map(order => {
+      // Status badge colour
+      let badgeClass = "bg-secondary";
+      if (order.status === "Awaiting Verification")  badgeClass = "bg-warning text-dark";
+      if (order.status === "Verified & Processing")  badgeClass = "bg-info text-dark";
+      if (order.status === "Dispatched")             badgeClass = "bg-success";
+      if (order.status === "Cancelled")              badgeClass = "bg-danger";
 
-      let filteredOrders = allOrders.filter(order => {
-        let match = true;
-        if (statusFilter) {
-          match = (order.status === statusFilter);
-        }
-        if (match && searchTerm) {
-          const textToSearch = `${order.orderNumber} ${order.customerName} ${order.phone} ${order.city}`.toLowerCase();
-          match = textToSearch.includes(searchTerm);
-        }
-        return match;
-      });
+      const itemsText = order.items && order.items.length
+        ? order.items.map(i => `${i.qty}× ${i.name}`).join("<br>")
+        : "<span class='text-muted'>—</span>";
 
-      let totalSalesVal = 0, pendingVal = 0, dispatchedVal = 0, totalWeightVal = 0, todayOrdersVal = 0;
-      const todayString = new Date().toISOString().split('T')[0];
+      const orderDateFormatted = order.orderDate
+        ? new Date(order.orderDate).toLocaleDateString('en-PK', { day:'2-digit', month:'short', year:'numeric' })
+        : "N/A";
 
-      // Compute stats
-      allOrders.forEach(order => {
-        totalSalesVal += order.total || 0;
-        if (order.status === "Awaiting Verification") pendingVal++;
-        if (order.status === "Dispatched") dispatchedVal++;
-        totalWeightVal += order.weight || 0;
-        if (order.orderDate && order.orderDate.startsWith(todayString)) todayOrdersVal++;
-      });
-      
-      statSales.textContent = `Rs. ${totalSalesVal.toLocaleString()}`;
-      statPending.textContent = pendingVal;
-      statDispatched.textContent = dispatchedVal;
-      statWeight.textContent = `${totalWeightVal.toFixed(2)} kg`;
-      if(statToday) statToday.textContent = todayOrdersVal;
-      ordersCountBadge.textContent = `${allOrders.length} orders`;
+      // ── Receipt cell with hover zoom + lightbox ──
+      const receiptCell = order.receiptUrl
+        ? `<div class="receipt-thumb-wrap" onclick="window.openLightbox('${order.receiptUrl}')">
+             <img class="receipt-thumb" src="${order.receiptUrl}" alt="Receipt" loading="lazy">
+           </div>`
+        : `<span class="text-muted small" title="No receipt uploaded"><i class="bi bi-image text-muted"></i></span>`;
 
-      if (filteredOrders.length === 0) {
-        tableBody.innerHTML = `<tr><td colspan="9" class="text-center py-5 text-muted">No orders found.</td></tr>`;
-        return;
-      }
+      return `
+        <tr>
+          <td><input class="form-check-input row-cb" type="checkbox" value="${order.id}"></td>
+          <td><strong class="font-monospace text-primary">${order.orderNumber || '—'}</strong></td>
+          <td class="small text-muted text-nowrap">${orderDateFormatted}</td>
+          <td>
+            <div class="fw-bold">${order.customerName || '—'}</div>
+            <div class="text-muted small">+92 ${order.phone || ''}</div>
+          </td>
+          <td><span class="text-uppercase small fw-semibold">${order.city || '—'}</span></td>
+          <td class="small">${itemsText}</td>
+          <td>${receiptCell}</td>
+          <td class="fw-semibold text-nowrap">Rs. ${(order.total || 0).toLocaleString()}</td>
+          <td>
+            <select class="form-select form-select-sm border-0 shadow-sm fw-bold ${badgeClass}"
+              style="width:130px;font-size:0.75rem;"
+              onchange="window.updateOrderStatus('${order.id}', this.value)">
+              <option value="Awaiting Receipt"    ${order.status==='Awaiting Receipt'    ?'selected':''}>Receipt</option>
+              <option value="Awaiting Verification" ${order.status==='Awaiting Verification'?'selected':''}>Verifying</option>
+              <option value="Verified & Processing" ${order.status==='Verified & Processing'?'selected':''}>Processing</option>
+              <option value="Dispatched"          ${order.status==='Dispatched'          ?'selected':''}>Dispatched</option>
+              <option value="Cancelled"           ${order.status==='Cancelled'           ?'selected':''}>Cancelled</option>
+            </select>
+          </td>
+          <td>
+            <div class="dropdown">
+              <button class="btn btn-sm btn-light" type="button" data-bs-toggle="dropdown">
+                <i class="bi bi-three-dots-vertical"></i>
+              </button>
+              <ul class="dropdown-menu shadow-sm dropdown-menu-end">
+                ${order.receiptUrl
+                  ? `<li><a class="dropdown-item small" href="#" onclick="window.openLightbox('${order.receiptUrl}');return false;">
+                       <i class="bi bi-file-earmark-image me-2"></i>View Receipt
+                     </a></li>
+                     <li><a class="dropdown-item small" href="${order.receiptUrl}" target="_blank">
+                       <i class="bi bi-box-arrow-up-right me-2"></i>Open in Tab
+                     </a></li>`
+                  : ''}
+                <li><hr class="dropdown-divider"></li>
+                <li><a class="dropdown-item small text-danger" href="#"
+                       onclick="window.deleteOrder('${order.id}');return false;">
+                     <i class="bi bi-trash me-2"></i>Delete
+                   </a></li>
+              </ul>
+            </div>
+          </td>
+        </tr>`;
+    }).join("");
 
-      tableBody.innerHTML = filteredOrders.map(order => {
-        let badgeClass = "bg-secondary";
-        let shortStatus = order.status;
-        if (order.status === "Awaiting Receipt") shortStatus = "Receipt";
-        if (order.status === "Awaiting Verification") { badgeClass = "bg-warning text-dark"; shortStatus = "Verifying"; }
-        if (order.status === "Verified & Processing") { badgeClass = "bg-info text-dark"; shortStatus = "Processing"; }
-        if (order.status === "Dispatched") { badgeClass = "bg-success"; shortStatus = "Dispatched"; }
-        if (order.status === "Cancelled") { badgeClass = "bg-danger"; shortStatus = "Cancelled"; }
+    updateBulkActionsUI();
+  }
 
-        const itemsText = order.items && order.items.length > 0 
-          ? order.items.map(item => `${item.qty}x ${item.name}`).join("<br>")
-          : "No items";
+  // ── Bulk actions UI ───────────────────────────────────────────────────
+  function updateBulkActionsUI() {
+    const anyChecked = document.querySelectorAll(".row-cb:checked").length > 0;
+    bulkActionsContainer.classList.toggle("d-none", !anyChecked);
+    if (!anyChecked && selectAllCb) selectAllCb.checked = false;
+  }
 
-        const orderDateFormatted = order.orderDate ? new Date(order.orderDate).toLocaleDateString() : "N/A";
-        const receiptLink = order.receiptUrl 
-          ? `<a href="${order.receiptUrl}" target="_blank" class="btn btn-xs btn-outline-primary py-1 px-2 small"><i class="bi bi-file-earmark-image"></i></a>`
-          : `<span class="text-muted small">No receipt</span>`;
+  // ── Filter event listeners ────────────────────────────────────────────
+  [searchInput, filterStatus, filterCity, filterDateFrom, filterDateTo, filterHasReceipt]
+    .forEach(el => { if (el) el.addEventListener("change", renderTable); });
+  if (searchInput) searchInput.addEventListener("input", renderTable);
 
-        return `
-          <tr>
-            <td><input class="form-check-input row-cb" type="checkbox" value="${order.id}"></td>
-            <td><strong class="font-monospace text-primary">${order.orderNumber}</strong></td>
-            <td class="small text-muted">${orderDateFormatted}</td>
-            <td>
-              <div class="fw-bold">${order.customerName}</div>
-              <div class="text-muted small">+92 ${order.phone}</div>
-            </td>
-            <td><span class="text-uppercase small fw-semibold">${order.city}</span></td>
-            <td class="small">${itemsText}</td>
-            <td class="fw-semibold">Rs. ${(order.total || 0).toLocaleString()}</td>
-            <td>
-              <select class="form-select form-select-sm border-0 shadow-sm fw-bold ${badgeClass}" style="width:130px; font-size:0.75rem;" onchange="window.updateOrderStatus('${order.id}', this.value)">
-                <option value="Awaiting Receipt" ${order.status === 'Awaiting Receipt' ? 'selected' : ''}>Receipt</option>
-                <option value="Awaiting Verification" ${order.status === 'Awaiting Verification' ? 'selected' : ''}>Verifying</option>
-                <option value="Verified & Processing" ${order.status === 'Verified & Processing' ? 'selected' : ''}>Processing</option>
-                <option value="Dispatched" ${order.status === 'Dispatched' ? 'selected' : ''}>Dispatched</option>
-                <option value="Cancelled" ${order.status === 'Cancelled' ? 'selected' : ''}>Cancelled</option>
-              </select>
-            </td>
-            <td>
-              <div class="dropdown">
-                <button class="btn btn-sm btn-light" type="button" data-bs-toggle="dropdown"><i class="bi bi-three-dots-vertical"></i></button>
-                <ul class="dropdown-menu shadow-sm dropdown-menu-end">
-                  ${order.receiptUrl ? `<li><a class="dropdown-item small" href="${order.receiptUrl}" target="_blank"><i class="bi bi-file-earmark-image me-2"></i>View Receipt</a></li>` : ''}
-                  <li><hr class="dropdown-divider"></li>
-                  <li><a class="dropdown-item small text-danger" href="#" onclick="window.deleteOrder('${order.id}')"><i class="bi bi-trash me-2"></i>Delete</a></li>
-                </ul>
-              </div>
-            </td>
-          </tr>
-        `;
-      }).join("");
-      
+  if (clearFiltersBtn) {
+    clearFiltersBtn.addEventListener("click", () => {
+      searchInput.value      = "";
+      filterStatus.value     = "";
+      filterCity.value       = "";
+      filterDateFrom.value   = "";
+      filterDateTo.value     = "";
+      filterHasReceipt.checked = false;
+      renderTable();
+    });
+  }
+
+  if (selectAllCb) {
+    selectAllCb.addEventListener("change", (e) => {
+      document.querySelectorAll(".row-cb").forEach(cb => cb.checked = e.target.checked);
       updateBulkActionsUI();
-    }
+    });
+  }
 
-    function updateBulkActionsUI() {
-      const anyChecked = document.querySelectorAll(".row-cb:checked").length > 0;
-      if (anyChecked) {
-        bulkActionsContainer.classList.remove("d-none");
-      } else {
+  if (tableBody) {
+    tableBody.addEventListener("change", (e) => {
+      if (e.target.classList.contains("row-cb")) updateBulkActionsUI();
+    });
+  }
+
+  if (applyBulkBtn) {
+    applyBulkBtn.addEventListener("click", async () => {
+      const selectedIds = Array.from(document.querySelectorAll(".row-cb:checked")).map(cb => cb.value);
+      const action = bulkActionSelect.value;
+      if (!action || !selectedIds.length) return;
+      if (confirm(`Change status to "${action}" for ${selectedIds.length} order(s)?`)) {
+        for (const id of selectedIds) {
+          await updateDoc(doc(db, "orders", id), { status: action });
+        }
+        alert("Bulk action applied.");
+        selectAllCb.checked = false;
         bulkActionsContainer.classList.add("d-none");
-        if (selectAllCb) selectAllCb.checked = false;
       }
-    }
+    });
+  }
 
-    // Event Listeners
-    if (searchInput) searchInput.addEventListener("input", renderTable);
-    if (filterStatus) filterStatus.addEventListener("change", renderTable);
-    
-    if (selectAllCb) {
-      selectAllCb.addEventListener("change", (e) => {
-        document.querySelectorAll(".row-cb").forEach(cb => cb.checked = e.target.checked);
-        updateBulkActionsUI();
+  // ── CSV Export ────────────────────────────────────────────────────────
+  if (exportBtn) {
+    exportBtn.addEventListener("click", () => {
+      if (!allOrders.length) return alert("No orders to export.");
+      const rows = [["Order #","Date","Customer","Phone","City","Amount","Status","Items","Receipt"].join(",")];
+      allOrders.forEach(o => {
+        const items = o.items ? o.items.map(i => `${i.qty}x ${i.name}`).join(" | ") : "";
+        rows.push([
+          `"${o.orderNumber}"`, `"${o.orderDate||''}"`, `"${o.customerName}"`,
+          `"${o.phone}"`, `"${o.city}"`, o.total||0, `"${o.status}"`,
+          `"${items}"`, `"${o.receiptUrl||''}"`
+        ].join(","));
       });
-    }
-
-    if (tableBody) {
-      tableBody.addEventListener("change", (e) => {
-        if (e.target.classList.contains("row-cb")) {
-          updateBulkActionsUI();
-        }
+      const blob = new Blob([rows.join("\n")], { type:"text/csv" });
+      const a = Object.assign(document.createElement("a"), {
+        href: URL.createObjectURL(blob),
+        download: `orders_export_${new Date().toISOString().split('T')[0]}.csv`
       });
-    }
+      a.click();
+    });
+  }
 
-    if (applyBulkBtn) {
-      applyBulkBtn.addEventListener("click", async () => {
-        const selectedIds = Array.from(document.querySelectorAll(".row-cb:checked")).map(cb => cb.value);
-        const action = bulkActionSelect.value;
-        if (!action || selectedIds.length === 0) return;
-        
-        if (confirm(`Are you sure you want to change status to "${action}" for ${selectedIds.length} orders?`)) {
-          for (const id of selectedIds) {
-            const ref = doc(db, "orders", id);
-            await updateDoc(ref, { status: action });
-          }
-          alert("Bulk action applied successfully.");
-          if (selectAllCb) selectAllCb.checked = false;
-          bulkActionsContainer.classList.add("d-none");
-        }
-      });
-    }
+  // ── Global hooks ──────────────────────────────────────────────────────
+  window.updateOrderStatus = (orderId, newStatus) => {
+    updateDoc(doc(db, "orders", orderId), { status: newStatus })
+      .then(() => updateDebug(`Order ${orderId} → ${newStatus}`))
+      .catch(err => alert("Error: " + err.message));
+  };
 
-    if (exportBtn) {
-      exportBtn.addEventListener("click", () => {
-        if (allOrders.length === 0) return alert("No orders to export.");
-        
-        const csvRows = [];
-        csvRows.push(["Order #", "Date", "Customer", "Phone", "City", "Amount", "Status", "Items"].join(","));
-        
-        allOrders.forEach(order => {
-          const items = order.items ? order.items.map(i => `${i.qty}x ${i.name}`).join(" | ") : "";
-          const row = [
-            `"${order.orderNumber}"`,
-            `"${order.orderDate || ''}"`,
-            `"${order.customerName}"`,
-            `"${order.phone}"`,
-            `"${order.city}"`,
-            order.total || 0,
-            `"${order.status}"`,
-            `"${items}"`
-          ];
-          csvRows.push(row.join(","));
-        });
-        
-        const csvString = csvRows.join("\n");
-        const blob = new Blob([csvString], { type: "text/csv" });
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        a.setAttribute("href", url);
-        a.setAttribute("download", `orders_export_${new Date().toISOString().split('T')[0]}.csv`);
-        a.click();
-      });
-    }
-
-    // Global hooks
-    window.updateOrderStatus = function(orderId, newStatus) {
-      const orderDocRef = doc(db, "orders", orderId);
-      updateDoc(orderDocRef, { status: newStatus })
-      .then(() => updateDebug(`Order ${orderId} status updated to ${newStatus}`))
-      .catch(err => alert("Error updating order status: " + err.message));
-    };
-
-    window.deleteOrder = function(orderId) {
-      if(confirm("Are you sure you want to permanently delete this order?")) {
-        deleteDoc(doc(db, "orders", orderId))
+  window.deleteOrder = (orderId) => {
+    if (confirm("Permanently delete this order?")) {
+      deleteDoc(doc(db, "orders", orderId))
         .then(() => updateDebug(`Order ${orderId} deleted`))
-        .catch(err => alert("Error deleting order: " + err.message));
-      }
-    };
-
-    // --- USER MANAGEMENT LOGIC ---
-    const usersTableBody = document.getElementById("users-table-body");
-    const usersCountBadge = document.getElementById("users-count-badge");
-    const usersSearchInput = document.getElementById("users-search-input");
-    let allUsers = [];
-
-    function initializeUsersFeed() {
-      updateDebug("Connecting to 'users' collection...");
-      const usersRef = collection(db, "users");
-      const q = query(usersRef, orderBy("createdAt", "desc"));
-
-      onSnapshot(q, (snapshot) => {
-        updateDebug(`✅ Users loaded: ${snapshot.size} users found`);
-        allUsers = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-        renderUsersTable();
-      }, (err) => {
-        updateDebug(`❌ Users error: ${err.message}`, true);
-        console.error("Users error:", err);
-        if (usersTableBody) {
-          usersTableBody.innerHTML = `<tr><td colspan="5" class="text-center py-5 text-danger">Error loading users: ${err.message}</td></tr>`;
-        }
-      });
+        .catch(err => alert("Error: " + err.message));
     }
+  };
 
-    function renderUsersTable() {
-      if (!usersTableBody) return;
-      
-      const searchTerm = usersSearchInput ? usersSearchInput.value.toLowerCase().trim() : "";
-      let filteredUsers = allUsers.filter(user => {
-        let match = true;
-        if (match && searchTerm) {
-          const text = `${user.name} ${user.email} ${user.phone}`.toLowerCase();
-          match = text.includes(searchTerm);
-        }
-        return match;
-      });
+  // ── Lightbox ──────────────────────────────────────────────────────────
+  window.openLightbox = (url) => {
+    document.getElementById("lightbox-img").src = url;
+    document.getElementById("receipt-lightbox").classList.add("active");
+  };
 
-      if (usersCountBadge) usersCountBadge.textContent = filteredUsers.length;
+  // ── USER MANAGEMENT ───────────────────────────────────────────────────
+  const usersTableBody   = document.getElementById("users-table-body");
+  const usersCountBadge  = document.getElementById("users-count-badge");
+  const usersSearchInput = document.getElementById("users-search-input");
+  let allUsers = [];
 
-      if (filteredUsers.length === 0) {
-        usersTableBody.innerHTML = `<tr><td colspan="5" class="text-center py-5 text-muted">No users found.</td></tr>`;
-        return;
-      }
+  function initializeUsersFeed() {
+    const q = query(collection(db, "users"), orderBy("createdAt", "desc"));
+    onSnapshot(q, (snapshot) => {
+      allUsers = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+      renderUsersTable();
+    }, (err) => {
+      if (usersTableBody)
+        usersTableBody.innerHTML = `<tr><td colspan="5" class="text-center py-5 text-danger">Error: ${err.message}</td></tr>`;
+    });
+  }
 
-      usersTableBody.innerHTML = filteredUsers.map(user => {
-        return `
-          <tr>
-            <td class="fw-bold">${user.name || 'N/A'}</td>
-            <td>${user.email}</td>
-            <td>${user.phone || 'N/A'}</td>
-            <td>
-              <select class="form-select form-select-sm shadow-sm border-0 fw-bold ${user.role === 'admin' ? 'bg-primary text-white' : 'bg-light'}" style="width:90px;" onchange="window.updateUserRole('${user.id}', this.value)">
-                <option value="client" ${user.role === 'client' || !user.role ? 'selected' : ''}>Client</option>
-                <option value="admin" ${user.role === 'admin' ? 'selected' : ''}>Admin</option>
-              </select>
-            </td>
-            <td>
-              <div class="dropdown">
-                <button class="btn btn-sm btn-light" type="button" data-bs-toggle="dropdown"><i class="bi bi-three-dots-vertical"></i></button>
-                <ul class="dropdown-menu shadow-sm dropdown-menu-end">
-                  <li><a class="dropdown-item small text-danger" href="#" onclick="window.deleteUser('${user.id}')"><i class="bi bi-trash me-2"></i>Delete</a></li>
-                </ul>
-              </div>
-            </td>
-          </tr>
-        `;
-      }).join("");
+  function renderUsersTable() {
+    if (!usersTableBody) return;
+    const term = usersSearchInput ? usersSearchInput.value.toLowerCase().trim() : "";
+    const filtered = allUsers.filter(u =>
+      !term || `${u.name} ${u.email} ${u.phone}`.toLowerCase().includes(term)
+    );
+    if (usersCountBadge) usersCountBadge.textContent = filtered.length;
+    if (!filtered.length) {
+      usersTableBody.innerHTML = `<tr><td colspan="5" class="text-center py-5 text-muted">No users found.</td></tr>`;
+      return;
     }
+    usersTableBody.innerHTML = filtered.map(u => `
+      <tr>
+        <td class="fw-bold">${u.name || 'N/A'}</td>
+        <td>${u.email}</td>
+        <td>${u.phone || 'N/A'}</td>
+        <td>
+          <select class="form-select form-select-sm shadow-sm border-0 fw-bold ${u.role==='admin'?'bg-primary text-white':'bg-light'}"
+            style="width:90px;" onchange="window.updateUserRole('${u.id}', this.value)">
+            <option value="client" ${u.role==='client'||!u.role?'selected':''}>Client</option>
+            <option value="admin"  ${u.role==='admin'?'selected':''}>Admin</option>
+          </select>
+        </td>
+        <td>
+          <div class="dropdown">
+            <button class="btn btn-sm btn-light" type="button" data-bs-toggle="dropdown">
+              <i class="bi bi-three-dots-vertical"></i>
+            </button>
+            <ul class="dropdown-menu shadow-sm dropdown-menu-end">
+              <li><a class="dropdown-item small text-danger" href="#"
+                     onclick="window.deleteUser('${u.id}');return false;">
+                   <i class="bi bi-trash me-2"></i>Delete
+                 </a></li>
+            </ul>
+          </div>
+        </td>
+      </tr>`).join("");
+  }
 
-    if (usersSearchInput) {
-      usersSearchInput.addEventListener("input", renderUsersTable);
-    }
+  if (usersSearchInput) usersSearchInput.addEventListener("input", renderUsersTable);
 
-    window.updateUserRole = async function(userId, newRole) {
-      const userRef = doc(db, "users", userId);
+  window.updateUserRole = async (userId, newRole) => {
+    try {
+      await updateDoc(doc(db, "users", userId), { role: newRole });
+      updateDebug(`User ${userId} role → ${newRole}`);
+    } catch (err) { alert("Error: " + err.message); }
+  };
+
+  window.deleteUser = async (userId) => {
+    if (confirm("Permanently delete this user from Firestore?")) {
       try {
-        await updateDoc(userRef, { role: newRole });
-        updateDebug(`User ${userId} role updated to ${newRole}`);
-      } catch (err) {
-        alert("Error updating user role: " + err.message);
-      }
-    };
-
-    window.deleteUser = async function(userId) {
-      if(confirm("Are you sure you want to permanently delete this user from Firestore?")) {
-        try {
-          await deleteDoc(doc(db, "users", userId));
-          updateDebug(`User ${userId} deleted`);
-        } catch (err) {
-          alert("Error deleting user: " + err.message);
-        }
-      }
-    };
-
-    // CSV Bulk Upload
-    const uploadBtn = document.getElementById("upload-csv-btn");
-    if (uploadBtn) {
-      uploadBtn.addEventListener("click", () => {
-        const fileInput = document.getElementById("csv-upload");
-        if (!fileInput.files.length) {
-          alert("Please select a CSV file.");
-          return;
-        }
-        alert("CSV upload feature - implement as needed");
-      });
+        await deleteDoc(doc(db, "users", userId));
+        updateDebug(`User ${userId} deleted`);
+      } catch (err) { alert("Error: " + err.message); }
     }
-  </script>
+  };
 
-  <script>
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/sw.js').catch(err => {
-          console.log('ServiceWorker registration failed: ', err);
-        });
-      });
-    }
-  </script>
+  // CSV Bulk Upload stub
+  const uploadBtn = document.getElementById("upload-csv-btn");
+  if (uploadBtn) {
+    uploadBtn.addEventListener("click", () => {
+      const f = document.getElementById("csv-upload");
+      if (!f.files.length) { alert("Please select a CSV file."); return; }
+      alert("CSV upload feature — implement as needed");
+    });
+  }
+</script>
+
+<!-- Lightbox close helper (non-module) -->
+<script>
+  function closeLightbox() {
+    document.getElementById("receipt-lightbox").classList.remove("active");
+    document.getElementById("lightbox-img").src = "";
+  }
+  document.addEventListener("keydown", e => { if (e.key === "Escape") closeLightbox(); });
+
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () =>
+      navigator.serviceWorker.register('/sw.js').catch(() => {})
+    );
+  }
+</script>
 </body>
 </html>
