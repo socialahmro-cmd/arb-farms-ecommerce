@@ -377,7 +377,7 @@
 
   // ── ERP SYNC CONFIG ── (change these to match your server)
   const ERP_SYNC_URL    = '/api/sync-to-erp.php';   // URL of the PHP endpoint
-  const ERP_SYNC_SECRET = 'Jawad@1234';           // must match SYNC_SECRET in config.php
+  const ERP_SYNC_SECRET = 'CHANGE_ME_NOW';           // must match SYNC_SECRET in config.php
 
   // ── DOM refs ──────────────────────────────────────────────────────────
   const debugText        = document.getElementById("debug-text");
@@ -817,7 +817,9 @@
 
         if (!silent) {
           const warn = data.warnings?.length ? '\n\n⚠️ ' + data.warnings.join('\n') : '';
-          alert(`✅ Synced to ERP!\nERP Order ID: ${data.erp_order_id}\nOrder: ${data.order_number}${warn}`);
+          const ship = data.shipping_rate != null ? `\nShipping: PKR ${data.shipping_rate.toLocaleString()}` : '';
+          const src  = data.shipping_calc?.source === 'dashboard' ? ' (from dashboard)' : ' (server recalc)';
+          alert(`✅ Synced to ERP!\nERP Order ID: ${data.erp_order_id}\nOrder: ${data.order_number}${ship}${src}${warn}`);
         }
         updateDebug(`ERP sync OK — ${order.orderNumber} → ERP #${data.erp_order_id}`);
         return data;
