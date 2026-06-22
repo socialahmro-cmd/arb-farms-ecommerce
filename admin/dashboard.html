@@ -5,11 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Admin Dashboard | ARB Farms Pakistan</title>
   
-  <!-- Bootstrap & Icons -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
-  
-  <!-- Custom Styles -->
   <link href="../css/index.css?v=c0cb305a" rel="stylesheet">
   
   <style>
@@ -29,7 +26,7 @@
       border-radius: 50px;
     }
 
-    /* ── Receipt thumbnail in row ── */
+    /* ── Receipt thumbnail ── */
     .receipt-thumb-wrap {
       position: relative;
       display: inline-block;
@@ -50,7 +47,6 @@
       z-index: 99;
       border-color: #2b422a;
     }
-    /* make sure zoom doesn't get clipped by table overflow */
     .table-responsive { overflow: visible !important; }
     table { overflow: visible !important; }
     tr { overflow: visible !important; }
@@ -103,9 +99,58 @@
       text-transform: uppercase;
       white-space: nowrap;
     }
+
+    /* ── Pagination ── */
+    .pagination-wrapper {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 8px;
+      padding-top: 12px;
+      border-top: 1px solid #e9ecef;
+      margin-top: 8px;
+    }
+    .pagination-info {
+      font-size: 0.8rem;
+      color: #6c757d;
+    }
+    .pagination .page-link {
+      font-size: 0.8rem;
+      padding: 4px 10px;
+      color: #2b422a;
+      border-color: #dee2e6;
+    }
+    .pagination .page-item.active .page-link {
+      background-color: #2b422a;
+      border-color: #2b422a;
+      color: #fff;
+    }
+    .pagination .page-link:hover {
+      background-color: #eaf3e9;
+    }
+    .per-page-select {
+      font-size: 0.8rem;
+      padding: 3px 8px;
+      border-radius: 6px;
+      border: 1px solid #dee2e6;
+      color: #495057;
+    }
+
+    /* ── ERP synced badge ── */
+    .erp-badge {
+      font-size: 0.62rem;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+      padding: 2px 6px;
+      border-radius: 50px;
+      background: #d1fae5;
+      color: #065f46;
+      border: 1px solid #6ee7b7;
+      white-space: nowrap;
+    }
   </style>
 
-  <!-- PWA Meta Tags -->
   <link rel="manifest" href="/manifest.json">
   <meta name="theme-color" content="#2b422a">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -114,13 +159,13 @@
 </head>
 <body>
 
-<!-- Receipt Lightbox Overlay -->
+<!-- Receipt Lightbox -->
 <div id="receipt-lightbox" onclick="closeLightbox()">
   <button class="lb-close" onclick="closeLightbox()"><i class="bi bi-x-circle-fill"></i></button>
   <img id="lightbox-img" src="" alt="Payment Receipt">
 </div>
 
-<!-- Top Navbar -->
+<!-- Navbar -->
 <nav class="navbar navbar-expand-lg bg-forest sticky-top shadow-sm py-2">
   <div class="container">
     <span class="navbar-brand d-flex align-items-center">
@@ -134,15 +179,13 @@
   </div>
 </nav>
 
-<!-- Main Content -->
 <main class="container py-4">
 
-  <!-- Debug Message -->
   <div id="debug-status" class="alert alert-info mb-3" style="font-size: 12px;">
     <i class="bi bi-info-circle"></i> <span id="debug-text">Initializing...</span>
   </div>
 
-  <!-- Tabs Navigation -->
+  <!-- Tabs -->
   <ul class="nav nav-tabs mb-4" id="adminTabs" role="tablist">
     <li class="nav-item" role="presentation">
       <button class="nav-link active font-primary" id="orders-tab" data-bs-toggle="tab" data-bs-target="#orders-pane" type="button" role="tab">Order Management</button>
@@ -154,10 +197,10 @@
 
   <div class="tab-content" id="adminTabsContent">
 
-    <!-- ══════════════════════════════════════ ORDERS TAB ══════════════════════════════════════ -->
+    <!-- ORDERS TAB -->
     <div class="tab-pane fade show active" id="orders-pane" role="tabpanel">
 
-      <!-- Analytics Header Cards -->
+      <!-- Stats -->
       <div class="row g-3 mb-4">
         <div class="col-6 col-md-4 col-lg-2">
           <div class="admin-card p-3 d-flex align-items-center gap-3 h-100">
@@ -218,7 +261,7 @@
           </button>
         </div>
 
-        <!-- ── Filter Row ── -->
+        <!-- Filter Row -->
         <div class="filter-row mb-3 p-3 rounded-3" style="background:#f8f9fa; border:1px solid #e9ecef;">
           <!-- Search -->
           <div class="input-group input-group-sm" style="width:220px;">
@@ -244,6 +287,16 @@
             <div class="filter-label mb-1">City</div>
             <select id="filter-city" class="form-select form-select-sm" style="width:140px;">
               <option value="">All Cities</option>
+            </select>
+          </div>
+
+          <!-- ERP Sync Status — NEW -->
+          <div>
+            <div class="filter-label mb-1">ERP Sync</div>
+            <select id="filter-erp" class="form-select form-select-sm" style="width:130px;">
+              <option value="">All Orders</option>
+              <option value="synced">✅ Synced</option>
+              <option value="unsynced">⏳ Not Synced</option>
             </select>
           </div>
 
@@ -313,10 +366,26 @@
             </tbody>
           </table>
         </div>
+
+        <!-- Pagination -->
+        <div class="pagination-wrapper" id="pagination-wrapper">
+          <div class="d-flex align-items-center gap-2">
+            <span class="pagination-info" id="pagination-info">Showing 0 orders</span>
+            <select class="per-page-select" id="per-page-select">
+              <option value="10">10 / page</option>
+              <option value="25" selected>25 / page</option>
+              <option value="50">50 / page</option>
+              <option value="100">100 / page</option>
+            </select>
+          </div>
+          <nav>
+            <ul class="pagination pagination-sm mb-0" id="pagination-controls"></ul>
+          </nav>
+        </div>
       </div>
     </div><!-- /orders-pane -->
 
-    <!-- ══════════════════════════════════════ USERS TAB ══════════════════════════════════════ -->
+    <!-- USERS TAB -->
     <div class="tab-pane fade" id="users-pane" role="tabpanel">
       <div class="admin-card p-4">
         <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-3">
@@ -360,14 +429,13 @@
           </table>
         </div>
       </div>
-    </div><!-- /users-pane -->
+    </div>
 
-  </div><!-- /tab-content -->
+  </div>
 </main>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
-<!-- ═══════════════════════════════════════════════════════════ SCRIPTS ══ -->
 <script type="module">
   import { auth, db } from "../js/firebase-init.js";
   import { onAuthStateChanged, signOut }
@@ -375,35 +443,41 @@
   import { collection, query, orderBy, onSnapshot, doc, updateDoc, deleteDoc }
     from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-  // ── ERP SYNC CONFIG ── (change these to match your server)
-const ERP_SYNC_URL = '/api/sync-to-erp';  // URL of the PHP endpoint
-  
+  const ERP_SYNC_URL = '/api/sync-to-erp';
 
   // ── DOM refs ──────────────────────────────────────────────────────────
-  const debugText        = document.getElementById("debug-text");
-  const userDisplay      = document.getElementById("user-email-display");
-  const tableBody        = document.getElementById("orders-table-body");
-  const logoutBtn        = document.getElementById("logout-btn");
+  const debugText            = document.getElementById("debug-text");
+  const userDisplay          = document.getElementById("user-email-display");
+  const tableBody            = document.getElementById("orders-table-body");
+  const logoutBtn            = document.getElementById("logout-btn");
 
-  const statSales        = document.getElementById("stat-sales");
-  const statPending      = document.getElementById("stat-pending");
-  const statDispatched   = document.getElementById("stat-dispatched");
-  const statWeight       = document.getElementById("stat-weight");
-  const statToday        = document.getElementById("stat-today");
-  const ordersCountBadge = document.getElementById("orders-count-badge");
+  const statSales            = document.getElementById("stat-sales");
+  const statPending          = document.getElementById("stat-pending");
+  const statDispatched       = document.getElementById("stat-dispatched");
+  const statWeight           = document.getElementById("stat-weight");
+  const statToday            = document.getElementById("stat-today");
+  const ordersCountBadge     = document.getElementById("orders-count-badge");
 
-  const searchInput      = document.getElementById("search-input");
-  const filterStatus     = document.getElementById("filter-status");
-  const filterCity       = document.getElementById("filter-city");
-  const filterDateFrom   = document.getElementById("filter-date-from");
-  const filterDateTo     = document.getElementById("filter-date-to");
-  const filterHasReceipt = document.getElementById("filter-has-receipt");
-  const clearFiltersBtn  = document.getElementById("clear-filters-btn");
-  const exportBtn        = document.getElementById("export-btn");
-  const selectAllCb      = document.getElementById("select-all-cb");
+  const searchInput          = document.getElementById("search-input");
+  const filterStatus         = document.getElementById("filter-status");
+  const filterCity           = document.getElementById("filter-city");
+  const filterErp            = document.getElementById("filter-erp");
+  const filterDateFrom       = document.getElementById("filter-date-from");
+  const filterDateTo         = document.getElementById("filter-date-to");
+  const filterHasReceipt     = document.getElementById("filter-has-receipt");
+  const clearFiltersBtn      = document.getElementById("clear-filters-btn");
+  const exportBtn            = document.getElementById("export-btn");
+  const selectAllCb          = document.getElementById("select-all-cb");
   const bulkActionsContainer = document.getElementById("bulk-actions-container");
-  const bulkActionSelect = document.getElementById("bulk-action-select");
-  const applyBulkBtn     = document.getElementById("apply-bulk-btn");
+  const bulkActionSelect     = document.getElementById("bulk-action-select");
+  const applyBulkBtn         = document.getElementById("apply-bulk-btn");
+
+  // ── Pagination state ──────────────────────────────────────────────────
+  let currentPage  = 1;
+  let perPage      = 25;
+  const perPageSel         = document.getElementById("per-page-select");
+  const paginationInfo     = document.getElementById("pagination-info");
+  const paginationControls = document.getElementById("pagination-controls");
 
   let allOrders = [];
 
@@ -441,11 +515,13 @@ const ERP_SYNC_URL = '/api/sync-to-erp';  // URL of the PHP endpoint
   // ── Firestore feed ────────────────────────────────────────────────────
   function initializeDashboardFeed() {
     updateDebug("Connecting to 'orders' collection…");
+    // DESC order = latest orders first
     const q = query(collection(db, "orders"), orderBy("orderDate", "desc"));
     onSnapshot(q, (snapshot) => {
       updateDebug(`✅ Orders loaded: ${snapshot.size} orders found`);
       allOrders = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
       populateCityFilter();
+      currentPage = 1; // reset to p1 on live data refresh
       renderTable();
     }, (err) => {
       updateDebug(`❌ Firestore error: ${err.message}`, true);
@@ -470,19 +546,25 @@ const ERP_SYNC_URL = '/api/sync-to-erp';  // URL of the PHP endpoint
     });
   }
 
-  // ── Main render ───────────────────────────────────────────────────────
-  function renderTable() {
+  // ── Filtering ────────────────────────────────────────────────────────
+  function getFilteredOrders() {
     const searchTerm  = searchInput.value.toLowerCase().trim();
     const statusVal   = filterStatus.value;
     const cityVal     = filterCity.value.toLowerCase();
+    const erpVal      = filterErp.value;
     const dateFrom    = filterDateFrom.value ? new Date(filterDateFrom.value) : null;
     const dateTo      = filterDateTo.value   ? new Date(filterDateTo.value + "T23:59:59") : null;
     const onlyReceipt = filterHasReceipt.checked;
 
-    const filteredOrders = allOrders.filter(order => {
+    return allOrders.filter(order => {
       if (statusVal && order.status !== statusVal) return false;
       if (cityVal && (order.city || '').toLowerCase() !== cityVal) return false;
       if (onlyReceipt && !order.receiptUrl) return false;
+
+      // ERP filter
+      if (erpVal === 'synced'   && !order.erp_synced) return false;
+      if (erpVal === 'unsynced' &&  order.erp_synced) return false;
+
       if (dateFrom || dateTo) {
         const d = order.orderDate ? new Date(order.orderDate) : null;
         if (!d) return false;
@@ -495,13 +577,77 @@ const ERP_SYNC_URL = '/api/sync-to-erp';  // URL of the PHP endpoint
       }
       return true;
     });
+  }
 
-    // ── Stats (always from full set) ──
+  // ── Pagination controls ───────────────────────────────────────────────
+  function renderPagination(totalItems) {
+    const totalPages = Math.max(1, Math.ceil(totalItems / perPage));
+    if (currentPage > totalPages) currentPage = totalPages;
+
+    const start = totalItems === 0 ? 0 : (currentPage - 1) * perPage + 1;
+    const end   = Math.min(currentPage * perPage, totalItems);
+    paginationInfo.textContent = totalItems === 0
+      ? 'No orders found'
+      : `Showing ${start}–${end} of ${totalItems} orders`;
+
+    paginationControls.innerHTML = '';
+
+    const addBtn = (label, page, disabled, active) => {
+      const li = document.createElement('li');
+      li.className = `page-item${disabled ? ' disabled' : ''}${active ? ' active' : ''}`;
+      const a = document.createElement('a');
+      a.className = 'page-link';
+      a.href = '#';
+      a.innerHTML = label;
+      if (!disabled && !active) {
+        a.addEventListener('click', (e) => { e.preventDefault(); currentPage = page; renderTable(); });
+      }
+      li.appendChild(a);
+      paginationControls.appendChild(li);
+    };
+
+    addBtn('<i class="bi bi-chevron-left"></i>', currentPage - 1, currentPage === 1, false);
+
+    let startPage = Math.max(1, currentPage - 2);
+    let endPage   = Math.min(totalPages, currentPage + 2);
+    if (endPage - startPage < 4) {
+      startPage = Math.max(1, endPage - 4);
+      endPage   = Math.min(totalPages, startPage + 4);
+    }
+
+    if (startPage > 1) {
+      addBtn('1', 1, false, false);
+      if (startPage > 2) {
+        const li = document.createElement('li'); li.className = 'page-item disabled';
+        li.innerHTML = '<span class="page-link">…</span>';
+        paginationControls.appendChild(li);
+      }
+    }
+    for (let p = startPage; p <= endPage; p++) {
+      addBtn(p, p, false, p === currentPage);
+    }
+    if (endPage < totalPages) {
+      if (endPage < totalPages - 1) {
+        const li = document.createElement('li'); li.className = 'page-item disabled';
+        li.innerHTML = '<span class="page-link">…</span>';
+        paginationControls.appendChild(li);
+      }
+      addBtn(totalPages, totalPages, false, false);
+    }
+
+    addBtn('<i class="bi bi-chevron-right"></i>', currentPage + 1, currentPage === totalPages, false);
+  }
+
+  // ── Main render ───────────────────────────────────────────────────────
+  function renderTable() {
+    const filteredOrders = getFilteredOrders();
+
+    // Stats — always computed from full allOrders
     let totalSalesVal = 0, pendingVal = 0, dispatchedVal = 0, totalWeightVal = 0, todayVal = 0;
     const todayStr = new Date().toISOString().split('T')[0];
     allOrders.forEach(o => {
-      totalSalesVal   += o.total  || 0;
-      totalWeightVal  += o.weight || 0;
+      totalSalesVal  += o.total  || 0;
+      totalWeightVal += o.weight || 0;
       if (o.status === "Awaiting Verification") pendingVal++;
       if (o.status === "Dispatched")            dispatchedVal++;
       if (o.orderDate && o.orderDate.startsWith(todayStr)) todayVal++;
@@ -513,13 +659,16 @@ const ERP_SYNC_URL = '/api/sync-to-erp';  // URL of the PHP endpoint
     statToday.textContent      = todayVal;
     ordersCountBadge.textContent = `${filteredOrders.length} / ${allOrders.length} orders`;
 
-    if (filteredOrders.length === 0) {
+    // Slice for current page
+    renderPagination(filteredOrders.length);
+    const pageOrders = filteredOrders.slice((currentPage - 1) * perPage, currentPage * perPage);
+
+    if (pageOrders.length === 0) {
       tableBody.innerHTML = `<tr><td colspan="10" class="text-center py-5 text-muted">No orders match your filters.</td></tr>`;
       return;
     }
 
-    tableBody.innerHTML = filteredOrders.map(order => {
-      // Status badge colour
+    tableBody.innerHTML = pageOrders.map(order => {
       let badgeClass = "bg-secondary";
       if (order.status === "Awaiting Verification")  badgeClass = "bg-warning text-dark";
       if (order.status === "Verified & Processing")  badgeClass = "bg-info text-dark";
@@ -534,18 +683,32 @@ const ERP_SYNC_URL = '/api/sync-to-erp';  // URL of the PHP endpoint
         ? new Date(order.orderDate).toLocaleDateString('en-PK', { day:'2-digit', month:'short', year:'numeric' })
         : "N/A";
 
-      // ── Receipt cell with hover zoom + lightbox ──
       const receiptCell = order.receiptUrl
         ? `<div class="receipt-thumb-wrap" onclick="window.openLightbox('${order.receiptUrl}')">
              <img class="receipt-thumb" src="${order.receiptUrl}" alt="Receipt" loading="lazy">
            </div>`
-        : `<span class="text-muted small" title="No receipt uploaded"><i class="bi bi-image text-muted"></i></span>`;
+        : `<span class="text-muted small"><i class="bi bi-image text-muted"></i></span>`;
+
+      // ERP badge under order number
+      const erpBadge = order.erp_synced
+        ? `<br><span class="erp-badge"><i class="bi bi-check2-circle me-1"></i>ERP${order.erp_order_id ? ' #' + order.erp_order_id : ''}</span>`
+        : '';
+
+      // Hide "Sync to ERP" action if already synced
+      const syncMenuItem = order.erp_synced ? '' : `
+        <li>
+          <a class="dropdown-item small text-success fw-semibold" href="#"
+             onclick="window.syncOrderToERP('${order.id}');return false;">
+            <i class="bi bi-arrow-repeat me-2"></i>Sync to ERP
+          </a>
+        </li>`;
 
       return `
         <tr>
           <td><input class="form-check-input row-cb" type="checkbox" value="${order.id}"></td>
-          <td><strong class="font-monospace text-primary">${order.orderNumber || '—'}</strong>
-            ${order.erp_synced ? `<br><span class="badge bg-success-subtle text-success border border-success-subtle" style="font-size:0.65rem;">✓ ERP</span>` : ''}
+          <td>
+            <strong class="font-monospace text-primary">${order.orderNumber || '—'}</strong>
+            ${erpBadge}
           </td>
           <td class="small text-muted text-nowrap">${orderDateFormatted}</td>
           <td>
@@ -560,11 +723,11 @@ const ERP_SYNC_URL = '/api/sync-to-erp';  // URL of the PHP endpoint
             <select class="form-select form-select-sm border-0 shadow-sm fw-bold ${badgeClass}"
               style="width:130px;font-size:0.75rem;"
               onchange="window.updateOrderStatus('${order.id}', this.value)">
-              <option value="Awaiting Receipt"    ${order.status==='Awaiting Receipt'    ?'selected':''}>Receipt</option>
+              <option value="Awaiting Receipt"      ${order.status==='Awaiting Receipt'    ?'selected':''}>Receipt</option>
               <option value="Awaiting Verification" ${order.status==='Awaiting Verification'?'selected':''}>Verifying</option>
               <option value="Verified & Processing" ${order.status==='Verified & Processing'?'selected':''}>Processing</option>
-              <option value="Dispatched"          ${order.status==='Dispatched'          ?'selected':''}>Dispatched</option>
-              <option value="Cancelled"           ${order.status==='Cancelled'           ?'selected':''}>Cancelled</option>
+              <option value="Dispatched"            ${order.status==='Dispatched'          ?'selected':''}>Dispatched</option>
+              <option value="Cancelled"             ${order.status==='Cancelled'           ?'selected':''}>Cancelled</option>
             </select>
           </td>
           <td>
@@ -573,12 +736,7 @@ const ERP_SYNC_URL = '/api/sync-to-erp';  // URL of the PHP endpoint
                 <i class="bi bi-three-dots-vertical"></i>
               </button>
               <ul class="dropdown-menu shadow-sm dropdown-menu-end">
-                <li>
-                  <a class="dropdown-item small text-success fw-semibold" href="#"
-                     onclick="window.syncOrderToERP('${order.id}');return false;">
-                    <i class="bi bi-arrow-repeat me-2"></i>Sync to ERP
-                  </a>
-                </li>
+                ${syncMenuItem}
                 ${order.receiptUrl
                   ? `<li><a class="dropdown-item small" href="#" onclick="window.openLightbox('${order.receiptUrl}');return false;">
                        <i class="bi bi-file-earmark-image me-2"></i>View Receipt
@@ -608,19 +766,32 @@ const ERP_SYNC_URL = '/api/sync-to-erp';  // URL of the PHP endpoint
     if (!anyChecked && selectAllCb) selectAllCb.checked = false;
   }
 
-  // ── Filter event listeners ────────────────────────────────────────────
-  [searchInput, filterStatus, filterCity, filterDateFrom, filterDateTo, filterHasReceipt]
-    .forEach(el => { if (el) el.addEventListener("change", renderTable); });
-  if (searchInput) searchInput.addEventListener("input", renderTable);
+  // ── Filter listeners ──────────────────────────────────────────────────
+  [searchInput, filterStatus, filterCity, filterErp, filterDateFrom, filterDateTo, filterHasReceipt]
+    .forEach(el => {
+      if (!el) return;
+      el.addEventListener("change", () => { currentPage = 1; renderTable(); });
+    });
+  if (searchInput) searchInput.addEventListener("input", () => { currentPage = 1; renderTable(); });
+
+  if (perPageSel) {
+    perPageSel.addEventListener("change", () => {
+      perPage = parseInt(perPageSel.value, 10);
+      currentPage = 1;
+      renderTable();
+    });
+  }
 
   if (clearFiltersBtn) {
     clearFiltersBtn.addEventListener("click", () => {
-      searchInput.value      = "";
-      filterStatus.value     = "";
-      filterCity.value       = "";
-      filterDateFrom.value   = "";
-      filterDateTo.value     = "";
+      searchInput.value        = "";
+      filterStatus.value       = "";
+      filterCity.value         = "";
+      filterErp.value          = "";
+      filterDateFrom.value     = "";
+      filterDateTo.value       = "";
       filterHasReceipt.checked = false;
+      currentPage = 1;
       renderTable();
     });
   }
@@ -638,33 +809,18 @@ const ERP_SYNC_URL = '/api/sync-to-erp';  // URL of the PHP endpoint
     });
   }
 
-  if (applyBulkBtn) {
-    applyBulkBtn.addEventListener("click", async () => {
-      const selectedIds = Array.from(document.querySelectorAll(".row-cb:checked")).map(cb => cb.value);
-      const action = bulkActionSelect.value;
-      if (!action || !selectedIds.length) return;
-      if (confirm(`Change status to "${action}" for ${selectedIds.length} order(s)?`)) {
-        for (const id of selectedIds) {
-          await updateDoc(doc(db, "orders", id), { status: action });
-        }
-        alert("Bulk action applied.");
-        selectAllCb.checked = false;
-        bulkActionsContainer.classList.add("d-none");
-      }
-    });
-  }
-
   // ── CSV Export ────────────────────────────────────────────────────────
   if (exportBtn) {
     exportBtn.addEventListener("click", () => {
       if (!allOrders.length) return alert("No orders to export.");
-      const rows = [["Order #","Date","Customer","Phone","City","Amount","Status","Items","Receipt"].join(",")];
+      const rows = [["Order #","Date","Customer","Phone","City","Amount","Status","Items","Receipt","ERP Synced","ERP Order ID"].join(",")];
       allOrders.forEach(o => {
         const items = o.items ? o.items.map(i => `${i.qty}x ${i.name}`).join(" | ") : "";
         rows.push([
           `"${o.orderNumber}"`, `"${o.orderDate||''}"`, `"${o.customerName}"`,
           `"${o.phone}"`, `"${o.city}"`, o.total||0, `"${o.status}"`,
-          `"${items}"`, `"${o.receiptUrl||''}"`
+          `"${items}"`, `"${o.receiptUrl||''}"`,
+          o.erp_synced ? 'Yes' : 'No', `"${o.erp_order_id || ''}"`
         ].join(","));
       });
       const blob = new Blob([rows.join("\n")], { type:"text/csv" });
@@ -691,11 +847,102 @@ const ERP_SYNC_URL = '/api/sync-to-erp';  // URL of the PHP endpoint
     }
   };
 
-  // ── Lightbox ──────────────────────────────────────────────────────────
   window.openLightbox = (url) => {
     document.getElementById("lightbox-img").src = url;
     document.getElementById("receipt-lightbox").classList.add("active");
   };
+
+  // ── ERP SYNC ─────────────────────────────────────────────────────────
+  async function syncOrderToERP(firebaseDocId, silent = false) {
+    const order = allOrders.find(o => o.id === firebaseDocId);
+    if (!order) {
+      if (!silent) alert('Order not found in local cache. Try refreshing.');
+      return { success: false, message: 'Order not found' };
+    }
+
+    try {
+      const res = await fetch(ERP_SYNC_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ order: { ...order, id: firebaseDocId } }),
+      });
+
+      const data = await res.json();
+
+      if (data.success) {
+        await updateDoc(doc(db, 'orders', firebaseDocId), {
+          erp_synced: true,
+          erp_order_id: data.erp_order_id ?? null,
+          erp_synced_at: new Date().toISOString(),
+        });
+
+        if (!silent) {
+          const warn = data.warnings?.length ? '\n\n⚠️ ' + data.warnings.join('\n') : '';
+          const ship = data.shipping_rate != null ? `\nShipping: PKR ${data.shipping_rate.toLocaleString()}` : '';
+          const src  = data.shipping_calc?.source === 'dashboard' ? ' (from dashboard)' : ' (server recalc)';
+          alert(`✅ Synced to ERP!\nERP Order ID: ${data.erp_order_id}\nOrder: ${data.order_number}${ship}${src}${warn}`);
+        }
+        updateDebug(`ERP sync OK — ${order.orderNumber} → ERP #${data.erp_order_id}`);
+        return data;
+      } else {
+        if (!silent) alert(`❌ ERP sync failed:\n${data.message}`);
+        updateDebug(`ERP sync failed: ${data.message}`, true);
+        return data;
+      }
+    } catch (err) {
+      const msg = 'Network error reaching ERP server: ' + err.message;
+      if (!silent) alert('❌ ' + msg);
+      updateDebug(msg, true);
+      return { success: false, message: msg };
+    }
+  }
+
+  window.syncOrderToERP = (id) => syncOrderToERP(id);
+
+  // ── Bulk action handler ───────────────────────────────────────────────
+  if (applyBulkBtn) {
+    applyBulkBtn.addEventListener("click", async () => {
+      const selectedIds = Array.from(document.querySelectorAll(".row-cb:checked")).map(cb => cb.value);
+      const action = bulkActionSelect.value;
+      if (!action || !selectedIds.length) return;
+
+      if (action === '__SYNC_ERP__') {
+        if (!confirm(`Sync ${selectedIds.length} order(s) to ERP?\nAlready-synced orders will be skipped.`)) return;
+
+        let ok = 0, skip = 0, fail = 0;
+        const failedOrders = [];
+        updateDebug(`Syncing ${selectedIds.length} orders to ERP…`);
+
+        for (const id of selectedIds) {
+          const o = allOrders.find(x => x.id === id);
+          if (o?.erp_synced) { skip++; continue; }
+          const result = await syncOrderToERP(id, true);
+          if (result.success) ok++;
+          else {
+            fail++;
+            failedOrders.push((o?.orderNumber ?? id) + ': ' + result.message);
+          }
+        }
+
+        let summary = `ERP Sync complete:\n✅ Synced: ${ok}\n⏭ Skipped (already synced): ${skip}`;
+        if (fail > 0) summary += `\n❌ Failed: ${fail}\n${failedOrders.join('\n')}`;
+        alert(summary);
+        updateDebug(`ERP Bulk sync: ${ok} ok, ${skip} skipped, ${fail} failed`);
+        if (selectAllCb) selectAllCb.checked = false;
+        document.getElementById("bulk-actions-container").classList.add("d-none");
+        return;
+      }
+
+      if (confirm(`Change status to "${action}" for ${selectedIds.length} order(s)?`)) {
+        for (const id of selectedIds) {
+          await updateDoc(doc(db, "orders", id), { status: action });
+        }
+        alert("Bulk action applied.");
+        if (selectAllCb) selectAllCb.checked = false;
+        document.getElementById("bulk-actions-container").classList.add("d-none");
+      }
+    });
+  }
 
   // ── USER MANAGEMENT ───────────────────────────────────────────────────
   const usersTableBody   = document.getElementById("users-table-body");
@@ -771,7 +1018,6 @@ const ERP_SYNC_URL = '/api/sync-to-erp';  // URL of the PHP endpoint
     }
   };
 
-  // CSV Bulk Upload stub
   const uploadBtn = document.getElementById("upload-csv-btn");
   if (uploadBtn) {
     uploadBtn.addEventListener("click", () => {
@@ -780,121 +1026,8 @@ const ERP_SYNC_URL = '/api/sync-to-erp';  // URL of the PHP endpoint
       alert("CSV upload feature — implement as needed");
     });
   }
-
-  // ── ERP SYNC ─────────────────────────────────────────────────────────────
-  /**
-   * Sync a single Firebase order to the ERP MySQL database.
-   * @param {string} firebaseDocId  — Firestore document ID
-   * @param {boolean} silent        — suppress alerts (used in bulk mode)
-   * @returns {Promise<{success, erp_order_id?, message}>}
-   */
-  async function syncOrderToERP(firebaseDocId, silent = false) {
-    const order = allOrders.find(o => o.id === firebaseDocId);
-    if (!order) {
-      if (!silent) alert('Order not found in local cache. Try refreshing.');
-      return { success: false, message: 'Order not found' };
-    }
-
-    try {
-      const res = await fetch(ERP_SYNC_URL, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-
-
-        },
-        body: JSON.stringify({ order: { ...order, id: firebaseDocId } }),
-      });
-
-      const data = await res.json();
-
-      if (data.success) {
-        // Tag the Firebase doc so the row shows it was synced
-        await updateDoc(doc(db, 'orders', firebaseDocId), {
-          erp_synced: true,
-          erp_order_id: data.erp_order_id ?? null,
-          erp_synced_at: new Date().toISOString(),
-        });
-
-        if (!silent) {
-          const warn = data.warnings?.length ? '\n\n⚠️ ' + data.warnings.join('\n') : '';
-          const ship = data.shipping_rate != null ? `\nShipping: PKR ${data.shipping_rate.toLocaleString()}` : '';
-          const src  = data.shipping_calc?.source === 'dashboard' ? ' (from dashboard)' : ' (server recalc)';
-          alert(`✅ Synced to ERP!\nERP Order ID: ${data.erp_order_id}\nOrder: ${data.order_number}${ship}${src}${warn}`);
-        }
-        updateDebug(`ERP sync OK — ${order.orderNumber} → ERP #${data.erp_order_id}`);
-        return data;
-      } else {
-        if (!silent) alert(`❌ ERP sync failed:\n${data.message}`);
-        updateDebug(`ERP sync failed: ${data.message}`, true);
-        return data;
-      }
-    } catch (err) {
-      const msg = 'Network error reaching ERP server: ' + err.message;
-      if (!silent) alert('❌ ' + msg);
-      updateDebug(msg, true);
-      return { success: false, message: msg };
-    }
-  }
-
-  // Expose for per-row dropdown
-  window.syncOrderToERP = (id) => syncOrderToERP(id);
-
-  // ── BULK SYNC HANDLER (hooked into existing applyBulkBtn) ────────────────
-  // We extend the existing bulk handler to intercept __SYNC_ERP__
-  if (applyBulkBtn) {
-    // Remove the old listener by cloning the node, then re-add both handlers
-    const oldBtn = applyBulkBtn;
-    const newBtn = oldBtn.cloneNode(true);
-    oldBtn.parentNode.replaceChild(newBtn, oldBtn);
-
-    newBtn.addEventListener("click", async () => {
-      const selectedIds = Array.from(document.querySelectorAll(".row-cb:checked")).map(cb => cb.value);
-      const action = document.getElementById("bulk-action-select").value;
-      if (!action || !selectedIds.length) return;
-
-      // ── ERP bulk sync branch ──
-      if (action === '__SYNC_ERP__') {
-        if (!confirm(`Sync ${selectedIds.length} order(s) to ERP?\nAlready-synced orders will be skipped.`)) return;
-
-        let ok = 0, skip = 0, fail = 0;
-        const failedOrders = [];
-        updateDebug(`Syncing ${selectedIds.length} orders to ERP…`);
-
-        for (const id of selectedIds) {
-          const result = await syncOrderToERP(id, true);
-          if (result.success) {
-            result.duplicate ? skip++ : ok++;
-          } else {
-            fail++;
-            const o = allOrders.find(x => x.id === id);
-            failedOrders.push((o?.orderNumber ?? id) + ': ' + result.message);
-          }
-        }
-
-        let summary = `ERP Sync complete:\n✅ Synced: ${ok}\n⏭ Skipped (already synced): ${skip}`;
-        if (fail > 0) summary += `\n❌ Failed: ${fail}\n${failedOrders.join('\n')}`;
-        alert(summary);
-        updateDebug(`ERP Bulk sync: ${ok} ok, ${skip} skipped, ${fail} failed`);
-        if (selectAllCb) selectAllCb.checked = false;
-        document.getElementById("bulk-actions-container").classList.add("d-none");
-        return;
-      }
-
-      // ── Normal status-change branch ──
-      if (confirm(`Change status to "${action}" for ${selectedIds.length} order(s)?`)) {
-        for (const id of selectedIds) {
-          await updateDoc(doc(db, "orders", id), { status: action });
-        }
-        alert("Bulk action applied.");
-        if (selectAllCb) selectAllCb.checked = false;
-        document.getElementById("bulk-actions-container").classList.add("d-none");
-      }
-    });
-  }
 </script>
 
-<!-- Lightbox close helper (non-module) -->
 <script>
   function closeLightbox() {
     document.getElementById("receipt-lightbox").classList.remove("active");
