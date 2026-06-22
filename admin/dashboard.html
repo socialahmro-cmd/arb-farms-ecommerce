@@ -520,6 +520,15 @@
     onSnapshot(q, (snapshot) => {
       updateDebug(`✅ Orders loaded: ${snapshot.size} orders found`);
       allOrders = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+      // Client-side sort: latest first — handles mixed Timestamp / string / null orderDate
+      allOrders.sort((a, b) => {
+        const toMs = v => {
+          if (!v) return 0;
+          if (typeof v.toDate === 'function') return v.toDate().getTime(); // Firestore Timestamp
+          return new Date(v).getTime();                                    // ISO string
+        };
+        return toMs(b.orderDate) - toMs(a.orderDate);
+      });
       populateCityFilter();
       currentPage = 1; // reset to p1 on live data refresh
       renderTable();
@@ -694,14 +703,12 @@
         ? `<br><span class="erp-badge"><i class="bi bi-check2-circle me-1"></i>ERP${order.erp_order_id ? ' #' + order.erp_order_id : ''}</span>`
         : '';
 
-      // Hide "Sync to ERP" action if already synced
-      const syncMenuItem = order.erp_synced ? '' : `
-        <li>
-          <a class="dropdown-item small text-success fw-semibold" href="#"
-             onclick="window.syncOrderToERP('${order.id}');return false;">
-            <i class="bi bi-arrow-repeat me-2"></i>Sync to ERP
-          </a>
-        </li>`;
+      // Sync button — visible on row, hidden once synced
+      const syncBtn = order.erp_synced ? '' : `
+        <button class="btn btn-sm btn-outline-success" title="Sync to ERP"
+          onclick="window.syncOrderToERP('${order.id}')">
+          <i class="bi bi-arrow-repeat"></i>
+        </button>`;
 
       return `
         <tr>
@@ -731,12 +738,13 @@
             </select>
           </td>
           <td>
-            <div class="dropdown">
-              <button class="btn btn-sm btn-light" type="button" data-bs-toggle="dropdown">
-                <i class="bi bi-three-dots-vertical"></i>
-              </button>
-              <ul class="dropdown-menu shadow-sm dropdown-menu-end">
-                ${syncMenuItem}
+            <div class="d-flex align-items-center gap-1">
+              ${syncBtn}
+              <div class="dropdown">
+                <button class="btn btn-sm btn-light" type="button" data-bs-toggle="dropdown">
+                  <i class="bi bi-three-dots-vertical"></i>
+                </button>
+                <ul class="dropdown-menu shadow-sm dropdown-menu-end">
                 ${order.receiptUrl
                   ? `<li><a class="dropdown-item small" href="#" onclick="window.openLightbox('${order.receiptUrl}');return false;">
                        <i class="bi bi-file-earmark-image me-2"></i>View Receipt
@@ -750,7 +758,8 @@
                        onclick="window.deleteOrder('${order.id}');return false;">
                      <i class="bi bi-trash me-2"></i>Delete
                    </a></li>
-              </ul>
+                </ul>
+              </div>
             </div>
           </td>
         </tr>`;
