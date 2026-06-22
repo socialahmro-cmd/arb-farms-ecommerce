@@ -247,6 +247,7 @@ function addToCart(product) {
     const price = calculateTieredPrice(product.id, qty, product.price);
     cart.push({
       id: product.id,
+      sku: SKU_MAP[product.id] ?? null,   // ← ADD THIS LINE
       name: product.name.replace(/ (Small|Large|Medium|Bulk)$/i, ''),
       price: price,
       basePrice: parseFloat(product.price),
@@ -1799,6 +1800,7 @@ function addBundleToCart(bundleId) {
       const price = typeof calculateTieredPrice === 'function' ? calculateTieredPrice(product.id, 1, product.price) : product.price;
       currentCart.push({
         id: product.id,
+        sku: SKU_MAP[product.id] ?? null,   // ← ADD THIS LINE
         name: product.name.replace(/ (Small|Large|Medium|Bulk)$/i, ''),
         price: price,
         basePrice: parseFloat(product.price),
