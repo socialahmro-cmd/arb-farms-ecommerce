@@ -1,7 +1,8 @@
 // /api/sync-to-erp.js
 // Vercel serverless proxy — forwards Firebase order to ERP MySQL.
+// Secret lives server-side only, never exposed to the browser.
 
-const ERP_URL    = 'https://erp.ahmroglobal.com/organics/api/sync-to-erp.php';
+const ERP_URL    = 'https://erp.ahmroglobal.com/api/sync-to-erp.php';
 const ERP_SECRET = 'Jawad@1234';
 
 export default async function handler(req, res) {
@@ -29,18 +30,28 @@ export default async function handler(req, res) {
       body: JSON.stringify(req.body),
     });
 
-    rawText = await response.text();          // get raw first, always
+    rawText = await response.text();
+
+    // Strip any PHP warnings/notices printed before the JSON
+    // They look like: "Warning: ...\n" or "Notice: ...\n" or "Deprecated: ...\n"
+    const cleaned = rawText
+      .replace(/^(\s*(Warning|Notice|Deprecated|Fatal error|Parse error)[^\n]*\n)*/i, '')
+      .trim();
+
+    // Find the first { or [ — start of actual JSON
+    const jsonStart = cleaned.search(/[{\[]/);
+    const jsonStr   = jsonStart >= 0 ? cleaned.slice(jsonStart) : cleaned;
 
     let data;
     try {
-      data = JSON.parse(rawText);             // try to parse as JSON
+      data = JSON.parse(jsonStr);
     } catch (parseErr) {
-      // ERP returned non-JSON — return the raw text so we can debug
+      // Still not valid JSON — return raw so we can debug
       return res.status(502).json({
         success: false,
         message: 'ERP returned non-JSON response',
-        erp_status: response.status,
-        erp_raw: rawText.substring(0, 1000), // first 1000 chars of whatever came back
+        erp_http_status: response.status,
+        erp_raw: rawText.substring(0, 1500),
       });
     }
 
@@ -50,7 +61,7 @@ export default async function handler(req, res) {
     return res.status(502).json({
       success: false,
       message: 'ERP server unreachable: ' + err.message,
-      erp_raw: rawText.substring(0, 1000),
+      erp_raw: rawText.substring(0, 500),
     });
   }
 }
