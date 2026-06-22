@@ -2,7 +2,34 @@
  * main.js - Core E-commerce State Management (Cart, Wishlist, Compare)
  * ARB Farms E-commerce
  */
-
+const SKU_MAP = {
+  "ogn-004-milk":"OGN-001","ogn-005":"OGN-002","ogn-006":"OGN-003",
+  "ogn-007":"OGN-007","ogn-008":"OGN-008","ogn-009":"OGN-009","ogn-010":"OGN-010",
+  "ogn-011":"OGN-011","ogn-012":"OGN-012","ogn-013":"OGN-013","ogn-014":"OGN-014",
+  "ogn-015":"OGN-017","ogn-016":"OGN-018","ogn-017":"OGN-019",
+  "ogn-066-white-chaunsa-5kg":"OGN-073","ogn-066-white-chaunsa-9kg":"OGN-074",
+  "ogn-067-sindhri-5kg":"OGN-075","ogn-067-sindhri-9kg":"OGN-076",
+  "ogn-068-dusehri-5kg":"OGN-069","ogn-068-dusehri-9kg":"OGN-070",
+  "ogn-069-anwar-ratol-5kg":"OGN-071","ogn-069-anwar-ratol-9kg":"OGN-072",
+  "ogn-018":"OGN-045","ogn-018-5kg":"OGN-083","ogn-018-40kg":"OGN-084",
+  "ogn-027-edible":"OGN-047","ogn-046":"OGN-048",
+  "ogn-028-edible":"OGN-049","ogn-048":"OGN-050",
+  "ogn-063":"OGN-065","ogn-064":"OGN-066",
+  "ogn-053-moringa":"OGN-055","ogn-054":"OGN-056",
+  "ogn-055":"OGN-057","ogn-056":"OGN-058",
+  "ogn-057":"OGN-059","ogn-058":"OGN-060",
+  "ogn-059":"OGN-061","ogn-060":"OGN-062",
+  "ogn-051":"OGN-051","ogn-061-edible":"OGN-052",
+  "ogn-052":"OGN-053","ogn-053-pumpkin":"OGN-054",
+  "ogn-041":"OGN-043","ogn-042":"OGN-044","ogn-044":"OGN-046",
+  "ogn-019":"OGN-021","ogn-020":"OGN-022","ogn-021":"OGN-023","ogn-022":"OGN-024",
+  "ogn-023":"OGN-025","ogn-024":"OGN-026","ogn-025":"OGN-027","ogn-026":"OGN-028",
+  "ogn-027-seed":"OGN-029","ogn-028-seed":"OGN-030","ogn-029-seed":"OGN-031",
+  "ogn-030":"OGN-032","ogn-031":"OGN-033","ogn-032":"OGN-034","ogn-033":"OGN-035",
+  "ogn-034":"OGN-036","ogn-035":"OGN-037","ogn-036":"OGN-038","ogn-037":"OGN-039",
+  "ogn-038":"OGN-040","ogn-039":"OGN-041","ogn-040":"OGN-042",
+  "ogn-061":"OGN-063","ogn-062":"OGN-064","ogn-004-seed":"OGN-085",
+};
 
 // Automatically clean up Cache Storage & Service Workers if a new deployment is detected to ensure fresh UI/UX
 (async function checkSiteVersion() {
