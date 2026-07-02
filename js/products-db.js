@@ -22,53 +22,10 @@
 
 const productsDb = [
   // A. Dairy & Organic Foods (Multan fresh milk delivery limits set in metadata)
-  // NOTE: Milk items (Cow/Buffalo/Goat) are intentionally placed at the END of
-  // this array (see "Z. Fresh Milk (shown last on shop page)" near the bottom)
-  // so Desi Ghee, Honey, Gurr, Achaar, and Mangoes show first, milk last.
-  {
-    id: "ogn-007",
-    sku: "OGN-007",
-    name: "Desi Organic Gurr",
-    weight: "1 Kg",
-    price: 720,
-    category: "dairy-organic",
-    image: "catalog/ogn-007-desi-organic-gurr-1kg-v2.svg",
-    hoverImage: "catalog/ogn-007-desi-organic-gurr-1kg-hover-v2.svg",
-    tags: ["gurr", "sweetener", "jaggery", "sugar"]
-  },
-  {
-    id: "ogn-008",
-    sku: "OGN-008",
-    name: "Gurr with Dry Fruits",
-    weight: "1 Kg",
-    price: 1800,
-    category: "dairy-organic",
-    image: "catalog/ogn-008-gurr-with-dry-fruits-1kg-v2.svg",
-    hoverImage: "catalog/ogn-007-desi-organic-gurr-1kg-hover-v2.svg",
-    tags: ["gurr", "sweetener", "premium", "dry fruits", "nuts"]
-  },
-  {
-    id: "ogn-009",
-    sku: "OGN-009",
-    name: "Organic Shakar",
-    weight: "1 Kg",
-    price: 810,
-    category: "dairy-organic",
-    image: "catalog/ogn-009-organic-shakar-1kg-v2.svg",
-    hoverImage: "catalog/ogn-009-organic-shakar-1kg-hover-v2.svg",
-    tags: ["shakar", "sweetener", "sugar", "brown"]
-  },
-  {
-    id: "ogn-010",
-    sku: "OGN-010",
-    name: "Organic Shakar (Bulk)",
-    weight: "6 Kg",
-    price: 4400,
-    category: "dairy-organic",
-    image: "catalog/ogn-009-organic-shakar-1kg-v2.svg",
-    hoverImage: "catalog/ogn-009-organic-shakar-1kg-hover-v2.svg",
-    tags: ["shakar", "sweetener", "sugar", "bulk"]
-  },
+  // NOTE: Milk items (Cow/Buffalo/Goat) are intentionally placed after the
+  // "B. Edible Seeds & Superfoods" section (see "B2. Fresh Milk" below) so
+  // Desi Ghee, Honey, Gurr, Achaar, Mangoes, and Edible Seeds show before milk.
+ 
   {
     id: "ogn-011",
     sku: "OGN-011",
@@ -112,186 +69,6 @@ const productsDb = [
     image: "catalog/ogn-013-desi-ghee-500gm-v2.svg",
     hoverImage: "catalog/ogn-013-desi-ghee-500gm-hover-v2.svg",
     tags: ["ghee", "desi", "butter", "dairy", "fat", "premium"]
-  },
-  {
-    id: "ogn-015",
-    sku: "OGN-017",
-    name: "Organic Achaar Small",
-    weight: "400 gm",
-    price: 700,
-    category: "dairy-organic",
-    image: "catalog/ogn-015-organic-achaar-400gm-v2.svg",
-    hoverImage: "catalog/ogn-017-organic-achaar-1kg-hover-v2.svg",
-    tags: ["achaar", "pickle", "traditional", "oil", "mango"]
-  },
-  {
-    id: "ogn-016",
-    sku: "OGN-018",
-    name: "Organic Achaar Medium",
-    weight: "750 gm",
-    price: 1000,
-    category: "dairy-organic",
-    image: "catalog/ogn-016-organic-achaar-750gm-v2.svg",
-    hoverImage: "catalog/ogn-017-organic-achaar-1kg-hover-v2.svg",
-    tags: ["achaar", "pickle", "traditional", "oil", "medium"]
-  },
-  {
-    id: "ogn-017",
-    sku: "OGN-019",
-    name: "Organic Achaar Large",
-    weight: "1 Kg",
-    price: 1400,
-    category: "dairy-organic",
-    image: "catalog/ogn-017-organic-achaar-1kg-v2.svg",
-    hoverImage: "catalog/ogn-017-organic-achaar-1kg-hover-v2.svg",
-    tags: ["achaar", "pickle", "traditional", "oil", "large"]
-  },
-  {
-    id: "ogn-066-white-chaunsa-5kg",
-    sku: "OGN-073",
-    name: "White Chaunsa (Pre-Order)",
-    weight: "5 Kg Box",
-    price: 2000,
-    originalPrice: 2500,
-    shipping: 0,
-    category: "dairy-organic",
-    image: "catalog/White-Chaunsa.svg",
-    hoverImage: "catalog/White-Chaunsa.svg",
-    tags: ["mango", "chaunsa", "white chaunsa", "fruit", "fresh", "organic", "pre-booking"]
-  },
-  {
-    id: "ogn-066-white-chaunsa-9kg",
-    sku: "OGN-074",
-    name: "White Chaunsa (Pre-Order)",
-    weight: "9 Kg Box",
-    price: 3200,
-    originalPrice: 3800,
-    shipping: 0,
-    category: "dairy-organic",
-    image: "catalog/White-Chaunsa.svg",
-    hoverImage: "catalog/White-Chaunsa.svg",
-    tags: ["mango", "chaunsa", "white chaunsa", "fruit", "fresh", "organic", "pre-booking"]
-  },
-{
-    id: "ogn-067-sindhri-5kg",
-    sku: "OGN-075",
-    name: "Sindhri Mango (Pre-Order)",
-    weight: "5 Kg Box",
-    price: 1700,
-    originalPrice: 1900,
-    shipping: 0,
-  inStock: false,
-    category: "dairy-organic",
-    image: "catalog/Sindhri-Mango.svg",
-    hoverImage: "catalog/Sindhri-Mango.svg",
-    tags: ["mango", "sindhri", "fruit", "fresh", "organic", "pre-booking"]
-  },
- {
-    id: "ogn-067-sindhri-9kg",
-    sku: "OGN-076",
-    name: "Sindhri Mango (Pre-Order)",
-    weight: "9 Kg Box",
-    price: 2900,
-    originalPrice: 3100,
-    shipping: 0,
-   inStock: false,
-    category: "dairy-organic",
-    image: "catalog/Sindhri-Mango.svg",
-    hoverImage: "catalog/Sindhri-Mango.svg",
-    tags: ["mango", "sindhri", "fruit", "fresh", "organic", "pre-booking"]
-  },
- {
-    id: "ogn-068-dusehri-5kg",
-    sku: "OGN-069",
-    name: "Dusehri Mango (Pre-Order)",
-    weight: "5 Kg Box",
-    price: 2000,
-    originalPrice: 2200,
-    shipping: 0,
-   inStock: false,
-    inStock: false,
-    category: "dairy-organic",
-    image: "catalog/Dusehri-Mango.svg",
-    hoverImage: "catalog/Dusehri-Mango.svg",
-    tags: ["mango", "dusehri", "fruit", "fresh", "organic", "pre-booking"]
-  },
- {
-    id: "ogn-068-dusehri-9kg",
-    sku: "OGN-070",
-    name: "Dusehri Mango (Pre-Order)",
-    weight: "9 Kg Box",
-    price: 3000,
-    originalPrice: 3400,
-    shipping: 0,
-   inStock: false,
-    inStock: false,
-    category: "dairy-organic",
-    image: "catalog/Dusehri-Mango.svg",
-    hoverImage: "catalog/Dusehri-Mango.svg",
-    tags: ["mango", "dusehri", "fruit", "fresh", "organic", "pre-booking"]
-  },
-  {
-    id: "ogn-069-anwar-ratol-5kg",
-    sku: "OGN-071",
-    name: "Anwar Ratol (Pre-Order)",
-    weight: "5 Kg Box",
-    price: 2400,
-    originalPrice: 2700,
-    shipping: 0,
-    inStock: false,
-    category: "dairy-organic",
-    image: "catalog/Anwar-Ratol.svg",
-    hoverImage: "catalog/Anwar-Ratol.svg",
-    tags: ["mango", "anwar ratol", "fruit", "fresh", "organic", "pre-booking"]
-  },
-  {
-    id: "ogn-069-anwar-ratol-9kg",
-    sku: "OGN-072",
-    name: "Anwar Ratol (Pre-Order)",
-    weight: "9 Kg Box",
-    price: 3600,
-    originalPrice: 4100,
-    shipping: 0,
-    inStock: false,
-    category: "dairy-organic",
-    image: "catalog/Anwar-Ratol.svg",
-    hoverImage: "catalog/Anwar-Ratol.svg",
-    tags: ["mango", "anwar ratol", "fruit", "fresh", "organic", "pre-booking"]
-  },
-
-  // B. Edible Seeds & Superfoods
-  {
-    id: "ogn-018",
-    sku: "OGN-045",
-    name: "Gandum (Wheat)",
-    weight: "1 Kg",
-    price: 225,
-    category: "edible-seeds",
-    image: "catalog/ogn-018-gandum-40kg-v2.svg",
-    hoverImage: "catalog/ogn-018-gandum-40kg-hover-v2.svg",
-    tags: ["wheat", "gandum", "grain", "flour", "staple"]
-  },
-  {
-    id: "ogn-018-5kg",
-    sku: "OGN-083",
-    name: "Gandum (Wheat)",
-    weight: "5 Kg",
-    price: 1100,
-    category: "edible-seeds",
-    image: "catalog/ogn-018-gandum-40kg-v2.svg",
-    hoverImage: "catalog/ogn-018-gandum-40kg-hover-v2.svg",
-    tags: ["wheat", "gandum", "grain", "flour", "staple"]
-  },
-  {
-    id: "ogn-018-40kg",
-    sku: "OGN-084",
-    name: "Gandum (Wheat)",
-    weight: "40 Kg (Maund)",
-    price: 9000,
-    category: "edible-seeds",
-    image: "catalog/ogn-018-gandum-40kg-v2.svg",
-    hoverImage: "catalog/ogn-018-gandum-40kg-hover-v2.svg",
-    tags: ["wheat", "gandum", "grain", "flour", "staple", "bulk"]
   },
   {
     id: "ogn-027-edible",
@@ -492,6 +269,266 @@ const productsDb = [
     tags: ["pumpkin", "kaddu", "snack", "premium", "zinc"]
   },
 
+   {
+    id: "ogn-007",
+    sku: "OGN-007",
+    name: "Desi Organic Gurr",
+    weight: "1 Kg",
+    price: 720,
+    category: "dairy-organic",
+    image: "catalog/ogn-007-desi-organic-gurr-1kg-v2.svg",
+    hoverImage: "catalog/ogn-007-desi-organic-gurr-1kg-hover-v2.svg",
+    tags: ["gurr", "sweetener", "jaggery", "sugar"]
+  },
+  {
+    id: "ogn-008",
+    sku: "OGN-008",
+    name: "Gurr with Dry Fruits",
+    weight: "1 Kg",
+    price: 1800,
+    category: "dairy-organic",
+    image: "catalog/ogn-008-gurr-with-dry-fruits-1kg-v2.svg",
+    hoverImage: "catalog/ogn-007-desi-organic-gurr-1kg-hover-v2.svg",
+    tags: ["gurr", "sweetener", "premium", "dry fruits", "nuts"]
+  },
+  {
+    id: "ogn-009",
+    sku: "OGN-009",
+    name: "Organic Shakar",
+    weight: "1 Kg",
+    price: 810,
+    category: "dairy-organic",
+    image: "catalog/ogn-009-organic-shakar-1kg-v2.svg",
+    hoverImage: "catalog/ogn-009-organic-shakar-1kg-hover-v2.svg",
+    tags: ["shakar", "sweetener", "sugar", "brown"]
+  },
+  {
+    id: "ogn-010",
+    sku: "OGN-010",
+    name: "Organic Shakar (Bulk)",
+    weight: "6 Kg",
+    price: 4400,
+    category: "dairy-organic",
+    image: "catalog/ogn-009-organic-shakar-1kg-v2.svg",
+    hoverImage: "catalog/ogn-009-organic-shakar-1kg-hover-v2.svg",
+    tags: ["shakar", "sweetener", "sugar", "bulk"]
+  },
+  {
+    id: "ogn-015",
+    sku: "OGN-017",
+    name: "Organic Achaar Small",
+    weight: "400 gm",
+    price: 700,
+    category: "dairy-organic",
+    image: "catalog/ogn-015-organic-achaar-400gm-v2.svg",
+    hoverImage: "catalog/ogn-017-organic-achaar-1kg-hover-v2.svg",
+    tags: ["achaar", "pickle", "traditional", "oil", "mango"]
+  },
+  {
+    id: "ogn-016",
+    sku: "OGN-018",
+    name: "Organic Achaar Medium",
+    weight: "750 gm",
+    price: 1000,
+    category: "dairy-organic",
+    image: "catalog/ogn-016-organic-achaar-750gm-v2.svg",
+    hoverImage: "catalog/ogn-017-organic-achaar-1kg-hover-v2.svg",
+    tags: ["achaar", "pickle", "traditional", "oil", "medium"]
+  },
+  {
+    id: "ogn-017",
+    sku: "OGN-019",
+    name: "Organic Achaar Large",
+    weight: "1 Kg",
+    price: 1400,
+    category: "dairy-organic",
+    image: "catalog/ogn-017-organic-achaar-1kg-v2.svg",
+    hoverImage: "catalog/ogn-017-organic-achaar-1kg-hover-v2.svg",
+    tags: ["achaar", "pickle", "traditional", "oil", "large"]
+  },
+  {
+    id: "ogn-066-white-chaunsa-5kg",
+    sku: "OGN-073",
+    name: "White Chaunsa (Pre-Order)",
+    weight: "5 Kg Box",
+    price: 2000,
+    originalPrice: 2500,
+    shipping: 0,
+    category: "dairy-organic",
+    image: "catalog/White-Chaunsa.svg",
+    hoverImage: "catalog/White-Chaunsa.svg",
+    tags: ["mango", "chaunsa", "white chaunsa", "fruit", "fresh", "organic", "pre-booking"]
+  },
+  {
+    id: "ogn-066-white-chaunsa-9kg",
+    sku: "OGN-074",
+    name: "White Chaunsa (Pre-Order)",
+    weight: "9 Kg Box",
+    price: 3200,
+    originalPrice: 3800,
+    shipping: 0,
+    category: "dairy-organic",
+    image: "catalog/White-Chaunsa.svg",
+    hoverImage: "catalog/White-Chaunsa.svg",
+    tags: ["mango", "chaunsa", "white chaunsa", "fruit", "fresh", "organic", "pre-booking"]
+  },
+{
+    id: "ogn-067-sindhri-5kg",
+    sku: "OGN-075",
+    name: "Sindhri Mango (Pre-Order)",
+    weight: "5 Kg Box",
+    price: 1700,
+    originalPrice: 1900,
+    shipping: 0,
+  inStock: false,
+    category: "dairy-organic",
+    image: "catalog/Sindhri-Mango.svg",
+    hoverImage: "catalog/Sindhri-Mango.svg",
+    tags: ["mango", "sindhri", "fruit", "fresh", "organic", "pre-booking"]
+  },
+ {
+    id: "ogn-067-sindhri-9kg",
+    sku: "OGN-076",
+    name: "Sindhri Mango (Pre-Order)",
+    weight: "9 Kg Box",
+    price: 2900,
+    originalPrice: 3100,
+    shipping: 0,
+   inStock: false,
+    category: "dairy-organic",
+    image: "catalog/Sindhri-Mango.svg",
+    hoverImage: "catalog/Sindhri-Mango.svg",
+    tags: ["mango", "sindhri", "fruit", "fresh", "organic", "pre-booking"]
+  },
+ {
+    id: "ogn-068-dusehri-5kg",
+    sku: "OGN-069",
+    name: "Dusehri Mango (Pre-Order)",
+    weight: "5 Kg Box",
+    price: 2000,
+    originalPrice: 2200,
+    shipping: 0,
+   inStock: false,
+    inStock: false,
+    category: "dairy-organic",
+    image: "catalog/Dusehri-Mango.svg",
+    hoverImage: "catalog/Dusehri-Mango.svg",
+    tags: ["mango", "dusehri", "fruit", "fresh", "organic", "pre-booking"]
+  },
+ {
+    id: "ogn-068-dusehri-9kg",
+    sku: "OGN-070",
+    name: "Dusehri Mango (Pre-Order)",
+    weight: "9 Kg Box",
+    price: 3000,
+    originalPrice: 3400,
+    shipping: 0,
+   inStock: false,
+    inStock: false,
+    category: "dairy-organic",
+    image: "catalog/Dusehri-Mango.svg",
+    hoverImage: "catalog/Dusehri-Mango.svg",
+    tags: ["mango", "dusehri", "fruit", "fresh", "organic", "pre-booking"]
+  },
+  {
+    id: "ogn-069-anwar-ratol-5kg",
+    sku: "OGN-071",
+    name: "Anwar Ratol (Pre-Order)",
+    weight: "5 Kg Box",
+    price: 2400,
+    originalPrice: 2700,
+    shipping: 0,
+    inStock: false,
+    category: "dairy-organic",
+    image: "catalog/Anwar-Ratol.svg",
+    hoverImage: "catalog/Anwar-Ratol.svg",
+    tags: ["mango", "anwar ratol", "fruit", "fresh", "organic", "pre-booking"]
+  },
+  {
+    id: "ogn-069-anwar-ratol-9kg",
+    sku: "OGN-072",
+    name: "Anwar Ratol (Pre-Order)",
+    weight: "9 Kg Box",
+    price: 3600,
+    originalPrice: 4100,
+    shipping: 0,
+    inStock: false,
+    category: "dairy-organic",
+    image: "catalog/Anwar-Ratol.svg",
+    hoverImage: "catalog/Anwar-Ratol.svg",
+    tags: ["mango", "anwar ratol", "fruit", "fresh", "organic", "pre-booking"]
+  },
+
+  // B. Edible Seeds & Superfoods
+  {
+    id: "ogn-018",
+    sku: "OGN-045",
+    name: "Gandum (Wheat)",
+    weight: "1 Kg",
+    price: 225,
+    category: "edible-seeds",
+    image: "catalog/ogn-018-gandum-40kg-v2.svg",
+    hoverImage: "catalog/ogn-018-gandum-40kg-hover-v2.svg",
+    tags: ["wheat", "gandum", "grain", "flour", "staple"]
+  },
+  {
+    id: "ogn-018-5kg",
+    sku: "OGN-083",
+    name: "Gandum (Wheat)",
+    weight: "5 Kg",
+    price: 1100,
+    category: "edible-seeds",
+    image: "catalog/ogn-018-gandum-40kg-v2.svg",
+    hoverImage: "catalog/ogn-018-gandum-40kg-hover-v2.svg",
+    tags: ["wheat", "gandum", "grain", "flour", "staple"]
+  },
+  {
+    id: "ogn-018-40kg",
+    sku: "OGN-084",
+    name: "Gandum (Wheat)",
+    weight: "40 Kg (Maund)",
+    price: 9000,
+    category: "edible-seeds",
+    image: "catalog/ogn-018-gandum-40kg-v2.svg",
+    hoverImage: "catalog/ogn-018-gandum-40kg-hover-v2.svg",
+    tags: ["wheat", "gandum", "grain", "flour", "staple", "bulk"]
+  },
+  
+  // B2. Fresh Milk (kept right after Edible Seeds & Superfoods)
+  {
+    id: "ogn-004-milk",
+    sku: "OGN-001",
+    name: "Cow Milk",
+    weight: "1 Ltr",
+    price: 330,
+    category: "dairy-organic",
+    image: "catalog/ogn-004-cow-milk-1ltr-v2.svg",
+    hoverImage: "catalog/ogn-004-cow-milk-1ltr-hover-v2.svg",
+    tags: ["milk", "dairy", "fresh", "cow", "multan"]
+  },
+  {
+    id: "ogn-005",
+    sku: "OGN-002",
+    name: "Buffalo Milk",
+    weight: "1 Ltr",
+    price: 390,
+    category: "dairy-organic",
+    image: "catalog/ogn-005-buffalo-milk-1ltr-v2.svg",
+    hoverImage: "catalog/ogn-005-hover-v2.svg",
+    tags: ["milk", "dairy", "fresh", "buffalo", "multan"]
+  },
+  {
+    id: "ogn-006",
+    sku: "OGN-003",
+    name: "Goat Milk",
+    weight: "1 Ltr",
+    price: 1000,
+    category: "dairy-organic",
+    image: "catalog/ogn-006-goat-milk-1ltr-v2.svg",
+    hoverImage: "catalog/ogn-006-goat-milk-1ltr-hover-v2.svg",
+    tags: ["milk", "dairy", "fresh", "goat", "multan"]
+  },
+
   // C. Livestock Feed & Forages
   {
     id: "ogn-041",
@@ -550,42 +587,7 @@ const productsDb = [
   { id: "ogn-040", sku: "OGN-042", name: "Bajra (Pearl Millet) Sowing Seed", weight: "1 Kg", price: 1000, category: "agri-sowing-seed", image: "catalog/ogn-040-bajra-sowing-v2.svg", tags: ["seed", "sowing", "bajra"] },
   { id: "ogn-061", sku: "OGN-063", name: "Okra Seed (less than 40kg)", weight: "1 Kg", price: 3000, category: "agri-sowing-seed", image: "catalog/ogn-061-okra-retail-v2.svg", tags: ["seed", "sowing", "okra"] },
   { id: "ogn-062", sku: "OGN-064", name: "Okra Seed (more than 40kg)", weight: "1 Kg", price: 2500, category: "agri-sowing-seed", image: "catalog/ogn-062-okra-bulk-v2.svg", tags: ["seed", "sowing", "okra"] },
-  { id: "ogn-004-seed", sku: "OGN-085", name: "Organic Wheat Sowing Seed", weight: "40 Kg", price: 4500, category: "agri-sowing-seed", image: "catalog/ogn-004-wheat-sowing-v2.svg", tags: ["seed", "sowing", "wheat"] },
-
-  // Z. Fresh Milk (shown last on shop page)
-  {
-    id: "ogn-004-milk",
-    sku: "OGN-001",
-    name: "Cow Milk",
-    weight: "1 Ltr",
-    price: 330,
-    category: "dairy-organic",
-    image: "catalog/ogn-004-cow-milk-1ltr-v2.svg",
-    hoverImage: "catalog/ogn-004-cow-milk-1ltr-hover-v2.svg",
-    tags: ["milk", "dairy", "fresh", "cow", "multan"]
-  },
-  {
-    id: "ogn-005",
-    sku: "OGN-002",
-    name: "Buffalo Milk",
-    weight: "1 Ltr",
-    price: 390,
-    category: "dairy-organic",
-    image: "catalog/ogn-005-buffalo-milk-1ltr-v2.svg",
-    hoverImage: "catalog/ogn-005-hover-v2.svg",
-    tags: ["milk", "dairy", "fresh", "buffalo", "multan"]
-  },
-  {
-    id: "ogn-006",
-    sku: "OGN-003",
-    name: "Goat Milk",
-    weight: "1 Ltr",
-    price: 1000,
-    category: "dairy-organic",
-    image: "catalog/ogn-006-goat-milk-1ltr-v2.svg",
-    hoverImage: "catalog/ogn-006-goat-milk-1ltr-hover-v2.svg",
-    tags: ["milk", "dairy", "fresh", "goat", "multan"]
-  }
+  { id: "ogn-004-seed", sku: "OGN-085", name: "Organic Wheat Sowing Seed", weight: "40 Kg", price: 4500, category: "agri-sowing-seed", image: "catalog/ogn-004-wheat-sowing-v2.svg", tags: ["seed", "sowing", "wheat"] }
 ];
 
 const productVariations = {
