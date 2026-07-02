@@ -25,7 +25,7 @@ const productsDb = [
   // NOTE: Milk items (Cow/Buffalo/Goat) are intentionally placed after the
   // "B. Edible Seeds & Superfoods" section (see "B2. Fresh Milk" below) so
   // Desi Ghee, Honey, Gurr, Achaar, Mangoes, and Edible Seeds show before milk.
- 
+  
   {
     id: "ogn-011",
     sku: "OGN-011",
@@ -268,8 +268,7 @@ const productsDb = [
     hoverImage: "catalog/ogn-052-pumpkin-seed-250gm-hover-v2.svg",
     tags: ["pumpkin", "kaddu", "snack", "premium", "zinc"]
   },
-
-   {
+  {
     id: "ogn-007",
     sku: "OGN-007",
     name: "Desi Organic Gurr",
@@ -494,6 +493,7 @@ const productsDb = [
     tags: ["wheat", "gandum", "grain", "flour", "staple", "bulk"]
   },
   
+
   // B2. Fresh Milk (kept right after Edible Seeds & Superfoods)
   {
     id: "ogn-004-milk",
