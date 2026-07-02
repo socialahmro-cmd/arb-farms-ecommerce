@@ -436,15 +436,6 @@ document.addEventListener('change', (e) => {
   const newId = selectedOption.value;
   const newPrice = parseFloat(selectedOption.getAttribute('data-price')) || 0;
   const isInStock = selectedOption.dataset.instock !== 'false';
-const addBtn = card.querySelector('.add-to-cart-btn');
-if (addBtn) {
-  addBtn.disabled = !isInStock;
-  addBtn.classList.toggle('btn-secondary', !isInStock);
-  addBtn.classList.toggle('btn-primary', isInStock);
-  addBtn.innerHTML = isInStock
-    ? '<i class="bi bi-cart-plus"></i> Add'
-    : '<i class="bi bi-slash-circle"></i> Out of Stock';
-}
   const newWeight = selectedOption.getAttribute('data-weight');
   const newSku = selectedOption.getAttribute('data-sku');
   const newImage = selectedOption.getAttribute('data-image');
@@ -453,6 +444,16 @@ if (addBtn) {
   // Find parent product card
   const card = select.closest('.product-card');
   if (!card) return;
+
+  const addBtn = card.querySelector('.add-to-cart-btn');
+  if (addBtn) {
+    addBtn.disabled = !isInStock;
+    addBtn.classList.toggle('btn-secondary', !isInStock);
+    addBtn.classList.toggle('btn-primary', isInStock);
+    addBtn.innerHTML = isInStock
+      ? '<i class="bi bi-cart-plus"></i> Add'
+      : '<i class="bi bi-slash-circle"></i> Out of Stock';
+  }
 
   // Calculate pricing
  const origPrice = parseFloat(selectedOption.getAttribute('data-original-price')) || 0;
