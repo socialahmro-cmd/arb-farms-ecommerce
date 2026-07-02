@@ -22,39 +22,9 @@
 
 const productsDb = [
   // A. Dairy & Organic Foods (Multan fresh milk delivery limits set in metadata)
-  {
-    id: "ogn-004-milk",
-    sku: "OGN-001",
-    name: "Cow Milk",
-    weight: "1 Ltr",
-    price: 330,
-    category: "dairy-organic",
-    image: "catalog/ogn-004-cow-milk-1ltr-v2.svg",
-    hoverImage: "catalog/ogn-004-cow-milk-1ltr-hover-v2.svg",
-    tags: ["milk", "dairy", "fresh", "cow", "multan"]
-  },
-  {
-    id: "ogn-005",
-    sku: "OGN-002",
-    name: "Buffalo Milk",
-    weight: "1 Ltr",
-    price: 390,
-    category: "dairy-organic",
-    image: "catalog/ogn-005-buffalo-milk-1ltr-v2.svg",
-    hoverImage: "catalog/ogn-005-hover-v2.svg",
-    tags: ["milk", "dairy", "fresh", "buffalo", "multan"]
-  },
-  {
-    id: "ogn-006",
-    sku: "OGN-003",
-    name: "Goat Milk",
-    weight: "1 Ltr",
-    price: 1000,
-    category: "dairy-organic",
-    image: "catalog/ogn-006-goat-milk-1ltr-v2.svg",
-    hoverImage: "catalog/ogn-006-goat-milk-1ltr-hover-v2.svg",
-    tags: ["milk", "dairy", "fresh", "goat", "multan"]
-  },
+  // NOTE: Milk items (Cow/Buffalo/Goat) are intentionally placed at the END of
+  // this array (see "Z. Fresh Milk (shown last on shop page)" near the bottom)
+  // so Desi Ghee, Honey, Gurr, Achaar, and Mangoes show first, milk last.
   {
     id: "ogn-007",
     sku: "OGN-007",
@@ -580,7 +550,42 @@ const productsDb = [
   { id: "ogn-040", sku: "OGN-042", name: "Bajra (Pearl Millet) Sowing Seed", weight: "1 Kg", price: 1000, category: "agri-sowing-seed", image: "catalog/ogn-040-bajra-sowing-v2.svg", tags: ["seed", "sowing", "bajra"] },
   { id: "ogn-061", sku: "OGN-063", name: "Okra Seed (less than 40kg)", weight: "1 Kg", price: 3000, category: "agri-sowing-seed", image: "catalog/ogn-061-okra-retail-v2.svg", tags: ["seed", "sowing", "okra"] },
   { id: "ogn-062", sku: "OGN-064", name: "Okra Seed (more than 40kg)", weight: "1 Kg", price: 2500, category: "agri-sowing-seed", image: "catalog/ogn-062-okra-bulk-v2.svg", tags: ["seed", "sowing", "okra"] },
-  { id: "ogn-004-seed", sku: "OGN-085", name: "Organic Wheat Sowing Seed", weight: "40 Kg", price: 4500, category: "agri-sowing-seed", image: "catalog/ogn-004-wheat-sowing-v2.svg", tags: ["seed", "sowing", "wheat"] }
+  { id: "ogn-004-seed", sku: "OGN-085", name: "Organic Wheat Sowing Seed", weight: "40 Kg", price: 4500, category: "agri-sowing-seed", image: "catalog/ogn-004-wheat-sowing-v2.svg", tags: ["seed", "sowing", "wheat"] },
+
+  // Z. Fresh Milk (shown last on shop page)
+  {
+    id: "ogn-004-milk",
+    sku: "OGN-001",
+    name: "Cow Milk",
+    weight: "1 Ltr",
+    price: 330,
+    category: "dairy-organic",
+    image: "catalog/ogn-004-cow-milk-1ltr-v2.svg",
+    hoverImage: "catalog/ogn-004-cow-milk-1ltr-hover-v2.svg",
+    tags: ["milk", "dairy", "fresh", "cow", "multan"]
+  },
+  {
+    id: "ogn-005",
+    sku: "OGN-002",
+    name: "Buffalo Milk",
+    weight: "1 Ltr",
+    price: 390,
+    category: "dairy-organic",
+    image: "catalog/ogn-005-buffalo-milk-1ltr-v2.svg",
+    hoverImage: "catalog/ogn-005-hover-v2.svg",
+    tags: ["milk", "dairy", "fresh", "buffalo", "multan"]
+  },
+  {
+    id: "ogn-006",
+    sku: "OGN-003",
+    name: "Goat Milk",
+    weight: "1 Ltr",
+    price: 1000,
+    category: "dairy-organic",
+    image: "catalog/ogn-006-goat-milk-1ltr-v2.svg",
+    hoverImage: "catalog/ogn-006-goat-milk-1ltr-hover-v2.svg",
+    tags: ["milk", "dairy", "fresh", "goat", "multan"]
+  }
 ];
 
 const productVariations = {
