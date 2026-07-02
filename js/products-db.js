@@ -25,7 +25,39 @@ const productsDb = [
   // NOTE: Milk items (Cow/Buffalo/Goat) are intentionally placed after the
   // "B. Edible Seeds & Superfoods" section (see "B2. Fresh Milk" below) so
   // Desi Ghee, Honey, Gurr, Achaar, Mangoes, and Edible Seeds show before milk.
-  
+  {
+    id: "ogn-018",
+    sku: "OGN-045",
+    name: "Gandum (Wheat)",
+    weight: "1 Kg",
+    price: 225,
+    category: "edible-seeds",
+    image: "catalog/ogn-018-gandum-40kg-v2.svg",
+    hoverImage: "catalog/ogn-018-gandum-40kg-hover-v2.svg",
+    tags: ["wheat", "gandum", "grain", "flour", "staple"]
+  },
+  {
+    id: "ogn-018-5kg",
+    sku: "OGN-083",
+    name: "Gandum (Wheat)",
+    weight: "5 Kg",
+    price: 1100,
+    category: "edible-seeds",
+    image: "catalog/ogn-018-gandum-40kg-v2.svg",
+    hoverImage: "catalog/ogn-018-gandum-40kg-hover-v2.svg",
+    tags: ["wheat", "gandum", "grain", "flour", "staple"]
+  },
+  {
+    id: "ogn-018-40kg",
+    sku: "OGN-084",
+    name: "Gandum (Wheat)",
+    weight: "40 Kg (Maund)",
+    price: 9000,
+    category: "edible-seeds",
+    image: "catalog/ogn-018-gandum-40kg-v2.svg",
+    hoverImage: "catalog/ogn-018-gandum-40kg-hover-v2.svg",
+    tags: ["wheat", "gandum", "grain", "flour", "staple", "bulk"]
+  },
   {
     id: "ogn-011",
     sku: "OGN-011",
@@ -459,39 +491,7 @@ const productsDb = [
   },
 
   // B. Edible Seeds & Superfoods
-  {
-    id: "ogn-018",
-    sku: "OGN-045",
-    name: "Gandum (Wheat)",
-    weight: "1 Kg",
-    price: 225,
-    category: "edible-seeds",
-    image: "catalog/ogn-018-gandum-40kg-v2.svg",
-    hoverImage: "catalog/ogn-018-gandum-40kg-hover-v2.svg",
-    tags: ["wheat", "gandum", "grain", "flour", "staple"]
-  },
-  {
-    id: "ogn-018-5kg",
-    sku: "OGN-083",
-    name: "Gandum (Wheat)",
-    weight: "5 Kg",
-    price: 1100,
-    category: "edible-seeds",
-    image: "catalog/ogn-018-gandum-40kg-v2.svg",
-    hoverImage: "catalog/ogn-018-gandum-40kg-hover-v2.svg",
-    tags: ["wheat", "gandum", "grain", "flour", "staple"]
-  },
-  {
-    id: "ogn-018-40kg",
-    sku: "OGN-084",
-    name: "Gandum (Wheat)",
-    weight: "40 Kg (Maund)",
-    price: 9000,
-    category: "edible-seeds",
-    image: "catalog/ogn-018-gandum-40kg-v2.svg",
-    hoverImage: "catalog/ogn-018-gandum-40kg-hover-v2.svg",
-    tags: ["wheat", "gandum", "grain", "flour", "staple", "bulk"]
-  },
+  
   
 
   // B2. Fresh Milk (kept right after Edible Seeds & Superfoods)
