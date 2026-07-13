@@ -379,7 +379,7 @@ const productsDb = [
     hoverImage: "catalog/ogn-017-organic-achaar-1kg-hover-v2.svg",
     tags: ["achaar", "pickle", "traditional", "oil", "large"]
   },
-  {
+/*  {
     id: "ogn-066-white-chaunsa-5kg",
     sku: "OGN-073",
     name: "White Chaunsa (Pre-Order)",
@@ -491,7 +491,7 @@ const productsDb = [
     hoverImage: "catalog/Anwar-Ratol.svg",
     tags: ["mango", "anwar ratol", "fruit", "fresh", "organic", "pre-booking"]
   },
-
+*/
   // B. Edible Seeds & Superfoods
   
   
