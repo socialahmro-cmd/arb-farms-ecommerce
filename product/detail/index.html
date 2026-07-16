@@ -891,13 +891,13 @@
   </footer>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-  <script src="../../js/products-db.js?v=9463c4ad"></script>
   <script src="../../js/main.js?v=96661f0d"></script>
   <script>
   let activeProduct = null;
   let refreshReviews = null;
+  let productsDb = [];
 
-  document.addEventListener('DOMContentLoaded', () => {
+  document.addEventListener('DOMContentLoaded', async () => {
     // ── Tabs ──
     document.querySelectorAll('.pdp-tab-btn').forEach(btn => {
       btn.addEventListener('click', () => {
@@ -920,7 +920,8 @@
       }
     }
 
-    if (!productId || typeof productsDb === 'undefined') { showError(); return; }
+    productsDb = await getProductsDb();
+    if (!productId || !productsDb || !productsDb.length) { showError(); return; }
     const product = productsDb.find(p => p.id === productId);
     if (!product) { showError(); return; }
 
