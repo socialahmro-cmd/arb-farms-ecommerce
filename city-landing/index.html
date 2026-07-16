@@ -206,10 +206,9 @@
   <!-- FOMO Announcement & Popup engine -->
   <script src="/js/fomo.js?v=1249ca25"></script>
 
-  <script src="/js/products-db.js"></script>
   <script src="/js/cities-db.js"></script>
   <script>
-    document.addEventListener('DOMContentLoaded', () => {
+    document.addEventListener('DOMContentLoaded', async () => {
       const urlParams = new URLSearchParams(window.location.search);
       let cityId = urlParams.get('city');
 
@@ -252,7 +251,8 @@
       }
 
       // Render some products
-      if (typeof productsDb !== 'undefined') {
+      const productsDb = await getProductsDb();
+      if (productsDb && productsDb.length) {
         const grid = document.getElementById('city-products-grid');
         
         // Filter out milk if the city is not Multan
