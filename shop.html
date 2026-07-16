@@ -250,13 +250,12 @@
 
   <!-- Scripts -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-  <script src="js/products-db.js?v=3160960b"></script>
   <script src="js/main.js?v=6fa2cbd2"></script>
   <script src="js/fomo.js?v=492e122c"></script>
 
   <!-- Catalog Render Logic -->
   <script>
-    document.addEventListener("DOMContentLoaded", () => {
+    document.addEventListener("DOMContentLoaded", async () => {
       const grid = document.getElementById("products-grid");
       const emptyState = document.getElementById("empty-state");
       const displayCount = document.getElementById("display-count");
@@ -476,7 +475,9 @@ const _outOfStock = product.inStock === false;
         renderCatalog();
       }
 
-      // Initial execution
+      // Initial execution — wait for Firestore product data before first render
+      grid.innerHTML = '<div class="col-12 text-center py-5 text-muted"><div class="spinner-border spinner-border-sm me-2"></div>Loading products...</div>';
+      await getProductsDb();
       renderCatalog();
     });
   </script>
