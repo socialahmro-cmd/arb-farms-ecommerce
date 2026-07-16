@@ -12,6 +12,14 @@ service cloud.firestore {
         );
     }
 
+    match /products/{productId} {
+      // Storefront reads product data publicly, no auth required
+      allow read: if true;
+
+      // Only admins can create/update/delete catalog data
+      allow write: if isAdmin();
+    }
+
     match /orders/{orderId} {
       // Anyone can place an order (guest checkout)
       allow create: if true;
