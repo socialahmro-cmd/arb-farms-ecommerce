@@ -202,13 +202,12 @@
 
   <!-- Scripts -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-  <script src="js/products-db.js?v=9463c4ad"></script>
   <script src="js/main.js?v=96661f0d"></script>
   <script src="js/fomo.js?v=492e122c"></script>
 
   <!-- Comparison Matrix Renderer -->
   <script>
-    document.addEventListener("DOMContentLoaded", () => {
+    document.addEventListener("DOMContentLoaded", async () => {
       const emptyDiv = document.getElementById("compare-empty");
       const contentDiv = document.getElementById("compare-content");
 
@@ -348,6 +347,7 @@
         }
       }
 
+      await getProductsDb();
       renderMatrix();
     });
   </script>
