@@ -1,1 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Migrate Products to Firestore | ARB Farms Admin</title>
+<meta name="robots" content="noindex, nofollow">
+<style>
+  body { font-family: system-ui, sans-serif; max-width: 720px; margin: 40px auto; padding: 0 20px; color: #121912; }
+  h1 { font-size: 1.3rem; }
+  button { background: #365733; color: #fff; border: none; padding: 10px 18px; border-radius: 6px; font-size: 0.95rem; cursor: pointer; }
+  button:disabled { opacity: 0.5; cursor: not-allowed; }
+  #log { margin-top: 20px; background: #f8f6f0; border: 1px solid #e2ded2; border-radius: 6px; padding: 12px 16px; font-family: monospace; font-size: 0.82rem; white-space: pre-wrap; max-height: 480px; overflow-y: auto; }
+  .ok { color: #2a7a2a; }
+  .err { color: #c0392b; }
+  .warn { color: #a06a00; }
+  #authState { margin: 12px 0; font-size: 0.9rem; }
+</style>
+</head>
+<body>
 
+<h1>Migrate products-db.js &rarr; Firestore</h1>
+<p>One-time (idempotent) script: writes every product in <code>window.productsDb</code> into the
+<code>products</code> collection, using each product's <code>id</code> as the document ID.
+The <code>tags</code> field is intentionally left out for now — everything else (sku, name, weight,
+price, category, image, hoverImage, etc.) is written as-is.
+Safe to re-run — it overwrites existing docs with the current file contents rather than duplicating them.</p>
+
+<div id="authState">Checking admin login&hellip;</div>
+
+<button id="runBtn" disabled>Run Migration</button>
+<button id="verifyBtn" disabled>Verify Only (no writes)</button>
+
+<div id="log"></div>
+
+<script src="../js/products-db.js"></script>
+<script type="module">
+  import { app, db, auth } from '../js/firebase-init.js';
+  import { getDocs, doc, writeBatch, collection } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+  import { onAuthStateChanged, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+  const logEl = document.getElementById('log');
+  const runBtn = document.getElementById('runBtn');
+  const verifyBtn = document.getElementById('verifyBtn');
+  const authStateEl = document.getElementById('authState');
+
+  function log(msg, cls) {
+    const line = document.createElement('div');
+    if (cls) line.className = cls;
+    line.textContent = msg;
+    logEl.appendChild(line);
+    logEl.scrollTop = logEl.scrollHeight;
+  }
+
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      authStateEl.textContent = `Logged in as ${user.email}. Firestore rules will only allow the write if this account is an admin.`;
+      runBtn.disabled = false;
+      verifyBtn.disabled = false;
+    } else {
+      authStateEl.innerHTML = 'Not logged in. <a href="login.html">Log in as an admin</a> first, then reload this page.';
+    }
+  });
+
+  async function runMigration(dryRun) {
+    runBtn.disabled = true;
+    verifyBtn.disabled = true;
+    logEl.innerHTML = '';
+
+    if (typeof window.productsDb === 'undefined' || !Array.isArray(window.productsDb)) {
+      log('productsDb not found — is js/products-db.js loading correctly?', 'err');
+      runBtn.disabled = false;
+      verifyBtn.disabled = false;
+      return;
+    }
+
+    const products = window.productsDb;
+    log(`Found ${products.length} products in products-db.js.`);
+
+    // Sanity checks before writing anything
+    const seenIds = new Set();
+    let bad = 0;
+    for (const p of products) {
+      if (!p.id) { log(`Missing "id" on product: ${JSON.stringify(p)}`, 'err'); bad++; continue; }
+      if (seenIds.has(p.id)) { log(`Duplicate id "${p.id}" — later entry will overwrite the earlier one.`, 'warn'); }
+      seenIds.add(p.id);
+    }
+    if (bad > 0) {
+      log(`Aborting: ${bad} product(s) missing an id.`, 'err');
+      runBtn.disabled = false;
+      verifyBtn.disabled = false;
+      return;
+    }
+
+    if (dryRun) {
+      log('Dry run only — no writes performed. ("tags" field is being left out for now.)', 'warn');
+      log('Product IDs that would be written:', 'warn');
+      products.forEach(p => log(`  - ${p.id} (${p.sku || 'no sku'}) ${p.name}`));
+      runBtn.disabled = false;
+      verifyBtn.disabled = false;
+      return;
+    }
+
+    // Firestore batches cap at 500 writes; chunk defensively
+    const chunkSize = 400;
+    let written = 0;
+    try {
+      for (let i = 0; i < products.length; i += chunkSize) {
+        const chunk = products.slice(i, i + chunkSize);
+        const batch = writeBatch(db);
+        chunk.forEach(p => {
+          const { tags, ...pWithoutTags } = p; // leaving "tags" out of Firestore for now
+          const ref = doc(collection(db, 'products'), p.id);
+          batch.set(ref, pWithoutTags, { merge: false });
+        });
+        await batch.commit();
+        written += chunk.length;
+        log(`Committed batch: ${written}/${products.length} products written.`, 'ok');
+      }
+      log(`Done. ${written} products migrated to Firestore "products" collection.`, 'ok');
+    } catch (e) {
+      log(`Write failed: ${e.message}`, 'err');
+      log('If this says "Missing or insufficient permissions", make sure your account passes isAdmin() in firestore.rules and that the updated rules have been deployed (firebase deploy --only firestore:rules).', 'warn');
+    }
+
+    runBtn.disabled = false;
+    verifyBtn.disabled = false;
+  }
+
+  document.getElementById('runBtn').addEventListener('click', () => runMigration(false));
+  document.getElementById('verifyBtn').addEventListener('click', () => runMigration(true));
+</script>
+</body>
+</html>
