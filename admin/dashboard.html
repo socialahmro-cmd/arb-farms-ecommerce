@@ -685,7 +685,7 @@
       if (order.status === "Cancelled")              badgeClass = "bg-danger";
 
       const itemsText = order.items && order.items.length
-        ? order.items.map(i => `${i.qty}× ${i.name}`).join("<br>")
+        ? order.items.map(i => `${i.qty}× ${i.name}${i.sku ? ` <span class="text-muted font-monospace" style="font-size:0.7rem;">(${i.sku})</span>` : ''}`).join("<br>")
         : "<span class='text-muted'>—</span>";
 
       const orderDateFormatted = order.orderDate
