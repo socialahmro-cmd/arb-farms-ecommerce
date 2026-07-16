@@ -1444,15 +1444,19 @@ function injectFaqAssistant() {
 }
 
 // --- Quick View Modal Support ---
-function getProductsDb() {
-  if (typeof productsDb !== 'undefined') {
-    return Promise.resolve(productsDb);
-  }
+// Products now live in Firestore ("products" collection). We fetch them once,
+// cache on window.productsDb (other code in this file and elsewhere reads that
+// global synchronously), and fall back to the static js/products-db.js file
+// if Firestore is unreachable so the storefront never hard-fails.
+let _productsDbPromise = null;
+
+function loadProductsFromStaticFile() {
   return new Promise((resolve, reject) => {
     const script = document.createElement('script');
     script.src = getPathPrefix() + 'js/products-db.js?v=' + Date.now();
     script.onload = () => {
       if (typeof productsDb !== 'undefined') {
+        window.productsDb = productsDb;
         resolve(productsDb);
       } else {
         reject(new Error("productsDb not defined"));
@@ -1461,6 +1465,39 @@ function getProductsDb() {
     script.onerror = () => reject(new Error("Failed to load products-db.js"));
     document.body.appendChild(script);
   });
+}
+
+function getProductsDb() {
+  if (typeof productsDb !== 'undefined') {
+    return Promise.resolve(productsDb);
+  }
+  if (window.productsDb) {
+    return Promise.resolve(window.productsDb);
+  }
+  if (_productsDbPromise) {
+    return _productsDbPromise;
+  }
+
+  _productsDbPromise = (async () => {
+    try {
+      const [{ db }, { collection, getDocs }] = await Promise.all([
+        import(getPathPrefix() + 'js/firebase-init.js'),
+        import('https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js')
+      ]);
+      const snap = await getDocs(collection(db, 'products'));
+      if (snap.empty) {
+        throw new Error('Firestore "products" collection is empty');
+      }
+      const products = snap.docs.map(d => d.data());
+      window.productsDb = products;
+      return products;
+    } catch (err) {
+      console.warn('Falling back to js/products-db.js — Firestore product fetch failed:', err);
+      return loadProductsFromStaticFile();
+    }
+  })();
+
+  return _productsDbPromise;
 }
 
 function getProductDescription(product) {
