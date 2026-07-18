@@ -1481,7 +1481,7 @@ function getProductsDb() {
   _productsDbPromise = (async () => {
     try {
       const [{ db }, { collection, getDocs }] = await Promise.all([
-        import(getPathPrefix() + 'js/firebase-init.js'),
+        import('/js/firebase-init.js'),
         import('https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js')
       ]);
       const snap = await getDocs(collection(db, 'products'));
