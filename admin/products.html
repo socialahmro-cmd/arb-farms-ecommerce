@@ -399,7 +399,7 @@
           <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
         </div>
         <div class="modal-body">
-          <p class="text-muted small mb-2">"Save Changes" already writes these products to Firestore — that's what the live storefront reads from. This export is only useful if you also want to keep the <code>js/products-db.js</code> fallback file in sync by hand.</p>
+          <p class="text-muted small mb-2">This shows a code snippet for just the products you've changed or added — handy for a quick manual copy-paste. For a complete, ready-to-commit file, use "Save &amp; Export" instead, which downloads the full updated <code>js/products-db.js</code>.</p>
           <div class="position-relative">
             <button class="btn btn-sm btn-outline-secondary position-absolute end-0 top-0 m-2" id="copy-export-btn">
               <i class="bi bi-clipboard me-1"></i> Copy
@@ -444,19 +444,36 @@
     });
   </script>
 
-  <script type="module">
-    import { db } from "../js/firebase-init.js";
-    import { collection, getDocs, doc, writeBatch, deleteDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-
+  <script>
     // ── PRODUCT DATA ─────────────────────────────────────────────────────────
-    // Products now live in Firestore's "products" collection — this is the
-    // single source of truth the storefront also reads from. This page loads
-    // straight from Firestore and Save/Delete write straight back to it.
+    // Products live in the static js/products-db.js file — that's what the
+    // live storefront reads from (no database). This page loads that file,
+    // lets you edit it in the table below, and "Save & Export" downloads a
+    // complete, updated products-db.js for you to commit back to the repo.
     let PRODUCTS_RAW = [];
+    let rawFileText = ""; // original file source, used to splice the new array back in untouched elsewhere
 
-    async function loadProductsFromFirestore() {
-      const snap = await getDocs(collection(db, 'products'));
-      PRODUCTS_RAW = snap.docs.map(d => d.data());
+    async function loadProductsFromFile() {
+      const res = await fetch('../js/products-db.js?cb=' + Date.now());
+      if (!res.ok) throw new Error('Could not fetch ../js/products-db.js (HTTP ' + res.status + ')');
+      rawFileText = await res.text();
+
+      await new Promise((resolve, reject) => {
+        const old = document.getElementById('__products_db_script__');
+        if (old) old.remove();
+        const script = document.createElement('script');
+        script.id = '__products_db_script__';
+        script.src = '../js/products-db.js?cb=' + Date.now();
+        script.onload = resolve;
+        script.onerror = () => reject(new Error('Failed to execute products-db.js'));
+        document.body.appendChild(script);
+      });
+
+      if (typeof window.productsDb === 'undefined') {
+        throw new Error('products-db.js loaded but did not define productsDb');
+      }
+
+      PRODUCTS_RAW = window.productsDb.map(p => ({ ...p, tags: [...(p.tags || [])] }));
       products = PRODUCTS_RAW.map(p => ({ ...p, _changed: false, _isNew: false }));
     }
 
@@ -478,6 +495,7 @@
     // ── STATE ─────────────────────────────────────────────────────────────────
     let products = [];
     let selectedIds = new Set();
+    let hasDeletions = false;
 
     // ── HELPERS ───────────────────────────────────────────────────────────────
     function Rs(n) { return 'Rs. ' + Number(n).toLocaleString(); }
@@ -496,9 +514,9 @@
       const ch = products.filter(p => p._changed).length;
       document.getElementById('stat-changes').textContent = ch;
       const bar = document.getElementById('pending-bar');
-      if (ch > 0) {
+      if (ch > 0 || hasDeletions) {
         bar.classList.add('show');
-        document.getElementById('pending-bar-text').textContent = `You have ${ch} unsaved change${ch > 1 ? 's' : ''}.`;
+        document.getElementById('pending-bar-text').textContent = `You have ${ch} unsaved change${ch === 1 ? '' : 's'}${hasDeletions ? ' (including deletions)' : ''}.`;
       } else {
         bar.classList.remove('show');
       }
@@ -700,42 +718,81 @@
     });
 
     // ── SAVE / RESET ──────────────────────────────────────────────────────────
-    function cleanForFirestore(p) {
-      // Strip internal UI-only fields and any undefined keys (Firestore
-      // rejects `undefined` values). "tags" is kept — the storefront search
-      // on shop.html reads p.tags.some(...) and throws if it's missing.
+    function cleanProduct(p) {
+      // Strip internal UI-only fields and any undefined/null-ish keys.
       const { _changed, _isNew, ...clean } = p;
       if (!Array.isArray(clean.tags)) clean.tags = [];
       Object.keys(clean).forEach(k => { if (clean[k] === undefined) delete clean[k]; });
       return clean;
     }
 
-    document.getElementById('save-changes-btn').addEventListener('click', async () => {
+    function serializeProduct(p) {
+      const c = cleanProduct(p);
+      const lines = [];
+      lines.push(`    id: ${JSON.stringify(c.id)},`);
+      lines.push(`    sku: ${JSON.stringify(c.sku)},`);
+      lines.push(`    name: ${JSON.stringify(c.name)},`);
+      lines.push(`    weight: ${JSON.stringify(c.weight || '')},`);
+      lines.push(`    price: ${Number(c.price) || 0},`);
+      if (c.originalPrice && c.originalPrice > c.price) {
+        lines.push(`    originalPrice: ${Number(c.originalPrice)},`);
+      }
+      if (c.shipping === 0) {
+        lines.push(`    shipping: 0,`);
+      }
+      lines.push(`    category: ${JSON.stringify(c.category || '')},`);
+      lines.push(`    image: ${JSON.stringify(c.image || '')},`);
+      lines.push(`    hoverImage: ${JSON.stringify(c.hoverImage || c.image || '')},`);
+      lines.push(`    tags: [${(c.tags || []).map(t => JSON.stringify(t)).join(', ')}]`);
+      return '  {\n' + lines.join('\n') + '\n  }';
+    }
+
+    // Splice the newly generated productsDb array back into the ORIGINAL raw
+    // file text, leaving the header comment, productVariations, bundlesDb,
+    // and footer exactly as they were.
+    function buildUpdatedFileText() {
+      const startMarker = 'const productsDb = [';
+      const startIdx = rawFileText.indexOf(startMarker);
+      if (startIdx === -1) throw new Error('Could not find "const productsDb = [" in products-db.js — has the file format changed?');
+      const endIdx = rawFileText.indexOf('\n];', startIdx);
+      if (endIdx === -1) throw new Error('Could not find the end of the productsDb array — has the file format changed?');
+
+      const before = rawFileText.slice(0, startIdx);
+      const after = rawFileText.slice(endIdx + 3); // skip past "\n];"
+      const newArrayBlock = 'const productsDb = [\n' + products.map(serializeProduct).join(',\n') + '\n];';
+      return before + newArrayBlock + after;
+    }
+
+    function downloadUpdatedFile() {
+      const updated = buildUpdatedFileText();
+      const blob = new Blob([updated], { type: 'text/javascript' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'products-db.js';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    }
+
+    document.getElementById('save-changes-btn').addEventListener('click', () => {
       const changed = products.filter(p => p._changed || p._isNew);
-      if (!changed.length) {
+      if (!changed.length && !hasDeletions) {
         showToast('No changes to save.');
         return;
       }
 
-      const saveBtn = document.getElementById('save-changes-btn');
-      saveBtn.disabled = true;
       try {
-        const batch = writeBatch(db);
-        changed.forEach(p => {
-          const ref = doc(collection(db, 'products'), p.id);
-          batch.set(ref, cleanForFirestore(p), { merge: false });
-        });
-        await batch.commit();
-
+        downloadUpdatedFile();
         products.forEach(p => { p._changed = false; p._isNew = false; });
-        PRODUCTS_RAW = products.map(p => cleanForFirestore(p));
-        showToast(`Saved ${changed.length} product(s) to Firestore!`);
+        PRODUCTS_RAW = products.map(p => cleanProduct(p));
+        hasDeletions = false;
+        showToast(`Downloaded products-db.js with ${changed.length} change(s) — replace js/products-db.js in your repo and deploy.`);
         renderTable();
       } catch (e) {
         console.error(e);
-        alert('Save failed: ' + e.message + '\n\nMake sure you are logged in as an admin and Firestore rules for the "products" collection have been deployed.');
-      } finally {
-        saveBtn.disabled = false;
+        alert('Could not generate the file: ' + e.message);
       }
     });
 
@@ -858,24 +915,14 @@
       renderTable();
     };
 
-    window.deleteProduct = async function(id) {
-      if (!confirm('Delete this product from Firestore? This removes it from the live storefront catalog and cannot be undone.')) return;
-      const isNew = products.find(p => p.id === id)?._isNew;
-      try {
-        // Only hit Firestore if this product was ever actually saved there —
-        // a brand-new, unsaved product only needs removing locally.
-        if (!isNew) {
-          await deleteDoc(doc(collection(db, 'products'), id));
-        }
-        products = products.filter(p => p.id !== id);
-        PRODUCTS_RAW = PRODUCTS_RAW.filter(p => p.id !== id);
-        selectedIds.delete(id);
-        showToast('Product deleted.');
-        renderTable();
-      } catch (e) {
-        console.error(e);
-        alert('Delete failed: ' + e.message);
-      }
+    window.deleteProduct = function(id) {
+      if (!confirm('Remove this product from the catalog? This only takes effect once you click "Save & Export" and redeploy the downloaded file.')) return;
+      products = products.filter(p => p.id !== id);
+      PRODUCTS_RAW = PRODUCTS_RAW.filter(p => p.id !== id);
+      selectedIds.delete(id);
+      hasDeletions = true;
+      showToast('Product removed — click "Save & Export" to download the updated file.');
+      renderTable();
     };
 
     document.getElementById('add-product-btn').addEventListener('click', () => {
@@ -922,9 +969,9 @@
 
     // ── INIT ──────────────────────────────────────────────────────────────────
     document.getElementById('products-tbody').innerHTML =
-      '<tr><td colspan="10" class="text-center text-muted py-4">Loading products from Firestore…</td></tr>';
+      '<tr><td colspan="10" class="text-center text-muted py-4">Loading products from js/products-db.js…</td></tr>';
 
-    loadProductsFromFirestore()
+    loadProductsFromFile()
       .then(() => {
         renderTable();
       })
