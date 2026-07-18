@@ -1112,7 +1112,7 @@ function performSearch(query, resultsEl, prefix) {
   const matches = ARB_SEARCH_INDEX.filter(p => {
     return p.name.toLowerCase().includes(q)
       || p.category.toLowerCase().includes(q)
-      || p.tags.some(t => t.toLowerCase().includes(q));
+      || (p.tags || []).some(t => t.toLowerCase().includes(q));
   });
 
   if (matches.length === 0) {
