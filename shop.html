@@ -312,7 +312,7 @@
           filtered = filtered.filter(p => 
             p.name.toLowerCase().includes(query) || 
             p.sku.toLowerCase().includes(query) ||
-            p.tags.some(t => t.includes(query))
+            (p.tags || []).some(t => t.includes(query))
           );
         }
 
