@@ -702,8 +702,10 @@
     // ── SAVE / RESET ──────────────────────────────────────────────────────────
     function cleanForFirestore(p) {
       // Strip internal UI-only fields and any undefined keys (Firestore
-      // rejects `undefined` values), and leave "tags" out for now.
-      const { _changed, _isNew, tags, ...clean } = p;
+      // rejects `undefined` values). "tags" is kept — the storefront search
+      // on shop.html reads p.tags.some(...) and throws if it's missing.
+      const { _changed, _isNew, ...clean } = p;
+      if (!Array.isArray(clean.tags)) clean.tags = [];
       Object.keys(clean).forEach(k => { if (clean[k] === undefined) delete clean[k]; });
       return clean;
     }
