@@ -1399,7 +1399,7 @@ function injectFaqAssistant() {
   // Chat Q&A handler
   const chatContainer = card.querySelector('#assistant-chat-container');
   const faqAnswers = {
-    advance: "Our terms require a 100% advance payment via EasyPaisa, JazzCash, or bank transfer (Bank Al-Falah Account: 56235001952299, Title: ARB Farms), with the balance settled upon delivery. After submitting an order, you can upload your receipt on the thank-you screen or share it via WhatsApp for immediate processing.",
+    advance: "Our terms require a 100% advance payment via EasyPaisa, JazzCash, or bank transfer (Bank UBL Ameen Account: PK45UNIL0109000361656719, Title: AHMRO GLOBAL Pvt Ltd), with the balance settled upon delivery. After submitting an order, you can upload your receipt on the thank-you screen or share it via WhatsApp for immediate processing.",
     shipping: "Standard products: 1g to 1kg = Rs. 300 flat, 1-6kg = Rs. 300/kg, 6kg+ = Rs. 150/kg. Wheat products: Up to 6kg = Rs. 300/kg, 6-40kg = Rs. 150/kg, 40kg+ = Rs. 1,500/Maund (40kg).",
     dairy: "No, fresh pasteurized dairy products (Cow, Buffalo, and Goat Milk) can only be delivered within Multan city boundaries to maintain freshness. Edible seeds, Desi Ghee, Honey, and livestock feed can be shipped nationwide."
   };
